@@ -1,10 +1,8 @@
 <template>
   <div class="login">
     <form v-on:submit.prevent="login">
-      <label for="username">Username</label>
-      <input type="text" id="username" v-model="input.username">
-      <label for="password">Password</label>
-      <input type="password" id="password" v-model="input.password">
+      <input type="text" v-model="input.username" placeholder="Username">
+      <input type="password" v-model="input.password" placeholder="Password">
       <button>Login</button>
     </form>
   </div>
@@ -28,8 +26,9 @@ function authAjaxRequest(method, url, body) {
         resolve(xhr.response);
       } else {
         reject({
-          status: this.status,
-          statusText: this.statusText,
+          status: xhr.status,
+          statusText: xhr.statusText,
+          response: xhr.response,
         });
       }
     };
@@ -45,7 +44,7 @@ function authAjaxRequest(method, url, body) {
 
 
 export default {
-  name: 'LogIn',
+  name: 'login',
   data: function() {
     return {
       input: {
