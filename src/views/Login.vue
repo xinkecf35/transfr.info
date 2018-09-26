@@ -5,6 +5,7 @@
       <input type="password" v-model="input.password" placeholder="Password">
       <button>Login</button>
     </form>
+    <router-link to="/signup">New here? Create an account.</router-link>
   </div>
 </template>
 <script>
@@ -25,23 +26,15 @@ function authAjaxRequest(method, url, body) {
       if (this.status >= 200 && this.status < 300) {
         resolve(xhr.response);
       } else {
-        reject({
-          status: xhr.status,
-          statusText: xhr.statusText,
-          response: xhr.response,
-        });
+        reject({status: xhr.status, response: xhr.response});
       }
     };
     xhr.onerror = function() {
-      reject({
-        status: xhr.status,
-        statusText: xhr.statusText,
-      });
+      reject({status: xhr.status, statusText: xhr.statusText});
     };
     xhr.send(body);
   });
 }
-
 
 export default {
   name: 'login',
@@ -51,12 +44,12 @@ export default {
         username: '',
         password: '',
       },
+      errors: [],
     };
   },
   methods: {
     login() {
-      const userInput = this.input;
-      if (userInput.username !== '' || userInput.password !== '') {
+      if (isValidInput()) {
         const requestBody = JSON.stringify(userInput);
         const authURL = 'https://api.transfr.info/v1/users/';
         let authPromise = authAjaxRequest('POST', authURL, requestBody);
@@ -66,6 +59,19 @@ export default {
           console.log(err);
         });
       }
+    },
+    isValidInput() {
+      let valid = true;
+      const userInput = this.input;
+      if (userInput.username === '') {
+        this.errors.push({field: username, error: 'Please enter username'});
+        valid = false;
+      }
+      if (userInput.password === '') {
+        this.errors.push({field: password, error: 'Please enter password'});
+        valid = false;
+      }
+      return valid;
     },
   },
 };
