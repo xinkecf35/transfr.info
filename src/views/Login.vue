@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div id="login">
     <form v-on:submit.prevent="login">
       <input type="text" v-model="input.username" placeholder="Username">
       <input type="password" v-model="input.password" placeholder="Password">
@@ -9,7 +9,6 @@
   </div>
 </template>
 <script>
-
 /**
  * Promise wrapper for XMLHttpRequest
  * @param {string} method HTTP Request Method
@@ -30,7 +29,7 @@ function authAjaxRequest(method, url, body) {
       }
     };
     xhr.onerror = function() {
-      reject({status: xhr.status, statusText: xhr.statusText});
+      reject({status: xhr.status, response: xhr.response});
     };
     xhr.send(body);
   });
@@ -48,8 +47,10 @@ export default {
     };
   },
   methods: {
-    login() {
-      if (isValidInput()) {
+    login: function login() {
+      const userInput = this.input;
+      if (this.isValidInput()) {
+        console.log('Sending request');
         const requestBody = JSON.stringify(userInput);
         const authURL = 'https://api.transfr.info/v1/users/';
         let authPromise = authAjaxRequest('POST', authURL, requestBody);
@@ -60,15 +61,15 @@ export default {
         });
       }
     },
-    isValidInput() {
+    isValidInput: function isValidInput() {
       let valid = true;
       const userInput = this.input;
       if (userInput.username === '') {
-        this.errors.push({field: username, error: 'Please enter username'});
+        this.errors.push({field: 'username', error: 'Please enter username'});
         valid = false;
       }
       if (userInput.password === '') {
-        this.errors.push({field: password, error: 'Please enter password'});
+        this.errors.push({field: 'password', error: 'Please enter password'});
         valid = false;
       }
       return valid;
