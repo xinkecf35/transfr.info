@@ -1,8 +1,20 @@
 <template>
   <div id="login">
     <form v-on:submit.prevent="login">
+      <div v-for="error in errors" :key="error.id">
+        <span v-if="error.field ==='username'">
+          {{error.message}}
+        </span>
+      </div>
       <input type="text" v-model="input.username" placeholder="Username">
+      <br>
+      <div v-for="error in errors" :key="error.id">
+        <span v-if="error.field ==='password'">
+          {{error.message}}
+        </span>
+      </div>
       <input type="password" v-model="input.password" placeholder="Password">
+      <br>
       <button>Login</button>
     </form>
     <router-link to="/signup">New here? Create an account.</router-link>
@@ -65,11 +77,11 @@ export default {
       let valid = true;
       const userInput = this.input;
       if (userInput.username === '') {
-        this.errors.push({field: 'username', error: 'Please enter username'});
+        this.errors.push({field: 'username', message: 'Please enter username'});
         valid = false;
       }
       if (userInput.password === '') {
-        this.errors.push({field: 'password', error: 'Please enter password'});
+        this.errors.push({field: 'password', message: 'Please enter password'});
         valid = false;
       }
       return valid;
