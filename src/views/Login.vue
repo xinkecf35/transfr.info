@@ -2,16 +2,12 @@
   <div id="login">
     <form v-on:submit.prevent="login">
       <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='username'">
-          {{error.message}}
-        </span>
+        <span v-if="error.field ==='username'">{{error.message}}</span>
       </div>
       <input type="text" v-model="input.username" placeholder="Username">
       <br>
       <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='password'">
-          {{error.message}}
-        </span>
+        <span v-if="error.field ==='password'">{{error.message}}</span>
       </div>
       <input type="password" v-model="input.password" placeholder="Password">
       <br>
