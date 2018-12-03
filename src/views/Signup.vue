@@ -91,7 +91,10 @@ export default {
     createAccount: function createAccount() {
       if (this.isValidInput()) {
         const requestBody = JSON.stringify(requestBody);
-        const signupURL = 'https://api.transfr.info/v1/users/new';
+        let signupURL = 'https://api.transfr.info/v1/users/new';
+        if (process.env.NODE_ENV === 'development') {
+          authURL = 'https://api.transfr.test/v1/users/new';
+        }
         let signupPromise = ajaxRequest('POST', signupURL, requestBody, false);
         signupPromise.then(function(response) {
           console.log(response);
