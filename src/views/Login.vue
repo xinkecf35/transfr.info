@@ -90,7 +90,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  @import '../scss/colors.scss';
   #login {
     background-color: $backgroundcolor;
   }
