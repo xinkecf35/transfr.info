@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('path');
 
 module.exports = {
   devServer: {
@@ -19,7 +19,8 @@ function addStyleResource(rule) {
     .loader('style-resources-loader')
     .options({
       patterns: [
-        path.resolve(__dirname, './src/scss/colors.scss'),
+        path.resolve(__dirname, './src/scss/variables.scss'),
+        path.resolve(__dirname, './src/scss/global.scss'),
       ],
     });
 }
