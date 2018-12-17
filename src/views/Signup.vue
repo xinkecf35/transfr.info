@@ -1,5 +1,5 @@
 <template>
-  <div id="signup">
+  <div id="signup" class="level-1 account-forms">
     <form v-on:submit.prevent="createAccount()">
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='username'">{{error.message}}</span>
@@ -27,6 +27,7 @@
       <br>
       <button>Create</button>
     </form>
+    <router-link to="/login ">Already have an account? Login here.</router-link>
   </div>
 </template>
 <script>
@@ -60,6 +61,12 @@ function ajaxRequest(method, url, body, withCredentials) {
 
 export default {
   name: 'signup',
+  beforeMount() {
+    document.body.classList.toggle('secondary');
+  },
+  destroyed() {
+    document.body.classList.toggle('secondary');
+  },
   data: function() {
     return {
       input: {
@@ -142,7 +149,4 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-  
-</style>
 

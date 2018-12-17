@@ -1,5 +1,5 @@
 <template>
-  <div id="login" class="level-1">
+  <div id="login" class="level-1 account-forms">
     <form v-on:submit.prevent="login">
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='username'">{{error.message}}</span>
@@ -46,6 +46,12 @@ function authAjaxRequest(method, url, body) {
 
 export default {
   name: 'login',
+  beforeMount() {
+    document.body.classList.toggle('secondary');
+  },
+  destroyed() {
+    document.body.classList.toggle('secondary');
+  },
   data: function() {
     return {
       input: {
@@ -90,42 +96,4 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  #login {
-    padding-top: 3em;
-    padding-bottom: 3em;
-    border-radius: 8px;
-    width: 40%;
-    margin: 0 auto;
-    form {
-      margin: 0 auto;
-      width: 80%;
-      input {
-        padding: 1em;
-        border-radius: 6px;
-        border: 1px solid $accentcolor;
-        width: 50%;
-        margin-bottom: 2em;
-        font-size: 1em;
-      }
-      button {
-        width: 55%;
-        padding-top: 1em;
-        padding-bottom: 1em;
-        font-size: 1em;
-        border-radius: 6px;
-        color: #fff;
-        background-color: $primarycolor;
-        text-decoration: none;
-        margin-bottom: 2em;
-        &:hover {
-          background-color: $accentcolor;
-        }
-      }
-    }
-    a {
-      text-decoration: none;
-      color: $primarycolor;
-      font-weight: 700;
-    }
-  }
 </style>

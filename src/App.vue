@@ -9,23 +9,37 @@
     <router-view/>
   </div>
 </template>
-
 <style lang="scss">
+  .home {
+    background-color: $backgroundcolor;
+  }
+  .secondary {
+      background-color: $secondarycolor !important;
+  }
+</style>
+<script>
+export default {
+  beforeCreate() {
+    document.body.classList.add('home');
+  },
+};
+</script>
+<style lang="scss" scoped>
 @import url("https://use.typekit.net/bek7yhg.css");
 #app {
   font-family: nunito, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: $primarycolor;
 }
 #nav {
   padding: 30px;
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: $primarycolor;
     &.router-link-exact-active {
-      color: #42b983;
+      color: $accentcolor;
     }
   }
 }
