@@ -1,5 +1,6 @@
 <template>
   <div id="login" class="level-1 account-forms">
+    <h1>Log In</h1>
     <form v-on:submit.prevent="login">
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='username'">{{error.message}}</span>

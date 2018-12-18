@@ -2,3 +2,7 @@ $primarycolor: #198B1C;
 $secondarycolor: #23BA5D;
 $accentcolor: #C3CA1D;
 $backgroundcolor: #FFFFFD;
+
+$breakpoint-sm: "screen and (max-width: 767px)";
+$breakpoint-md: "screen and (min-width: 768px) and (max-width: 1023px)";
+$breakpoint-lg : "screen and (min-width: 1024px)";
