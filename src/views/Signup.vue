@@ -1,5 +1,6 @@
 <template>
   <div id="signup" class="level-1 account-forms">
+    <h1>Sign Up</h1>
     <form v-on:submit.prevent="createAccount()">
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='username'">{{error.message}}</span>
@@ -115,15 +116,16 @@ export default {
     },
     isValidInput: function isValidInput() {
       let valid = true;
-      const regexPattern = '/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|' +
-                    '(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1' +
-                    ',3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/';
+      const regexPattern = 'test';
       const regex = new RegExp(regexPattern);
       const userInput = this.input;
       this.errors = [];
       // Check username
       if (userInput.username === '') {
-        this.errors.push({field: 'username', message: 'Please enter a username'});
+        this.errors.push({
+          field: 'username',
+          message: 'Please enter a username',
+        });
       }
       // Check email
       if (userInput.email === '') {
@@ -131,17 +133,26 @@ export default {
         valid = false;
       } else if (!regex.test(userInput.email)) {
         // Damn regex is not working, probably did it wrong
-        this.errors.push({field: 'email', message: 'Please enter a valid email'});
+        this.errors.push({
+          field: 'email',
+          message: 'Please enter a valid email',
+        });
         // valid = false;
       }
       // Check password
       if (userInput.password === '') {
-        this.errors.push({field: 'password', message: 'Please enter password'});
+        this.errors.push({
+          field: 'password',
+          message: 'Please enter password',
+        });
         valid = false;
       }
       // Check names
       if (userInput.firstName === '' || userInput.lastName === '') {
-        this.errors.push({field: 'firstName', message: 'Please enter first and last name'});
+        this.errors.push({
+          field: 'firstName',
+          message: 'Please enter first and last name',
+        });
         valid = false;
       }
       return valid;

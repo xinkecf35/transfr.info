@@ -1,5 +1,8 @@
 <template>
   <div id="login" class="level-1 account-forms">
+    <router-link to="/">
+      <img id="login-form" src="../assets/logo.svg">
+    </router-link>
     <h1>Log In</h1>
     <form v-on:submit.prevent="login">
       <div v-for="error in errors" :key="error.id">
@@ -97,4 +100,7 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  #login-form {
+    height: 4em;
+  }
 </style>
