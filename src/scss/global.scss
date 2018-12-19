@@ -30,10 +30,13 @@ no-margin {
 }
 // Some classes used across platforms
 .account-forms {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
     padding-top: 2.5em;
     padding-bottom: 2.5em;
     border-radius: 8px;
-    margin: 2em auto 2em auto;
     background-color: $backgroundcolor;
     @media #{$breakpoint-sm} {
         width: 95%;
