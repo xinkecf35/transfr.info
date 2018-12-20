@@ -12,14 +12,6 @@
     <router-view/>
   </div>
 </template>
-<style lang="scss">
-  .home {
-    background-color: $backgroundcolor;
-  }
-  .secondary {
-      background-color: $secondarycolor !important;
-  }
-</style>
 <script>
 export default {
   beforeCreate() {
@@ -28,6 +20,14 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+  .home {
+    background-color: $backgroundcolor;
+  }
+  .secondary {
+      background-color: $secondarycolor !important;
+  }
+</style>
 <style lang="scss" scoped>
 @import url("https://use.typekit.net/bek7yhg.css");
 #app {
