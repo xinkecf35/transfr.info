@@ -77,7 +77,7 @@ export default {
         if (process.env.NODE_ENV === 'development') {
           signupURL = 'https://api.transfr.test/v1/users/new';
         }
-        let signupPromise = ajaxRequest('POST', signupURL, requestBody, false);
+        let signupPromise = ajaxRequest('POST', signupURL, requestBody);
         signupPromise.then(function(response) {
           console.log(response);
         }).catch(function(err) {

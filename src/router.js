@@ -34,7 +34,7 @@ export default new Router({
       component: Signup,
     },
     {
-      path: '/user/:id',
+      path: '/user/:username',
       name: 'user',
       component: user,
     },
