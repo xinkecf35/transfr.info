@@ -9,7 +9,8 @@ new Vue({
   router,
   store,
   beforeCreate() {
-    this.$store.commit('initCSRF');
+    this.$store.commit('csrf/initCSRF');
+    this.$store.commit('userdata/initUserData');
   },
   render: (h) => h(App),
 }).$mount('#app');

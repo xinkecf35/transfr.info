@@ -41,7 +41,7 @@ export default {
     };
   },
   methods: {
-    login: function login() {
+    login: function() {
       const userInput = this.input;
       const router = this.$router;
       const store = this.$store;
@@ -54,14 +54,14 @@ export default {
         }
         let authPromise = ajaxRequest('POST', authURL, requestBody);
         authPromise.then(function(response) {
-          store.commit('setToken', response.csrf);
+          store.commit('csrf/setToken', response.csrf);
           router.push({name: 'user', params: {username: userInput.username}});
         }).catch(function(err) {
           console.log(err);
         });
       }
     },
-    isValidInput: function isValidInput() {
+    isValidInput: function() {
       let valid = true;
       const userInput = this.input;
       if (userInput.username === '') {

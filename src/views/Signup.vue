@@ -70,7 +70,7 @@ export default {
     },
   },
   methods: {
-    createAccount: function createAccount() {
+    createAccount: function() {
       if (this.isValidInput()) {
         const requestBody = JSON.stringify(this.computedBody);
         let signupURL = 'https://api.transfr.info/v1/users/new';
@@ -88,7 +88,7 @@ export default {
         console.log(this.errors);
       }
     },
-    isValidInput: function isValidInput() {
+    isValidInput: function() {
       let valid = true;
       const userInput = this.input;
       this.errors = [];

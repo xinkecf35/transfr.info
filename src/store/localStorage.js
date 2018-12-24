@@ -8,13 +8,14 @@ const userMutations = [
 
 const localStoragePlugin = (store) => {
   store.subscribe((mutation, state) => {
-    const payload = mutation.payload;
     // Checking if mutation type is part of CSRF
+    console.log(mutation);
+    console.log(state);
     if (mutation.type === 'setToken') {
-      sessionStorage.setItem('csrf', JSON.stringify(payload));
+      sessionStorage.setItem('csrf', JSON.stringify(state.csrf));
     }
     if (userMutations.indexOf(mutation.type) > -1) {
-      sessionStorage.setItem('userdata', JSON.stringify(payload));
+      sessionStorage.setItem('userdata', JSON.stringify(state.userdata));
     }
   });
 };
