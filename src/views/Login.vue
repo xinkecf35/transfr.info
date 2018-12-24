@@ -44,7 +44,6 @@ export default {
     login: function() {
       const userInput = this.input;
       const router = this.$router;
-      const store = this.$store;
       if (this.isValidInput()) {
         console.log('Sending request');
         const requestBody = JSON.stringify(userInput);
@@ -54,7 +53,7 @@ export default {
         }
         let authPromise = ajaxRequest('POST', authURL, requestBody);
         authPromise.then(function(response) {
-          store.commit('csrf/setToken', response.csrf);
+          sessionStorage.setItem('csrf', response.csrf);
           router.push({name: 'user', params: {username: userInput.username}});
         }).catch(function(err) {
           console.log(err);

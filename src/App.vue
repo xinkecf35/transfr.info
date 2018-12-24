@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav" v-if="['login', 'signup'].indexOf($route.name) === -1">
+    <div id="nav" v-if="showNav">
       <img id="nav-logo" alt="transfr logo" src="./assets/logo-invert.svg">
       <div id="nav-links">
         <router-link to="/">Home</router-link>
@@ -17,6 +17,12 @@ export default {
   beforeCreate() {
     document.body.classList.add('home');
     document.body.classList.add('no-margin');
+  },
+  computed: {
+    showNav: function() {
+      const routes = ['login', 'signup'];
+      return !(routes.indexOf(this.$route.name) > -1);
+    },
   },
 };
 </script>

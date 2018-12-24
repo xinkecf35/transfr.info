@@ -36,7 +36,7 @@ const mutations = {
   initUserData(state) {
     const userdata = JSON.parse(sessionStorage.getItem('userdata'));
     if (userdata) {
-      this.replaceState(state);
+      this.replaceState(userdata);
     }
   },
 };
