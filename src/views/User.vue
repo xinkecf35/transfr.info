@@ -1,10 +1,12 @@
 <template>
-  <h1>
-    Hello {{fullName}}
-  </h1>
+  <card
+    v-bind:vcard = "cards[0]"
+    v-bind:initialFirstName = "firstName"
+    v-bind:initialLastName = "lastName"/>
 </template>
 <script>
-import {ajaxRequest} from '../functions';
+import {ajaxRequest} from '@/functions';
+import card from '@/components/Card';
 
 export default {
   name: 'user',
@@ -12,7 +14,7 @@ export default {
     return {
       fullName: '',
       email: '',
-      cards: [],
+      cards: [{}],
     };
   },
   computed: {
@@ -24,6 +26,9 @@ export default {
       const names = this.fullName.split(';');
       return names[0];
     },
+    displayName: function() {
+      return this.firstName + ' ' + this.lastName;
+    },
     csrfToken: function() {
       return sessionStorage.getItem('csrf');
     },
@@ -34,6 +39,9 @@ export default {
       this.email = data.email;
       this.cards = data.vcards;
     },
+  },
+  components: {
+    card,
   },
   beforeRouteEnter(to, from, next) {
     let userDataURL = 'https://api.transfr.info/v1/userdata/user';
