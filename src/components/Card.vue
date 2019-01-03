@@ -1,9 +1,9 @@
 <template>
   <div id="card">
-    <div id="card-tab">
+    <div id="card-tab" class="level-1">
       {{description}}
     </div>
-    <div id="card-main" class="grid level-1">
+    <div id="card-main" class="grid level-2">
       <span> {{firstName}} {{lastName}} </span>
       <div class="row"
         v-for="key in Object.keys(objectOptionals)" :key="key">
@@ -82,7 +82,7 @@ export default {
       let result = {};
       const include = ['telephone', 'email'];
       include.forEach((key) => {
-        if (!isEmptyOrNull(this.optional[key])) {
+        if (this.optional[key] !== []) {
           result[key] = this.optional[key];
         }
       });
@@ -125,22 +125,12 @@ export default {
     color: $backgroundcolor;
     font-size: 1.25rem;
     top: 0px;
-    padding: 0.1em 1em 0.1em 1em;
+    padding: 0.25em 1em 0.2em 1em;
     background-color: $accentcolor;
     border-radius: 10px 10px 0px 0px;
     width: 16%;
-    &:after {
-      position: absolute;
-      content: "";
-      height: 0;
-      width: 0;
-      border-left: 40px solid $accentcolor;
-      border-right: 40px solid $accentcolor;
-      border-bottom: 40px solid $accentcolor;
-      left:14px;
-      top: 30px;
-      z-index: -1;
-    }
+    border-bottom: 10px solid $accentcolor;
+    margin-bottom: -10px;
 
   }
   #card-main {
