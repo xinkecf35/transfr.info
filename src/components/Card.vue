@@ -1,10 +1,7 @@
 <template>
   <div id="card">
-    <div id="card-tab" class="level-1">
-      {{description}}
-    </div>
     <div id="card-main" class="grid level-2">
-      <span> {{firstName}} {{lastName}} </span>
+      <span>{{firstName}} {{lastName}}</span>
       <div class="row"
         v-for="key in Object.keys(objectOptionals)" :key="key">
         <div class="column-props">{{key}}</div>
@@ -121,25 +118,13 @@ export default {
     text-align: left;
     padding: 14px;
   }
-  #card-tab {
-    color: $backgroundcolor;
-    font-size: 1.25rem;
-    top: 0px;
-    padding: 0.25em 1em 0.2em 1em;
-    background-color: $accentcolor;
-    border-radius: 10px 10px 0px 0px;
-    width: 16%;
-    border-bottom: 10px solid $accentcolor;
-    margin-bottom: -10px;
-
-  }
   #card-main {
     padding: 2em;
     font-size: 1.1rem;
     top:30px;
     background-color: $backgroundcolor;
     border-radius: 12px;
-    width: 66%;
+    width: 74.3333%;
     span {
       font-size: 1.2rem;
     }

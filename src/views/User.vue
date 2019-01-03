@@ -3,15 +3,15 @@
     <div id="sidebar">
       {{displayName}}
     </div>
-    <card id="card"
-      v-bind:vcard = "cards[0]"
-      v-bind:initialFirstName = "firstName"
-      v-bind:initialLastName = "lastName"/>
+    <card-manager id="card-manager"
+      v-bind:cards="cards"
+      v-bind:initialFirstNam ="firstName"
+      v-bind:initialLastName="lastName"/>
   </div>
 </template>
 <script>
 import {ajaxRequest} from '@/functions';
-import card from '@/components/Card';
+import cardManager from '@/components/CardManager';
 
 export default {
   name: 'user',
@@ -46,7 +46,7 @@ export default {
     },
   },
   components: {
-    card,
+    cardManager,
   },
   beforeRouteEnter(to, from, next) {
     let userDataURL = 'https://api.transfr.info/v1/userdata/user';
@@ -73,11 +73,11 @@ export default {
     padding: 0.5em;
   }
   #sidebar {
-    flex: 0 1 25%;
+    flex: 0 1 33%;
     left: 0;
   }
-  #card {
-    flex: 0 2 75%;
+  #card-manager {
+    flex: 0 2 66%;
   }
 </style>
 
