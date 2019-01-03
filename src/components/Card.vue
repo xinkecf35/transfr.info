@@ -1,7 +1,10 @@
 <template>
   <div id="card">
-    <span> {{firstName}} {{lastName}} </span>
-    <div class="grid">
+    <div id="card-tab">
+      {{description}}
+    </div>
+    <div id="card-main" class="grid level-1">
+      <span> {{firstName}} {{lastName}} </span>
       <div class="row"
         v-for="key in Object.keys(objectOptionals)" :key="key">
         <div class="column-props">{{key}}</div>
@@ -114,8 +117,42 @@ export default {
 </script>
 <style lang="scss" scoped>
   #card {
+    position: relative;
     text-align: left;
-    min-width: 60%;
+    padding: 14px;
+  }
+  #card-tab {
+    color: $backgroundcolor;
+    font-size: 1.25rem;
+    top: 0px;
+    padding: 0.1em 1em 0.1em 1em;
+    background-color: $accentcolor;
+    border-radius: 10px 10px 0px 0px;
+    width: 16%;
+    &:after {
+      position: absolute;
+      content: "";
+      height: 0;
+      width: 0;
+      border-left: 40px solid $accentcolor;
+      border-right: 40px solid $accentcolor;
+      border-bottom: 40px solid $accentcolor;
+      left:14px;
+      top: 30px;
+      z-index: -1;
+    }
+
+  }
+  #card-main {
+    padding: 2em;
+    font-size: 1.1rem;
+    top:30px;
+    background-color: $backgroundcolor;
+    border-radius: 12px;
+    width: 66%;
+    span {
+      font-size: 1.2rem;
+    }
   }
   .row {
     padding-bottom: 0.5em;
@@ -143,12 +180,12 @@ export default {
   }
   .column-props {
     @extend %column-properties;
-    width: 40%;
+    width: 35%;
     text-align: right;
   }
   .column-values {
     @extend %column-properties;
-    width: 60%;
+    width: 65%;
     text-align: left;
   }
   .column-list {
@@ -158,7 +195,7 @@ export default {
       margin: 0;
       li {
         display: flex;
-        justify-content: space-evenly;
+        justify-content: space-around;
       }
     }
   }

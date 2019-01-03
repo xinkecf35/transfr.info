@@ -73,9 +73,11 @@ export default {
     padding: 0.5em;
   }
   #sidebar {
-    flex: 0 1 20%;
+    flex: 0 1 25%;
     left: 0;
-    min-height: 100%;
+  }
+  #card {
+    flex: 0 2 75%;
   }
 </style>
 
