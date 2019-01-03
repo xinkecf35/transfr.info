@@ -10,11 +10,13 @@
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='firstName'">{{error.message}}</span>
       </div>
+      <span>
       <input type="text" v-model="input.firstName" placeholder="First Name">
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='lastName'">{{error.message}}</span>
       </div>
       <input type="text" v-model="input.lastName" placeholder="Last Name">
+      </span>
       <br>
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='email'">{{error.message}}</span>

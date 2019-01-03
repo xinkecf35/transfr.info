@@ -1,8 +1,13 @@
 <template>
-  <card
-    v-bind:vcard = "cards[0]"
-    v-bind:initialFirstName = "firstName"
-    v-bind:initialLastName = "lastName"/>
+  <div id="user">
+    <div id="sidebar">
+      {{displayName}}
+    </div>
+    <card id="card"
+      v-bind:vcard = "cards[0]"
+      v-bind:initialFirstName = "firstName"
+      v-bind:initialLastName = "lastName"/>
+  </div>
 </template>
 <script>
 import {ajaxRequest} from '@/functions';
@@ -61,3 +66,16 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+  #user {
+    display: flex;
+    font-size: 1.2em;
+    padding: 0.5em;
+  }
+  #sidebar {
+    flex: 0 1 20%;
+    left: 0;
+    min-height: 100%;
+  }
+</style>
+

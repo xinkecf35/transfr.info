@@ -1,17 +1,36 @@
 <template>
   <div id="card">
     <span> {{firstName}} {{lastName}} </span>
-    <div v-for="object in objectOptionals" :key="object.id">
-      <span v-for="item in object" :key="item.id">
-        {{item.value}} {{item.type}}
-      </span>
+    <div class="grid">
+      <div class="row"
+        v-for="key in Object.keys(objectOptionals)" :key="key">
+        <div class="column-props">{{key}}</div>
+        <div class="column-values column-list">
+          <ul>
+            <li v-for="item in objectOptionals[key]" :key="item.id">
+              <div>{{item.type}}</div>
+              <div>{{item.value}}</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="row"
+        v-for="key in Object.keys(simpleOptionals)" :key="key">
+        <div class="column-props">{{key}}</div>
+        <div class="column-values">{{simpleOptionals[key]}}</div>
+      </div>
     </div>
-    <span v-for="item in simpleOptionals" :key="item.id">
-      {{item}}
-    </span>
   </div>
 </template>
 <script>
+/**
+ * Null/Empty/Undefined Check for string
+ * @param {String} string string to be checked
+ * @return {Boolean} Is string empty, null or undefined
+ */
+function isEmptyOrNull(string) {
+  return string === '' || string === null || string === undefined;
+}
 export default {
   data: function() {
     return {
@@ -45,7 +64,11 @@ export default {
         // if the property is not in exclude array, add it
         return exclude.indexOf(property) === -1;
       });
-      filtered.forEach((key) => result[key] = this.optional[key]);
+      filtered.forEach((key) => {
+        if (!isEmptyOrNull(this.optional[key])) {
+          result[key] = this.optional[key];
+        }
+      });
       return result;
     },
     /* This computed property returns properties that are objects
@@ -55,7 +78,11 @@ export default {
     objectOptionals: function() {
       let result = {};
       const include = ['telephone', 'email'];
-      include.forEach((key) => result[key] = this.optional[key]);
+      include.forEach((key) => {
+        if (!isEmptyOrNull(this.optional[key])) {
+          result[key] = this.optional[key];
+        }
+      });
       return result;
     },
   },
@@ -85,3 +112,54 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+  #card {
+    text-align: left;
+    min-width: 60%;
+  }
+  .row {
+    padding-bottom: 0.5em;
+    &:before {
+      content: " ";
+      display: table;
+    }
+    &:after {
+      content: " ";
+      display: table;
+      clear: both;
+    }
+  }
+  .grid *{
+    font-size: 1rem;
+    position: relative;
+    box-sizing: border-box;
+    width: 100%;
+  }
+  %column-properties {
+    float: left;
+    min-height: 1px;
+    padding: 10px;
+    position: relative;
+  }
+  .column-props {
+    @extend %column-properties;
+    width: 40%;
+    text-align: right;
+  }
+  .column-values {
+    @extend %column-properties;
+    width: 60%;
+    text-align: left;
+  }
+  .column-list {
+    ul {
+      padding: 0;
+      list-style: none;
+      margin: 0;
+      li {
+        display: flex;
+        justify-content: space-evenly;
+      }
+    }
+  }
+</style>
