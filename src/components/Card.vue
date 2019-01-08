@@ -1,7 +1,12 @@
 <template>
   <div id="card">
     <div id="card-main" class="grid level-2">
-      <span>{{firstName}} {{lastName}}</span>
+      <div id="header" class="row">
+        <span>{{firstName}} {{lastName}}</span>
+        <div id="edit">
+          <button v-on:click="edit = true" class="level-1">Edit</button>
+        </div>
+      </div>
       <div class="row"
         v-for="key in Object.keys(objectOptionals)" :key="key">
         <div class="column-props">{{key}}</div>
@@ -47,6 +52,7 @@ export default {
         birthday: '',
         impp: '',
       },
+      edit: false,
     };
   },
   computed: {
@@ -79,7 +85,7 @@ export default {
       let result = {};
       const include = ['telephone', 'email'];
       include.forEach((key) => {
-        if (this.optional[key] !== []) {
+        if (this.optional[key] !== undefined) {
           result[key] = this.optional[key];
         }
       });
@@ -126,7 +132,7 @@ export default {
     border-radius: 12px;
     width: 74.3333%;
     span {
-      font-size: 1.2rem;
+      font-size: 1.5rem;
     }
   }
   .row {
@@ -139,6 +145,29 @@ export default {
       content: " ";
       display: table;
       clear: both;
+    }
+  }
+  #header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    #edit{
+      flex: 0 1 16.667%;
+      button {
+        display: block;
+        background-color: $secondarycolor;
+        border: 0;
+        color: $backgroundcolor;
+        float: right;
+        font-family: nunito, Helvetica, Arial, sans-serif;
+        font-size: 1.2rem;
+        padding: 0.25em 1em 0.25em 1em;
+        border-radius: 6px;
+        &:hover {
+          background-color: $primarycolor;
+        }
+      }
     }
   }
   .grid *{

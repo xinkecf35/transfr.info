@@ -1,11 +1,13 @@
 <template>
   <div id="user">
     <div id="sidebar">
-      {{displayName}}
+      <h1>{{displayName}}</h1>
       <a v-on:click.prevent="logout">Log out</a>
     </div>
     <card-manager id="card-manager"
-      v-bind:cards="cards"/>
+      v-bind:cards="cards"
+      v-bind:initialFirstName="firstName"
+      v-bind:initialLastName="lastName"/>
   </div>
 </template>
 <script>

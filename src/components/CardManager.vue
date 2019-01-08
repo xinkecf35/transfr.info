@@ -41,6 +41,8 @@ export default {
   },
   props: {
     cards: Array,
+    initialFirstName: String,
+    initialLastName: String,
   },
   watch: {
     initialFirstName: function(value) {
