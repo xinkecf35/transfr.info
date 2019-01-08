@@ -2,6 +2,7 @@
   <div id="user">
     <div id="sidebar">
       {{displayName}}
+      <a v-on:click.prevent="logout">Log out</a>
     </div>
     <card-manager id="card-manager"
       v-bind:cards="cards"
@@ -44,6 +45,16 @@ export default {
       this.email = data.email;
       this.cards = data.vcards;
     },
+    logout: function() {
+      let logoutURL = 'https://api.transfr.info/v1/users/token?logout=true';
+      if (process.env.NODE_ENV === 'development') {
+        logoutURL = 'https://api.transfr.test/v1/users/token?logout=true';
+      }
+      let logoutPromise = ajaxRequest('POST', logoutURL);
+      logoutPromise.then(function(response) {
+        console.log(response);
+      }).catch((err) => console.log(err));
+    }
   },
   components: {
     cardManager,
