@@ -5,9 +5,7 @@
       <a v-on:click.prevent="logout">Log out</a>
     </div>
     <card-manager id="card-manager"
-      v-bind:cards="cards"
-      v-bind:initialFirstNam ="firstName"
-      v-bind:initialLastName="lastName"/>
+      v-bind:cards="cards"/>
   </div>
 </template>
 <script>
@@ -50,11 +48,13 @@ export default {
       if (process.env.NODE_ENV === 'development') {
         logoutURL = 'https://api.transfr.test/v1/users/token?logout=true';
       }
+      const router = this.$router;
       let logoutPromise = ajaxRequest('POST', logoutURL);
       logoutPromise.then(function(response) {
-        console.log(response);
+        sessionStorage.removeItem('csrf');
+        router.push({name: 'home'});
       }).catch((err) => console.log(err));
-    }
+    },
   },
   components: {
     cardManager,
