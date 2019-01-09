@@ -33,7 +33,29 @@
       </div>
       <edit-input
         v-bind:attribute="'Description'"
-        v-bind:value.sync="description"
+        v-bind:value.sync="description"/>
+      <edit-input
+        v-bind:attribute="'Address'"
+        v-bind:value.sync="address"/>
+      <edit-input
+        v-bind:attribute="'Birthday'"
+        v-bind:value.sync="birthday"/>
+      <edit-input
+        v-bind:attribute="'Email'"
+        v-bind:value.sync="birthday"
+        v-bind:isComplex="true"/>
+      <edit-input
+        v-bind:attribute="'Note'"
+        v-bind:value.sync="note"/>
+      <edit-input
+        v-bind:attribute="'Nickname'"
+        v-bind:value.sync="nickname"/>
+      <edit-input
+        v-bind:attribute="'Organization'"
+        v-bind:value.sync="organization"/>
+      <edit-input
+        v-bind:attribute="'Telephone'"
+        v-bind:value.sync="telephone"
         v-bind:isComplex="true"/>
     </div>
   </div>
@@ -135,7 +157,46 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+  #card {
+    position: relative;
+    text-align: left;
+    padding: 14px;
+  }
+  .card-main {
+    padding: 2em;
+    font-size: 1.1rem;
+    top:30px;
+    background-color: $backgroundcolor;
+    border-radius: 12px;
+    width: 74.3333%;
+  }
+  #header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    span {
+      font-size: 1.5rem;
+    }
+    #edit{
+      flex: 0 1 16.667%;
+      button {
+        display: block;
+        background-color: $secondarycolor;
+        border: 0;
+        color: $backgroundcolor;
+        float: right;
+        font-family: nunito, Helvetica, Arial, sans-serif;
+        font-size: 1.1rem;
+        padding: 0.25em 1em 0.25em 1em;
+        border-radius: 6px;
+        &:hover {
+          background-color: $primarycolor;
+        }
+      }
+    }
+  }
   .grid *{
     font-size: 1rem;
     position: relative;
@@ -178,47 +239,6 @@ export default {
       li {
         display: flex;
         justify-content: space-around;
-      }
-    }
-  }
-</style>
-<style lang="scss" scoped>
-  #card {
-    position: relative;
-    text-align: left;
-    padding: 14px;
-  }
-  .card-main {
-    padding: 2em;
-    font-size: 1.1rem;
-    top:30px;
-    background-color: $backgroundcolor;
-    border-radius: 12px;
-    width: 74.3333%;
-  }
-  #header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    span {
-      font-size: 1.5rem;
-    }
-    #edit{
-      flex: 0 1 16.667%;
-      button {
-        display: block;
-        background-color: $secondarycolor;
-        border: 0;
-        color: $backgroundcolor;
-        float: right;
-        font-family: nunito, Helvetica, Arial, sans-serif;
-        font-size: 1.1rem;
-        padding: 0.25em 1em 0.25em 1em;
-        border-radius: 6px;
-        &:hover {
-          background-color: $primarycolor;
-        }
       }
     }
   }
