@@ -68,6 +68,7 @@ export default {
     }
     #more {
       background-color: $secondarycolor;
+      border-bottom: 10px solid $secondarycolor;
       margin-left: -16px;
       text-align: center;
       z-index: -1;

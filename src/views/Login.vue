@@ -15,7 +15,7 @@
       </div>
       <input type="password" v-model="input.password" placeholder="Password">
       <br>
-      <button class="level-1">Login</button>
+      <button class="level-1">Log in</button>
     </form>
     <router-link to="/signup">New here? Create an account.</router-link>
   </div>

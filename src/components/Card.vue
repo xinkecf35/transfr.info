@@ -1,14 +1,13 @@
 <template>
   <div id="card">
-    <div id="card-main" class="grid level-2">
+    <div v-if="!edit" class="grid card-main level-2">
       <div id="header" class="row">
         <span>{{firstName}} {{lastName}}</span>
         <div id="edit">
-          <button v-on:click="edit = true" class="level-1">Edit</button>
+          <button v-on:click="edit = !edit" class="level-1">Edit</button>
         </div>
       </div>
-      <div class="row"
-        v-for="key in Object.keys(objectOptionals)" :key="key">
+      <div class="row" v-for="key in Object.keys(objectOptionals)" :key="key">
         <div class="column-props">{{key}}</div>
         <div class="column-values column-list">
           <ul>
@@ -19,15 +18,29 @@
           </ul>
         </div>
       </div>
-      <div class="row"
-        v-for="key in Object.keys(simpleOptionals)" :key="key">
+      <div class="row" v-for="key in Object.keys(simpleOptionals)" :key="key">
         <div class="column-props">{{key}}</div>
         <div class="column-values">{{simpleOptionals[key]}}</div>
       </div>
     </div>
+    <!-- Editing view for card -->
+    <div v-else class="grid card-main level-2">
+      <div id="header" class="row">
+        <span>Editing</span>
+        <div id="edit">
+          <button v-on:click="edit = !edit" class="level-1">Done</button>
+        </div>
+      </div>
+      <edit-input
+        v-bind:attribute="'Description'"
+        v-bind:value.sync="description"
+        v-bind:isComplex="true"/>
+    </div>
   </div>
 </template>
 <script>
+import EditInput from '@/components/EditInput';
+
 /**
  * Null/Empty/Undefined Check for string
  * @param {String} string string to be checked
@@ -36,6 +49,7 @@
 function isEmptyOrNull(string) {
   return string === '' || string === null || string === undefined;
 }
+
 export default {
   data: function() {
     return {
@@ -85,12 +99,15 @@ export default {
       let result = {};
       const include = ['telephone', 'email'];
       include.forEach((key) => {
-        if (this.optional[key] !== undefined) {
+        if (this.optional[key].length !== 0) {
           result[key] = this.optional[key];
         }
       });
       return result;
     },
+  },
+  components: {
+    EditInput,
   },
   props: {
     vcard: Object,
@@ -118,22 +135,12 @@ export default {
   },
 };
 </script>
-<style lang="scss" scoped>
-  #card {
+<style lang="scss">
+  .grid *{
+    font-size: 1rem;
     position: relative;
-    text-align: left;
-    padding: 14px;
-  }
-  #card-main {
-    padding: 2em;
-    font-size: 1.1rem;
-    top:30px;
-    background-color: $backgroundcolor;
-    border-radius: 12px;
-    width: 74.3333%;
-    span {
-      font-size: 1.5rem;
-    }
+    box-sizing: border-box;
+    width: 100%;
   }
   .row {
     padding-bottom: 0.5em;
@@ -146,35 +153,6 @@ export default {
       display: table;
       clear: both;
     }
-  }
-  #header {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    #edit{
-      flex: 0 1 16.667%;
-      button {
-        display: block;
-        background-color: $secondarycolor;
-        border: 0;
-        color: $backgroundcolor;
-        float: right;
-        font-family: nunito, Helvetica, Arial, sans-serif;
-        font-size: 1.2rem;
-        padding: 0.25em 1em 0.25em 1em;
-        border-radius: 6px;
-        &:hover {
-          background-color: $primarycolor;
-        }
-      }
-    }
-  }
-  .grid *{
-    font-size: 1rem;
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
   }
   %column-properties {
     float: left;
@@ -200,6 +178,47 @@ export default {
       li {
         display: flex;
         justify-content: space-around;
+      }
+    }
+  }
+</style>
+<style lang="scss" scoped>
+  #card {
+    position: relative;
+    text-align: left;
+    padding: 14px;
+  }
+  .card-main {
+    padding: 2em;
+    font-size: 1.1rem;
+    top:30px;
+    background-color: $backgroundcolor;
+    border-radius: 12px;
+    width: 74.3333%;
+  }
+  #header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    span {
+      font-size: 1.5rem;
+    }
+    #edit{
+      flex: 0 1 16.667%;
+      button {
+        display: block;
+        background-color: $secondarycolor;
+        border: 0;
+        color: $backgroundcolor;
+        float: right;
+        font-family: nunito, Helvetica, Arial, sans-serif;
+        font-size: 1.1rem;
+        padding: 0.25em 1em 0.25em 1em;
+        border-radius: 6px;
+        &:hover {
+          background-color: $primarycolor;
+        }
       }
     }
   }
