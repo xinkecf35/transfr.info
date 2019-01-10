@@ -22,6 +22,7 @@ function addStyleResource(rule) {
       patterns: [
         path.resolve(__dirname, './src/scss/variables.scss'),
         path.resolve(__dirname, './src/scss/global.scss'),
+        path.resolve(__dirname, './src/css/normalize.css'),
       ],
     });
 }

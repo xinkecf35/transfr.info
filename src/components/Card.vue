@@ -36,26 +36,26 @@
         v-bind:value.sync="description"/>
       <edit-input
         v-bind:attribute="'Address'"
-        v-bind:value.sync="address"/>
+        v-bind:value.sync="optional.address"/>
       <edit-input
         v-bind:attribute="'Birthday'"
-        v-bind:value.sync="birthday"/>
+        v-bind:value.sync="optional.birthday"/>
       <edit-input
         v-bind:attribute="'Email'"
-        v-bind:value.sync="birthday"
+        v-bind:value.sync="optional.email"
         v-bind:isComplex="true"/>
       <edit-input
         v-bind:attribute="'Note'"
-        v-bind:value.sync="note"/>
+        v-bind:value.sync="optional.note"/>
       <edit-input
         v-bind:attribute="'Nickname'"
-        v-bind:value.sync="nickname"/>
+        v-bind:value.sync="optional.nickname"/>
       <edit-input
         v-bind:attribute="'Organization'"
-        v-bind:value.sync="organization"/>
+        v-bind:value.sync="optional.organization"/>
       <edit-input
         v-bind:attribute="'Telephone'"
-        v-bind:value.sync="telephone"
+        v-bind:value.sync="optional.telephone"
         v-bind:isComplex="true"/>
     </div>
   </div>

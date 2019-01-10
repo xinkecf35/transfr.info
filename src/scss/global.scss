@@ -36,7 +36,7 @@
     transform: translate(-50%, -50%);
     padding-top: 2.5em;
     padding-bottom: 2.5em;
-    border-radius: 8px;
+    border-radius: 12px;
     background-color: $backgroundcolor;
     @media #{$breakpoint-sm} {
         width: 95%;
@@ -61,25 +61,26 @@
         display: block;
         margin: 0 auto;
         width: 90%;
+        color: #000;
         input {
             width: 60%;
-            padding: 1em;
+            padding: 1rem;
             border-radius: 6px;
             border: 1px solid $secondarycolor;
-            margin-bottom: 2em;
-            font-size: 0.9em;
+            margin-bottom: 2rem;
+            font-size: 1rem;
         }
         button {
             width: 55%;
-            padding-top: 1em;
-            padding-bottom: 1em;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
             font-size: 1em;
             border-radius: 6px;
             color: #fff;
             border: none;
             background-color: $primarycolor;
             text-decoration: none;
-            margin-bottom: 2em;
+            margin-bottom: 2rem;
             &:hover {
                 background-color: $accentcolor;
             }
