@@ -32,31 +32,12 @@
         </div>
       </div>
       <edit-input
-        v-bind:attribute="'Description'"
-        v-bind:value.sync="description"/>
-      <edit-input
-        v-bind:attribute="'Address'"
-        v-bind:value.sync="optional.address"/>
-      <edit-input
-        v-bind:attribute="'Birthday'"
-        v-bind:value.sync="optional.birthday"/>
-      <edit-input
-        v-bind:attribute="'Email'"
-        v-bind:value.sync="optional.email"
-        v-bind:isComplex="true"/>
-      <edit-input
-        v-bind:attribute="'Note'"
-        v-bind:value.sync="optional.note"/>
-      <edit-input
-        v-bind:attribute="'Nickname'"
-        v-bind:value.sync="optional.nickname"/>
-      <edit-input
-        v-bind:attribute="'Organization'"
-        v-bind:value.sync="optional.organization"/>
-      <edit-input
-        v-bind:attribute="'Telephone'"
-        v-bind:value.sync="optional.telephone"
-        v-bind:isComplex="true"/>
+        v-for="item in editInputValues"
+        v-bind:key="item.id"
+        v-bind:attribute="item.attribute"
+        v-bind:value.sync="item.value"
+        v-bind:isComplex="item.complex"
+        v-on:update-edit="updateEditedCard"/>
     </div>
   </div>
 </template>
@@ -127,6 +108,19 @@ export default {
       });
       return result;
     },
+    editInputValues: function() {
+      return [
+        {attribute: 'Description', value: this.description, complex: false},
+        {attribute: 'Address', value: this.optional.address, complex: false},
+        {attribute: 'Birthday', value: this.optional.birthday, complex: false},
+        {attribute: 'Email', value: this.optional.email, complex: true},
+        {attribute: 'Note', value: this.optional.note, complex: false},
+        {attribute: 'Nickname', value: this.optional.nickname, complex: false},
+        {attribute: 'Organization',
+          value: this.optional.organization, complex: false},
+        {attribute: 'Telephone', value: this.optional.telephone, complex: true},
+      ];
+    },
   },
   components: {
     EditInput,
@@ -137,6 +131,15 @@ export default {
     initialLastName: String,
   },
   methods: {
+    updateEditedCard: function(payload) {
+      let attribute = payload[0].toLowerCase();
+      if (attribute === 'description') {
+        // Specific case for non optional property
+        this.description = payload[1];
+      }
+      let optional = this.optional;
+      optional[attribute] = payload[1];
+    },
   },
   watch: {
     vcard: function(card) {

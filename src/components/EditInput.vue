@@ -5,17 +5,28 @@
       <div class="column-values">
         <input type="text" class="control"
           v-model="text"
-          v-on:change="$emit('update:value', text)">
+          v-on:change="$emit('update-edit', [attribute, text])">
       </div>
     </div>
     <div v-else class="row">
       <div class="column-props">{{attribute}}</div>
       <div class="column-values">
-          <div v-for="item in text" :key="item.id" class="complex-input">
-            <input class="control" type="text" v-model="item.type"
-              style="flex: 0 1 16.6666%; margin-right: 0.25rem">
-            <input class="control" type="text" v-model="item.value"
-              style="flex: 0 2 66.6666%">
+          <div class="complex-input">
+            <input class="control-label">
+            <input class="control-value">
+          </div>
+          <div
+            v-for="(item, index) in text" :key="item.id"
+            class="complex-input">
+            <input
+              class="control-label"
+              type="text"
+              v-model="item.type"
+              v-on:change="$emit('update-edit', [attribute, text, index])">
+            <input
+              class="control-value"
+              type="text" v-model="item.value"
+              v-on:change="$emit('update-edit', [attribute, text, index])">
           </div>
       </div>
     </div>
@@ -27,8 +38,6 @@ export default {
     return {
       text: this.value,
     };
-  },
-  compute: {
   },
   event: 'update:value',
   props: {
@@ -52,6 +61,15 @@ export default {
       border-left: 0;
       border-top: 0;
       border-right: 0;
+  }
+  .control-label {
+    @extend .control;
+    flex: 0 1 16.6666%;
+    margin-right: 0.25rem;
+  }
+  .control-value {
+    @extend .control;
+    flex: 0 2 66.6666%;
   }
   .grid *{
     font-size: 1rem;
