@@ -82,7 +82,7 @@ export default {
     simpleOptionals: function() {
       let result = {};
       const keys = Object.keys(this.optional);
-      const exclude = ['telephone', 'email'];
+      const exclude = ['telephone', 'email', 'description'];
       const filtered = keys.filter(function(property) {
         // if the property is not in exclude array, add it
         return exclude.indexOf(property) === -1;
