@@ -35,7 +35,7 @@
         v-for="item in editInputValues"
         v-bind:key="item.id"
         v-bind:attribute="item.attribute"
-        v-bind:value.sync="item.value"
+        v-bind:initialValue.sync="item.value"
         v-bind:isComplex="item.complex"
         v-on:update-edit="updateEditedCard"/>
     </div>
@@ -70,6 +70,7 @@ export default {
         impp: '',
       },
       edit: false,
+      patch: [{}],
     };
   },
   computed: {

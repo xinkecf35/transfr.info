@@ -12,8 +12,11 @@
       <div class="column-props">{{attribute}}</div>
       <div class="column-values">
           <div class="complex-input">
-            <input class="control-label">
-            <input class="control-value">
+            <input class="control-label" v-model="label">
+            <input class="control-value" v-model="value">
+            <button class="control-button">
+              <img src="../assets/plus-round.svg">
+            </button>
           </div>
           <div
             v-for="(item, index) in text" :key="item.id"
@@ -27,6 +30,9 @@
               class="control-value"
               type="text" v-model="item.value"
               v-on:change="$emit('update-edit', [attribute, text, index])">
+            <button class="control-button">
+              <img src="../assets/minus-round.svg">
+            </button>
           </div>
       </div>
     </div>
@@ -36,13 +42,25 @@
 export default {
   data: function() {
     return {
-      text: this.value,
+      text: this.initialValue,
+      label: '',
+      value: '',
     };
   },
+  computed: {
+    complexData: function() {
+      return {type: label, value: value};
+    },
+  },
   event: 'update:value',
+  methods: {
+    addValue: function(data) {
+      this.text.push(data);
+    },
+  },
   props: {
     attribute: String,
-    value: [String, Array],
+    initialValue: [String, Array],
     isComplex: {
       type: Boolean,
       default: false,
@@ -64,12 +82,25 @@ export default {
   }
   .control-label {
     @extend .control;
-    flex: 0 1 16.6666%;
+    flex: 0 1 25%;
     margin-right: 0.25rem;
   }
   .control-value {
     @extend .control;
-    flex: 0 2 66.6666%;
+    flex: 0 2 66.666%;
+  }
+  .control-button {
+    border: 0px;
+    background-color: transparent;
+    padding: 0px;
+    flex: 0 1 8.3333%;
+    &:focus {
+      outline: none;
+    }
+    img {
+      height: 1.25em;
+      align-self: baseline;
+    }
   }
   .grid *{
     font-size: 1rem;
