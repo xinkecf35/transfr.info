@@ -35,7 +35,7 @@
         v-for="item in editInputValues"
         v-bind:key="item.id"
         v-bind:attribute="item.attribute"
-        v-bind:initialValue.sync="item.value"
+        v-bind:initialValue="item.value"
         v-bind:isComplex="item.complex"
         v-on:update-edit="updateEditedCard"/>
     </div>
@@ -51,6 +51,30 @@ import EditInput from '@/components/EditInput';
  */
 function isEmptyOrNull(string) {
   return string === '' || string === null || string === undefined;
+}
+
+/**
+ * Function to create a patch object for JSON patch (RFC 6902)
+ * @param {String} attribute path to be patched
+ * @param {any} currentValue value that is currently assigned
+ * @param {any} newValue New value that is to be patched
+ * @return {Object} dictionary of items in line with JSON Patch
+ */
+function generatePatchObject(attribute, currentValue, newValue) {
+  let operation = 'replace';
+  if (isEmptyOrNull(newValue)) {
+    // If it removes the current value
+    operation = 'remove';
+  } else if (isEmptyOrNull(currentValue)) {
+    operation = 'add';
+  }
+  let patch;
+  if (operation === 'remove') {
+    patch = {op: operation, path: '/' + attribute};
+  } else {
+    patch = {op: operation, path: '/' + attribute, value: newValue};
+  }
+  return patch;
 }
 
 export default {
@@ -70,7 +94,7 @@ export default {
         impp: '',
       },
       edit: false,
-      patch: [{}],
+      patch: [],
     };
   },
   computed: {
@@ -136,10 +160,17 @@ export default {
       let attribute = payload[0].toLowerCase();
       if (attribute === 'description') {
         // Specific case for non optional property
+        const operation =
+          generatePatchObject(attribute, this.description, payload[1]);
+        this.patch.push(operation);
         this.description = payload[1];
+      } else {
+        let optional = this.optional;
+        const operation =
+          generatePatchObject(attribute, optional[attribute], payload[1]);
+        this.patch.push(operation);
+        optional[attribute] = payload[1];
       }
-      let optional = this.optional;
-      optional[attribute] = payload[1];
     },
   },
   watch: {
