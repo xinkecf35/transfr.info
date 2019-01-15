@@ -59,7 +59,7 @@ export default {
         if (!response.meta.success) {
           throw response.meta.message;
         }
-        cards[index] = response.card;
+        cards.splice(index, 1, response.card);
       }).catch((err) => console.log(err));
     },
   },
