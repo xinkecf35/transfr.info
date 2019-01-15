@@ -13,7 +13,7 @@ export function ajaxRequest(method, url, body = null, headers = null) {
     xhr.setRequestHeader('Content-Type', 'application/json; charset=utf-8');
     if (headers) {
       headers.forEach(function(header) {
-        xhr.setRequestHeader(header);
+        xhr.setRequestHeader(header.name, header.value);
       });
     }
     xhr.withCredentials = true;

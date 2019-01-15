@@ -155,6 +155,7 @@ export default {
     initialFirstName: String,
     initialLastName: String,
   },
+  events: 'card-update',
   methods: {
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
@@ -188,6 +189,11 @@ export default {
     },
     initialLastName: function(value) {
       this.lastName = value;
+    },
+    edit: function(edit) {
+      if (edit === false && this.patch.length !== 0) {
+        this.$emit('card-update', this.patch);
+      }
     },
   },
 };

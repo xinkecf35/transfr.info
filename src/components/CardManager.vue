@@ -11,11 +11,13 @@
     <card id="card"
       v-bind:vcard ="cards[this.currentCardIndex]"
       v-bind:initialFirstName="firstName"
-      v-bind:initialLastName="lastName"/>
+      v-bind:initialLastName="lastName"
+      v-on:card-update="patchCard"/>
   </div>
 </template>
 <script>
 import card from '@/components/Card';
+import {ajaxRequest} from '../functions';
 
 export default {
   data: function() {
@@ -37,6 +39,28 @@ export default {
     },
     currentCard: function() {
       return this.cards[this.currentCardIndex];
+    },
+  },
+  methods: {
+    patchCard: function(payload) {
+      const index = this.currentCardIndex;
+      const cards = this.cards;
+      const profileId = cards[index].profileId;
+      let patchURL = 'https://api.transfr.info/v1/userdata/profile/' + profileId;
+      if (process.env.NODE_ENV === 'development') {
+        patchURL = 'https://api.transfr.test/v1/userdata/profile/' + profileId;
+      }
+      const patchBody = {patch: payload};
+      const patchJSON = JSON.stringify(patchBody);
+      console.log(patchBody);
+      const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
+      const patchPromise = ajaxRequest('PATCH', patchURL, patchJSON, headers);
+      patchPromise.then(function(response) {
+        if (!response.meta.success) {
+          throw response.meta.message;
+        }
+        cards[index] = response.card;
+      }).catch((err) => console.log(err));
     },
   },
   props: {
