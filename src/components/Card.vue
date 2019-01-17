@@ -43,15 +43,7 @@
 </template>
 <script>
 import EditInput from '@/components/EditInput';
-
-/**
- * Null/Empty/Undefined Check for string
- * @param {String} string string to be checked
- * @return {Boolean} Is string empty, null or undefined
- */
-function isEmptyOrNull(string) {
-  return string === '' || string === null || string === undefined;
-}
+import {isEmptyOrNull} from '../functions';
 
 /**
  * Function to create a patch object for JSON patch (RFC 6902)

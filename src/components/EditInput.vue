@@ -14,7 +14,8 @@
           <div class="complex-input">
             <input class="control-label" v-model="label">
             <input class="control-value" v-model="value">
-            <button class="control-button">
+            <button class="control-button"
+              v-on:click="addComplexValue(attribute, complexData)">
               <img src="../assets/plus-round.svg">
             </button>
           </div>
@@ -30,7 +31,8 @@
               class="control-value"
               type="text" v-model="item.value"
               v-on:change="$emit('update-edit', [attribute, text, index])">
-            <button class="control-button">
+            <button class="control-button"
+              v-on:click="removeComplexValue(attribute, index)">
               <img src="../assets/minus-round.svg">
             </button>
           </div>
@@ -49,13 +51,24 @@ export default {
   },
   computed: {
     complexData: function() {
-      return {type: label, value: value};
+      if (this.label !== '' && this.value !== '') {
+        return {type: this.label, value: this.value};
+      } else {
+        return null;
+      }
     },
   },
   event: 'update:value',
   methods: {
-    addValue: function(data) {
-      this.text.push(data);
+    addComplexValue: function(attribute, data) {
+      if (data !== null) {
+        let index = this.text.push(data) - 1;
+        this.$emit('update-edit', [attribute, this.text, index]);
+      }
+    },
+    removeComplexValue: function(attribute, index) {
+      this.text.splice(index, 1);
+      this.$emit('update-edit', [attribute, this.text, index]);
     },
   },
   props: {

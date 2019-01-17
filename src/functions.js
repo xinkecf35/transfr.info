@@ -30,3 +30,14 @@ export function ajaxRequest(method, url, body = null, headers = null) {
     xhr.send(body);
   });
 }
+
+/**
+ * Null/Empty/Undefined Check for string
+ * @param {String} string string to be checked
+ * @return {Boolean} Is string empty, null or undefined
+ */
+export function isEmptyOrNull(string) {
+  return string === '' || string === null || string === undefined;
+}
+
+export default {ajaxRequest, isEmptyOrNull};
