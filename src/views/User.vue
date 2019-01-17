@@ -93,7 +93,7 @@ export default {
   #sidebar {
     flex: 0 1 33%;
     @media #{$breakpoint-md} {
-      flex: 0 1 25%;
+      flex: 0 1 30%;
     }
     left: 0;
     font-size: 1.25rem;
@@ -109,7 +109,7 @@ export default {
   #card-manager {
     flex: 0 2 66%;
     @media #{$breakpoint-md} {
-      flex: 0 2 75%;
+      flex: 0 2 70%;
     }
   }
 </style>
