@@ -1,7 +1,10 @@
 <template>
   <div id="user">
     <div id="sidebar">
+      <img id="logo" src="../assets/logo.svg">
       <h1>{{displayName}}</h1>
+      <span>Settings</span>
+      <br>
       <a v-on:click.prevent="logout">Log out</a>
     </div>
     <card-manager id="card-manager"
@@ -82,15 +85,32 @@ export default {
 <style lang="scss" scoped>
   #user {
     display: flex;
-    font-size: 1.2em;
-    padding: 0.5em;
+    flex-wrap: wrap;
+    font-size: 1.25em;
+    height: 100%;
+    padding: 1em;
   }
   #sidebar {
     flex: 0 1 33%;
+    @media #{$breakpoint-md} {
+      flex: 0 1 25%;
+    }
     left: 0;
+    font-size: 1.25rem;
+    #logo {
+      align-self: flex-start;
+      height: 3em;
+    }
+    h1 {
+      margin-top: 0.25rem;
+      font-size: 2rem;
+    }
   }
   #card-manager {
     flex: 0 2 66%;
+    @media #{$breakpoint-md} {
+      flex: 0 2 75%;
+    }
   }
 </style>
 

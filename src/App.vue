@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div id="nav" v-if="showNav">
+    <div id="nav" v-show="showNav">
       <img id="nav-logo" alt="transfr logo" src="./assets/logo-invert.svg">
       <div id="nav-links">
         <router-link to="/">Home</router-link>
@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     showNav: function() {
-      const routes = ['login', 'signup'];
+      const routes = ['user', 'login', 'signup'];
       return !(routes.indexOf(this.$route.name) > -1);
     },
   },

@@ -116,9 +116,15 @@ export default {
     padding: 0.25em 1em 0.2em 1em;
     background-color: $accentcolor;
     border-radius: 10px 10px 0px 0px;
-    width: 12.5%;
     border-bottom: 10px solid $accentcolor;
     margin-bottom: -10px;
     z-index: 50;
+    width: 12.5%;
+    @media #{$breakpoint-md} {
+      width: 16.6666%;
+    }
+    @media #{$breakpoint-sm} {
+      width: 20.6666%;
+    }
   }
 </style>

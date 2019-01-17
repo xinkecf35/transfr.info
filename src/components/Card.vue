@@ -203,6 +203,10 @@ export default {
     background-color: $backgroundcolor;
     border-radius: 12px;
     width: 74.3333%;
+    @media #{$breakpoint-md} {
+      width: 82.6666%;
+      padding: 1.5em;
+    }
   }
   #header {
     display: flex;
@@ -214,6 +218,9 @@ export default {
     }
     #edit{
       flex: 0 1 16.667%;
+      @media #{$breakpoint-md} {
+      flex: 0 1 20%;
+      }
       button {
         display: block;
         background-color: $secondarycolor;

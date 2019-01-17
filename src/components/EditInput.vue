@@ -142,11 +142,17 @@ export default {
   .column-props {
     @extend %column-properties;
     width: 20%;
+    @media #{$breakpoint-md} {
+      width: 25%;
+    }
     text-align: right;
   }
   .column-values {
     @extend %column-properties;
     width: 80%;
+    @media #{$breakpoint-md} {
+      width: 75%;
+    }
     text-align: left;
     color: #000;
   }
