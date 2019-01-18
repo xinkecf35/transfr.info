@@ -12,8 +12,13 @@
       <div class="column-props">{{attribute}}</div>
       <div class="column-values">
           <div class="complex-input">
-            <input class="control-label" v-model="label">
-            <input class="control-value" v-model="value">
+            <input class="control-label" placeholder="Label"
+            v-model="label"
+            v-on:keyup.enter="addComplexValue(attribute, complexData)">
+            <input class="control-value"
+            v-bind:placeholder="attribute"
+            v-model="value"
+            v-on:keyup.enter="addComplexValue(attribute, complexData)">
             <button class="control-button"
               v-on:click="addComplexValue(attribute, complexData)">
               <img src="../assets/plus-round.svg">
@@ -64,6 +69,7 @@ export default {
       if (data !== null) {
         let index = this.text.push(data) - 1;
         this.$emit('update-edit', [attribute, this.text, index]);
+        this.label = this.value = '';
       }
     },
     removeComplexValue: function(attribute, index) {
