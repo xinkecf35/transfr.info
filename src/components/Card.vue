@@ -185,6 +185,7 @@ export default {
     edit: function(edit) {
       if (edit === false && this.patch.length !== 0) {
         this.$emit('card-update', this.patch);
+        this.patch = [];
       }
     },
   },
