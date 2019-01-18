@@ -12,10 +12,10 @@
       <div class="column-props">{{attribute}}</div>
       <div class="column-values">
           <div class="complex-input">
-            <input class="control-label" placeholder="Label"
+            <input type="text" class="control-label" placeholder="Label"
             v-model="label"
             v-on:keyup.enter="addComplexValue(attribute, complexData)">
-            <input class="control-value"
+            <input type="text" class="control-value"
             v-bind:placeholder="attribute"
             v-model="value"
             v-on:keyup.enter="addComplexValue(attribute, complexData)">
@@ -24,9 +24,8 @@
               <img src="../assets/plus-round.svg">
             </button>
           </div>
-          <div
-            v-for="(item, index) in text" :key="item.id"
-            class="complex-input">
+          <div class="complex-input"
+            v-for="(item, index) in text" :key="item.id">
             <input
               class="control-label"
               type="text"
@@ -88,90 +87,97 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-  .complex-input{
-    display: flex;
-    flex-direction: row;
-    margin-bottom: 0.5rem;
+input[type="text"] > * {
+  border-radius: 2px;
+}
+input[type="text"]:focus {
+  outline: none;
+  box-shadow: 0 4px 4px -1px rgba(196, 202, 29, 0.33);
+}
+.complex-input{
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 0.5rem;
+}
+.control {
+    border-bottom: 2px solid rgba(25, 139, 28, 0.2);
+    border-left: 0;
+    border-top: 0;
+    border-right: 0;
+}
+.control-label {
+  @extend .control;
+  flex: 0 1 25%;
+  margin-right: 0.25rem;
+}
+.control-value {
+  @extend .control;
+  flex: 0 2 66.666%;
+}
+.control-button {
+  border: 0px;
+  background-color: transparent;
+  padding: 0px;
+  flex: 0 1 8.3333%;
+  &:focus {
+    outline: none;
   }
-  .control {
-      border-bottom: 2px solid rgba(25, 139, 28, 0.2);
-      border-left: 0;
-      border-top: 0;
-      border-right: 0;
+  img {
+    height: 1.25em;
+    align-self: baseline;
   }
-  .control-label {
-    @extend .control;
-    flex: 0 1 25%;
-    margin-right: 0.25rem;
+}
+.grid *{
+  font-size: 1rem;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+}
+.row {
+  padding-bottom: 0.5em;
+  &:before {
+    content: " ";
+    display: table;
   }
-  .control-value {
-    @extend .control;
-    flex: 0 2 66.666%;
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
   }
-  .control-button {
-    border: 0px;
-    background-color: transparent;
-    padding: 0px;
-    flex: 0 1 8.3333%;
-    &:focus {
-      outline: none;
+}
+%column-properties {
+  float: left;
+  min-height: 1px;
+  padding: 10px;
+  position: relative;
+}
+.column-props {
+  @extend %column-properties;
+  width: 20%;
+  @media #{$breakpoint-md} {
+    width: 25%;
+  }
+  text-align: right;
+}
+.column-values {
+  @extend %column-properties;
+  width: 80%;
+  @media #{$breakpoint-md} {
+    width: 75%;
+  }
+  text-align: left;
+  color: #000;
+}
+.column-list {
+  ul {
+    padding: 0;
+    list-style: none;
+    margin: 0;
+    li {
+      display: flex;
+      justify-content: space-around;
     }
-    img {
-      height: 1.25em;
-      align-self: baseline;
-    }
   }
-  .grid *{
-    font-size: 1rem;
-    position: relative;
-    box-sizing: border-box;
-    width: 100%;
-  }
-  .row {
-    padding-bottom: 0.5em;
-    &:before {
-      content: " ";
-      display: table;
-    }
-    &:after {
-      content: " ";
-      display: table;
-      clear: both;
-    }
-  }
-  %column-properties {
-    float: left;
-    min-height: 1px;
-    padding: 10px;
-    position: relative;
-  }
-  .column-props {
-    @extend %column-properties;
-    width: 20%;
-    @media #{$breakpoint-md} {
-      width: 25%;
-    }
-    text-align: right;
-  }
-  .column-values {
-    @extend %column-properties;
-    width: 80%;
-    @media #{$breakpoint-md} {
-      width: 75%;
-    }
-    text-align: left;
-    color: #000;
-  }
-  .column-list {
-    ul {
-      padding: 0;
-      list-style: none;
-      margin: 0;
-      li {
-        display: flex;
-        justify-content: space-around;
-      }
-    }
-  }
+}
 </style>
 

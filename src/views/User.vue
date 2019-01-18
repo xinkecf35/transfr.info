@@ -88,7 +88,7 @@ export default {
     flex-wrap: wrap;
     font-size: 1.25em;
     height: 100%;
-    padding: 1em;
+    padding: 2em 1em 1em 1em;
   }
   #sidebar {
     flex: 0 1 33%;
