@@ -204,6 +204,11 @@ export default {
     background-color: $backgroundcolor;
     border-radius: 12px;
     width: 74.3333%;
+    @media #{$breakpoint-sm} {
+      width: 90%;
+      padding: 0.75rem;
+      font-size: 0.8rem;
+    }
     @media #{$breakpoint-md} {
       width: 82.6666%;
       padding: 1.5em;
@@ -266,11 +271,22 @@ export default {
     @extend %column-properties;
     width: 35%;
     text-align: right;
+    @media #{$breakpoint-sm} {
+      width: 100%;
+      text-align: left;
+      font-weight: 600;
+    }
   }
   .column-values {
     @extend %column-properties;
     width: 65%;
     text-align: left;
+    @media #{$breakpoint-sm} {
+      width: 95%;
+      margin-left: 5%;
+      padding: 0;
+    }
+
   }
   .column-list {
     ul {

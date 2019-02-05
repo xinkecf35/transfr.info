@@ -154,19 +154,23 @@ input[type="text"]:focus {
 .column-props {
   @extend %column-properties;
   width: 20%;
-  @media #{$breakpoint-md} {
-    width: 25%;
-  }
   text-align: right;
+  @media #{$breakpoint-sm} {
+      width: 100%;
+      text-align: left;
+      font-weight: 600;
+      padding: 10px 0px 10px 0px;
+  }
 }
 .column-values {
   @extend %column-properties;
   width: 80%;
-  @media #{$breakpoint-md} {
-    width: 75%;
-  }
   text-align: left;
   color: #000;
+  @media #{$breakpoint-sm} {
+      width: 100%;
+      padding: 0;
+  }
 }
 .column-list {
   ul {

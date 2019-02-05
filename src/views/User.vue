@@ -89,12 +89,14 @@ export default {
     font-size: 1.25em;
     height: 100%;
     padding: 2em 1em 1em 1em;
+    @media #{$breakpoint-sm} {
+      justify-content: center;
+      padding: 0.25rem;
+      margin-left: 2%;
+    }
   }
   #sidebar {
     flex: 0 1 33%;
-    @media #{$breakpoint-md} {
-      flex: 0 1 30%;
-    }
     left: 0;
     font-size: 1.25rem;
     #logo {
@@ -105,9 +107,23 @@ export default {
       margin-top: 0.25rem;
       font-size: 2rem;
     }
+    @media #{$breakpoint-sm} {
+      flex: 0 1 100%;
+      h1 {
+        display: none;
+      }
+    }
+    @media #{$breakpoint-md} {
+      flex: 0 1 30%;
+    }
   }
   #card-manager {
     flex: 0 2 66%;
+    @media #{$breakpoint-sm} {
+      flex: 0 2 95%;
+      justify-content: center;
+      align-self: center;
+    }
     @media #{$breakpoint-md} {
       flex: 0 2 70%;
     }
