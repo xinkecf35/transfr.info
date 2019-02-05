@@ -13,13 +13,13 @@
           <span v-if="error.field ==='username'">{{error.message}}</span>
         </div>
         <input type="text" placeholder="Username"
-          v-model="input.username" @focus="errors = []">
+          v-model="input.username" @focus="removeError('username')">
         <br>
         <div v-for="error in errors" :key="error.id">
           <span v-if="error.field ==='password'">{{error.message}}</span>
         </div>
         <input type="password" placeholder="Password"
-          v-model="input.password" @focus="errors = []">
+          v-model="input.password" @focus="removeError('password')">
         <br>
         <button class="level-1">Log in</button>
       </form>
@@ -55,7 +55,7 @@ export default {
     login: function() {
       const userInput = this.input;
       const router = this.$router;
-      let errors = this.errors;
+      let errors = this.errors = [];
       if (this.isValidInput()) {
         console.log('Sending request');
         const requestBody = JSON.stringify(userInput);
@@ -70,12 +70,28 @@ export default {
         }).catch(function(err) {
           if (err.status === 401) {
             errors.push({
-              field: 'network',
+              field: 'modal-error',
               message: 'Authentication failed,'
               +' please check username and password',
             });
+          } else {
+            errors.push({
+              field: 'modal-error',
+              message: 'Something went wrong, please try again later'});
           }
         });
+      }
+    },
+    removeError: function(property) {
+      let index = -1;
+      for (let i = 0; i < this.errors.length; i++) {
+        let error = this.errors[i];
+        if (error.field === property) {
+          index = i;
+        }
+      }
+      if (index !== -1) {
+        this.errors.splice(index, 1);
       }
     },
     isValidInput: function() {
@@ -92,7 +108,7 @@ export default {
       if (this.errors.length) {
         this.errors.push({
           field: 'modal-error',
-          message: 'Please fill highlighted fields',
+          message: 'Please fill empty fields',
         });
       }
       return valid;

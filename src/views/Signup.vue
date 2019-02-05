@@ -8,16 +8,14 @@
       <input type="text" v-model="input.username" placeholder="Username">
       <br>
       <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='firstName'">{{error.message}}</span>
+        <span v-if="error.field ==='firstName' || error.field ==='lastName'">
+          {{error.message}}
+        </span>
       </div>
-      <span>
-      <input type="text" v-model="input.firstName" placeholder="First Name">
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='lastName'">{{error.message}}</span>
+      <div class="row-input">
+        <input type="text" v-model="input.firstName" placeholder="First Name">
+        <input type="text" v-model="input.lastName" placeholder="Last Name">
       </div>
-      <input type="text" v-model="input.lastName" placeholder="Last Name">
-      </span>
-      <br>
       <div v-for="error in errors" :key="error.id">
         <span v-if="error.field ==='email'">{{error.message}}</span>
       </div>
@@ -27,6 +25,12 @@
         <span v-if="error.field ==='password'">{{error.message}}</span>
       </div>
       <input type="password" v-model="input.password" placeholder="Password">
+      <br>
+      <div v-for="error in errors" :key="error.id">
+        <span v-if="error.field ==='confirm'">{{error.message}}</span>
+      </div>
+      <input type="password" v-model="input.confirm"
+        placeholder="Confirm Password">
       <br>
       <button>Create</button>
     </form>
@@ -52,6 +56,7 @@ export default {
         lastName: '',
         email: '',
         password: '',
+        confirm: '',
       },
       errors: [],
     };
@@ -114,6 +119,10 @@ export default {
         });
         valid = false;
       }
+      if (userInput.password !== userInput.confirm) {
+        this.errors.push({field: 'confirm', message: 'Passwords do not match'});
+        valid = false;
+      }
       // Check names
       if (userInput.firstName === '' || userInput.lastName === '') {
         this.errors.push({
@@ -127,4 +136,16 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.row-input {
+  display: flex;
+  margin: 0 auto;
+  input {
+    flex: 1 2 0;
+    width: 50%;
+    margin: 0rem 0.5rem 0rem 0.5rem;
+  }
+}
+</style>
+
 

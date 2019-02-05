@@ -25,7 +25,7 @@ export default {
   z-index: 1000;
   color: $backgroundcolor;
   background-color: $error-red;
-  font-size: 1rem;
-  padding: 0.75rem;
+  font-size: 1.25rem;
+  padding: 1rem;
 }
 </style>
