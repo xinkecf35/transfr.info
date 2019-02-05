@@ -1,27 +1,35 @@
 <template>
-  <div id="login" class="level-1 account-forms">
-    <router-link to="/">
-      <img id="login-form" src="../assets/logo.svg">
-    </router-link>
-    <h1>Log In</h1>
-    <form v-on:submit.prevent="login">
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='username'">{{error.message}}</span>
-      </div>
-      <input type="text" v-model="input.username" placeholder="Username">
-      <br>
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='password'">{{error.message}}</span>
-      </div>
-      <input type="password" v-model="input.password" placeholder="Password">
-      <br>
-      <button class="level-1">Log in</button>
-    </form>
-    <router-link to="/signup">New here? Create an account.</router-link>
+  <div id="login-root">
+    <error v-if="errors.length !== 0">
+      {{ errors[errors.length-1].message }}
+    </error>
+    <div id="login" class="level-1 account-forms">
+      <router-link to="/">
+        <img id="login-form" src="../assets/logo.svg">
+      </router-link>
+      <h1>Log In</h1>
+      <form v-on:submit.prevent="login">
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='username'">{{error.message}}</span>
+        </div>
+        <input type="text" placeholder="Username"
+          v-model="input.username" @focus="errors = []">
+        <br>
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='password'">{{error.message}}</span>
+        </div>
+        <input type="password" placeholder="Password"
+          v-model="input.password" @focus="errors = []">
+        <br>
+        <button class="level-1">Log in</button>
+      </form>
+      <router-link to="/signup">New here? Create an account.</router-link>
+    </div>
   </div>
 </template>
 <script>
 import {ajaxRequest} from '../functions.js';
+import error from '@/components/Error';
 
 export default {
   name: 'login',
@@ -40,10 +48,14 @@ export default {
       errors: [],
     };
   },
+  components: {
+    error,
+  },
   methods: {
     login: function() {
       const userInput = this.input;
       const router = this.$router;
+      let errors = this.errors;
       if (this.isValidInput()) {
         console.log('Sending request');
         const requestBody = JSON.stringify(userInput);
@@ -56,7 +68,13 @@ export default {
           sessionStorage.setItem('csrf', response.csrf);
           router.push({name: 'user', params: {username: userInput.username}});
         }).catch(function(err) {
-          console.log(err);
+          if (err.status === 401) {
+            errors.push({
+              field: 'network',
+              message: 'Authentication failed,'
+              +' please check username and password',
+            });
+          }
         });
       }
     },
@@ -71,13 +89,24 @@ export default {
         this.errors.push({field: 'password', message: 'Please enter password'});
         valid = false;
       }
+      if (this.errors.length) {
+        this.errors.push({
+          field: 'modal-error',
+          message: 'Please fill highlighted fields',
+        });
+      }
       return valid;
     },
   },
 };
 </script>
 <style lang="scss" scoped>
+  .error-outline {
+    outline: solid 1px $error-red;
+  }
+
   #login-form {
+    position: relative;
     height: 4em;
   }
 </style>
