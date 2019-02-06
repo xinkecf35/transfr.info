@@ -13,13 +13,13 @@
           <span v-if="error.field ==='username'">{{error.message}}</span>
         </div>
         <input type="text" placeholder="Username"
-          v-model="input.username" @focus="removeError('username')">
+          v-model="input.username">
         <br>
         <div v-for="error in errors" :key="error.id">
           <span v-if="error.field ==='password'">{{error.message}}</span>
         </div>
         <input type="password" placeholder="Password"
-          v-model="input.password" @focus="removeError('password')">
+          v-model="input.password">
         <br>
         <button class="level-1">Log in</button>
       </form>
@@ -80,18 +80,6 @@ export default {
               message: 'Something went wrong, please try again later'});
           }
         });
-      }
-    },
-    removeError: function(property) {
-      let index = -1;
-      for (let i = 0; i < this.errors.length; i++) {
-        let error = this.errors[i];
-        if (error.field === property) {
-          index = i;
-        }
-      }
-      if (index !== -1) {
-        this.errors.splice(index, 1);
       }
     },
     isValidInput: function() {

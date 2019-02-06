@@ -1,11 +1,17 @@
 <template>
   <div id="user">
     <div id="sidebar">
-      <img id="logo" src="../assets/logo.svg">
-      <h1>{{displayName}}</h1>
-      <span>Settings</span>
-      <br>
-      <a v-on:click.prevent="logout">Log out</a>
+      <div id='mobile-menu'>
+        <img id="menu-icon" src="../assets/menu-icon.svg">
+        <img class="logo" src="../assets/logo.svg">
+      </div>
+      <div class="mobile-hide">
+        <img class="logo" src="../assets/logo.svg">
+        <h1>{{displayName}}</h1>
+        <span>Settings</span>
+        <br>
+        <a v-on:click.prevent="logout">Log out</a>
+      </div>
     </div>
     <card-manager id="card-manager"
       v-bind:cards="cards"
@@ -99,7 +105,7 @@ export default {
     flex: 0 1 33%;
     left: 0;
     font-size: 1.25rem;
-    #logo {
+    .logo {
       align-self: flex-start;
       height: 3em;
     }
@@ -107,11 +113,24 @@ export default {
       margin-top: 0.25rem;
       font-size: 2rem;
     }
-    @media #{$breakpoint-sm} {
-      flex: 0 1 100%;
-      h1 {
-        display: none;
+    #mobile-menu {
+      display: none;
+      @media #{$breakpoint-sm} {
+        left: 0;
+        display: flex;
+        height: 2.5rem;
+        justify-content: space-between;
+        #menu-icon {
+          flex: 1 0 10%;
+        }
+        .logo {
+          flex: 3 1 10%;
+          height: 2.5rem;
+        }
       }
+    }
+    @media #{$breakpoint-sm} {
+      flex: 1 0 100%;
     }
     @media #{$breakpoint-md} {
       flex: 0 1 30%;

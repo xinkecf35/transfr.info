@@ -271,10 +271,10 @@ export default {
     @extend %column-properties;
     width: 35%;
     text-align: right;
+    font-weight: 600;
     @media #{$breakpoint-sm} {
       width: 100%;
       text-align: left;
-      font-weight: 600;
     }
   }
   .column-values {
