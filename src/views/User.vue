@@ -98,7 +98,6 @@ export default {
     @media #{$breakpoint-sm} {
       justify-content: center;
       padding: 0.25rem;
-      margin-left: 2%;
     }
   }
   #sidebar {
@@ -138,10 +137,9 @@ export default {
   }
   #card-manager {
     flex: 0 2 66%;
+    box-sizing: border-box;
     @media #{$breakpoint-sm} {
-      flex: 0 2 95%;
-      justify-content: center;
-      align-self: center;
+      flex: 0 2 90%;
     }
     @media #{$breakpoint-md} {
       flex: 0 2 70%;

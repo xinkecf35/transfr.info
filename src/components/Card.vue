@@ -196,21 +196,27 @@ export default {
     position: relative;
     text-align: left;
     padding: 14px;
+    box-sizing: border-box;
+    @media #{$breakpoint-md} {
+      width: 91%;
+    }
+    @media #{$breakpoint-lg} {
+      width: 84.333%;
+    }
   }
   .card-main {
+    box-sizing: border-box;
     padding: 2em;
     font-size: 1.1rem;
     top:30px;
     background-color: $backgroundcolor;
     border-radius: 12px;
-    width: 74.3333%;
+    width: 100%;
     @media #{$breakpoint-sm} {
-      width: 90%;
       padding: 0.75rem;
       font-size: 0.8rem;
     }
     @media #{$breakpoint-md} {
-      width: 82.6666%;
       padding: 1.5em;
     }
   }

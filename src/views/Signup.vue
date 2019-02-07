@@ -97,7 +97,6 @@ export default {
         signupPromise.then(function(response) {
           router.push({path: 'login'});
         }).catch(function(err) {
-          console.log(err);
           if (err.status === 403) {
             errors.push({
               field: 'modal-error',
@@ -110,9 +109,6 @@ export default {
             });
           }
         });
-      } else {
-        console.log('Validation failed');
-        console.log(this.errors);
       }
     },
     isValidInput: function() {
