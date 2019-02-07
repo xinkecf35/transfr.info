@@ -155,10 +155,10 @@ input[type="text"]:focus {
   @extend %column-properties;
   width: 20%;
   text-align: right;
+  font-weight: 600;
   @media #{$breakpoint-sm} {
       width: 100%;
       text-align: left;
-      font-weight: 600;
       padding: 10px 0px 10px 0px;
   }
 }

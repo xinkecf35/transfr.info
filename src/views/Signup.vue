@@ -1,44 +1,48 @@
 <template>
-  <div id="signup" class="level-1 account-forms">
-    <h1>Sign Up</h1>
-    <form v-on:submit.prevent="createAccount()">
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='username'">{{error.message}}</span>
-      </div>
-      <input type="text" v-model="input.username" placeholder="Username">
-      <br>
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='firstName' || error.field ==='lastName'">
-          {{error.message}}
-        </span>
-      </div>
-      <div class="row-input">
-        <input type="text" v-model="input.firstName" placeholder="First Name">
-        <input type="text" v-model="input.lastName" placeholder="Last Name">
-      </div>
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='email'">{{error.message}}</span>
-      </div>
-      <input type="email" v-model="input.email" placeholder="Email">
-      <br>
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='password'">{{error.message}}</span>
-      </div>
-      <input type="password" v-model="input.password" placeholder="Password">
-      <br>
-      <div v-for="error in errors" :key="error.id">
-        <span v-if="error.field ==='confirm'">{{error.message}}</span>
-      </div>
-      <input type="password" v-model="input.confirm"
-        placeholder="Confirm Password">
-      <br>
-      <button>Create</button>
-    </form>
-    <router-link to="/login">Already have an account? Login here.</router-link>
+  <div id="signup-root">
+    <error v-if="errors.length !== 0">
+      {{ errors[errors.length-1].message }}
+    </error>
+    <div id="signup" class="level-1 account-forms">
+      <h1>Sign Up</h1>
+      <form v-on:submit.prevent="createAccount()">
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='username'">{{error.message}}</span>
+        </div>
+        <input type="text" v-model="input.username" placeholder="Username">
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='firstName' || error.field ==='lastName'">
+            {{error.message}}
+          </span>
+        </div>
+        <div class="row-input">
+          <input type="text" v-model="input.firstName" placeholder="First Name">
+          <input type="text" v-model="input.lastName" placeholder="Last Name">
+        </div>
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='email'">{{error.message}}</span>
+        </div>
+        <input type="email" v-model="input.email" placeholder="Email">
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='password'">{{error.message}}</span>
+        </div>
+        <input type="password" v-model="input.password" placeholder="Password">
+        <div v-for="error in errors" :key="error.id">
+          <span v-if="error.field ==='confirm'">{{error.message}}</span>
+        </div>
+        <input type="password" v-model="input.confirm"
+          placeholder="Confirm Password">
+        <button>Create</button>
+      </form>
+      <router-link to="/login">
+        Already have an account? Login here.
+      </router-link>
+    </div>
   </div>
 </template>
 <script>
 import {ajaxRequest} from '../functions.js';
+import error from '@/components/Error';
 
 export default {
   name: 'signup',
@@ -61,6 +65,9 @@ export default {
       errors: [],
     };
   },
+  components: {
+    error,
+  },
   computed: {
     name: function() {
       return this.input.lastName + ';' + this.input.firstName;
@@ -79,6 +86,8 @@ export default {
   methods: {
     createAccount: function() {
       if (this.isValidInput()) {
+        const router = this.$router;
+        let errors = this.errors;
         const requestBody = JSON.stringify(this.computedBody);
         let signupURL = 'https://api.transfr.info/v1/users/new';
         if (process.env.NODE_ENV === 'development') {
@@ -86,9 +95,20 @@ export default {
         }
         let signupPromise = ajaxRequest('POST', signupURL, requestBody);
         signupPromise.then(function(response) {
-          console.log(response);
+          router.push({path: 'login'});
         }).catch(function(err) {
           console.log(err);
+          if (err.status === 403) {
+            errors.push({
+              field: 'modal-error',
+              message: 'Username taken, please choose another username',
+            });
+          } else {
+            errors.push({
+              field: 'modal-error',
+              message: 'Something went wrong, please try again later',
+            });
+          }
         });
       } else {
         console.log('Validation failed');
