@@ -52,7 +52,6 @@ export default {
       }
       const patchBody = {patch: payload};
       const patchJSON = JSON.stringify(patchBody);
-      console.log(patchBody);
       const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
       const patchPromise = ajaxRequest('PATCH', patchURL, patchJSON, headers);
       patchPromise.then(function(response) {

@@ -4,7 +4,9 @@
       <div id="header" class="row">
         <span>{{firstName}} {{lastName}}</span>
         <div id="edit">
-          <button v-on:click="edit = !edit" class="level-1">Edit</button>
+          <button @click="edit = !edit" class="level-1 editing-button">
+            Edit
+          </button>
         </div>
       </div>
       <div class="row" v-for="key in Object.keys(objectOptionals)" :key="key">
@@ -28,7 +30,12 @@
       <div id="header" class="row">
         <span>Editing</span>
         <div id="edit">
-          <button v-on:click="edit = !edit" class="level-1">Done</button>
+          <button @click="abort()" class="level-1 editing-button-error">
+            Cancel
+          </button>
+          <button @click="edit = !edit" class="level-1 editing-button">
+            Done
+          </button>
         </div>
       </div>
       <edit-input
@@ -87,13 +94,15 @@ export default {
       },
       edit: false,
       patch: [],
+      original: '',
     };
   },
   computed: {
     name: function() {
       return this.firstName + ' ' + this.lastName;
     },
-    /* This computed property returns properties that are text only
+    /*
+     * This computed property returns properties that are text only
      * returns an object filled with the simple key-value pairs
      */
     simpleOptionals: function() {
@@ -111,7 +120,8 @@ export default {
       });
       return result;
     },
-    /* This computed property returns properties that are objects
+    /*
+     * This computed property returns properties that are objects
      * This simply uses an array as include and iterates over that
      * returns an object filled the key value pairs
      */
@@ -149,6 +159,22 @@ export default {
   },
   events: 'card-update',
   methods: {
+    abort: function() {
+      // abort changes and return
+      // parse orignal card to undo changes
+      const card = JSON.parse(this.original);
+      this.patch.forEach((operation) => {
+        console.log(operation);
+        const attribute = operation.path.substring(1);
+        if (attribute === 'description') {
+          this.description = card.description;
+        } else {
+          this.optional[attribute] = card[attribute] || '';
+        }
+      });
+      this.patch = []; // discard path array
+      this.edit = !this.edit;
+    },
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
       if (attribute === 'description') {
@@ -168,6 +194,11 @@ export default {
   },
   watch: {
     vcard: function(card) {
+      if (isEmptyOrNull(this.original)) {
+        // Effectively deep copies the card; we do not parse until necessary
+        this.original = JSON.stringify(card);
+      }
+      // populate data
       const optionalAttributes = Object.keys(this.optional);
       optionalAttributes.forEach((attribute) => {
         if (attribute in card) {
@@ -184,7 +215,9 @@ export default {
     },
     edit: function(edit) {
       if (edit === false && this.patch.length !== 0) {
+        // cleaning up after done editing
         this.$emit('card-update', this.patch);
+        this.original = '';
         this.patch = [];
       }
     },
@@ -226,14 +259,17 @@ export default {
     align-items: center;
     justify-content: flex-end;
     span {
+      flex: 4 2 58.333%;
       font-size: 1.5rem;
     }
     #edit{
-      flex: 0 1 16.667%;
-      @media #{$breakpoint-md} {
-      flex: 0 1 20%;
-      }
-      button {
+      display: flex;
+      flex: 0 1 41.666%;
+      justify-content: flex-end;
+      .editing-button {
+        box-sizing: border-box;
+        flex: 0 1 33.333%;
+        margin-left: 0.25rem;
         display: block;
         background-color: $secondarycolor;
         border: 0;
@@ -246,6 +282,13 @@ export default {
         &:hover {
           background-color: $primarycolor;
         }
+      }
+      .editing-button-error {
+          @extend .editing-button;
+          background-color: $error-red;
+          &:hover {
+            background-color: $error-highlight;
+          }
       }
     }
   }

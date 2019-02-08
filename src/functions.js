@@ -40,4 +40,17 @@ export function isEmptyOrNull(string) {
   return string === '' || string === null || string === undefined;
 }
 
-export default {ajaxRequest, isEmptyOrNull};
+/**
+ * Empty Object Check, null or undefined
+ * @param {Object} object object to be checked
+ * @return {Boolean} Is object empty
+ */
+export function isObjectEmpty(object) {
+  if (object !== null && object !== undefined) {
+    return Object.keys(object).length === 0 && object.constructor === Object;
+  } else {
+    return true;
+  }
+}
+
+export default {ajaxRequest, isEmptyOrNull, isObjectEmpty};
