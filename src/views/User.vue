@@ -115,21 +115,23 @@ export default {
     #mobile-menu {
       display: none;
       @media #{$breakpoint-sm} {
+        display: block;
         left: 0;
-        display: flex;
         height: 2.5rem;
         justify-content: space-between;
         #menu-icon {
-          flex: 1 0 10%;
+          display: block;
+          height: 100%;
+          float: left;
         }
         .logo {
-          flex: 3 1 10%;
+          float: right;
           height: 2.5rem;
         }
       }
     }
     @media #{$breakpoint-sm} {
-      flex: 1 0 100%;
+      flex: 0 2 90%;
     }
     @media #{$breakpoint-md} {
       flex: 0 1 30%;

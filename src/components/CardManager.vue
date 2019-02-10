@@ -2,22 +2,38 @@
   <div id="card-manager">
     <div id="controls">
       <div id="current-card" class="level-1 tabs">
-        {{currentCard.description}}
+        {{cardDescription}}
       </div>
       <div id="more" class="level-1 tabs">
         ...
       </div>
     </div>
-    <card id="card"
-      v-bind:vcard ="cards[this.currentCardIndex]"
-      v-bind:initialFirstName="firstName"
-      v-bind:initialLastName="lastName"
-      v-on:card-update="patchCard"/>
+    <keep-alive>
+    <template v-if="cards.length === 0">
+      <div id="getting-started" class="level-1">
+        <div id="call-to-action">
+          <h2>You don't have any cards, why not add one?</h2>
+            <button class="action-button level-1" @click="pushCard">
+              Add a Card
+            </button>
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <card id="card"
+        v-bind:vcard ="cards[this.currentCardIndex]"
+        v-bind:initialFirstName="firstName"
+        v-bind:initialLastName="lastName"
+        v-bind:newCard="addCard"
+        v-on:card-update="patchCard"
+        v-on:card-create=""/>
+    </template>
+    </keep-alive>
   </div>
 </template>
 <script>
 import card from '@/components/Card';
-import {ajaxRequest} from '../functions';
+import {ajaxRequest, isEmptyOrNull} from '../functions';
 
 export default {
   data: function() {
@@ -25,6 +41,7 @@ export default {
       firstName: '',
       lastName: '',
       currentCardIndex: 0,
+      addCard: false,
     };
   },
   components: {
@@ -34,14 +51,34 @@ export default {
     displayName: function() {
       return this.firstName + ' ' + this.lastName;
     },
+    cardDescription: function() {
+      if (isEmptyOrNull(this.currentCard)) {
+        return 'Welcome';
+      }
+      return this.currentCard.description;
+    },
     csrfToken: function() {
       return sessionStorage.getItem('csrf');
     },
     currentCard: function() {
-      return this.cards[this.currentCardIndex];
+      if (this.cards.length !== 0) {
+        return this.cards[this.currentCardIndex];
+      }
+      return null;
     },
   },
   methods: {
+    createCard: function(payload) {
+      if (this.addCard) {
+        addCard = false;
+      }
+      const cards = this.cards;
+      let createURL = 'https://api.transfr.info/v1/userdata/profiles';
+      if (process.env.NODE_ENV === 'development') {
+        createURL = 'https://api.transfr.info/v1/userdata/profiles';
+      }
+      const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
+    },
     patchCard: function(payload) {
       const index = this.currentCardIndex;
       const cards = this.cards;
@@ -60,6 +97,13 @@ export default {
         }
         cards.splice(index, 1, response.card);
       }).catch((err) => console.log(err));
+    },
+    pushCard: function() {
+      this.addCard = true;
+      this.cards.push({
+        description: 'New Card',
+        name: this.lastName +';'+this.firstName,
+      });
     },
   },
   props: {
@@ -80,6 +124,7 @@ export default {
 <style lang="scss" scoped>
   #controls {
     width: 100%;
+    z-index: 50;
     &:before {
       content: " ";
       display: table;
@@ -107,6 +152,42 @@ export default {
   #card {
     padding: 0;
     z-index: 100;
+  }
+  #getting-started {
+    background-color: $backgroundcolor;
+    border-radius: 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    min-height: 20rem;
+    padding: 2em;
+    position: relative;
+    z-index: 100;
+    .action-button {
+      background-color: $secondarycolor;
+      border: 0;
+      border-radius: 6px;
+      color: $backgroundcolor;
+      flex: 1 1 33%;
+      padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+      @media (hover: hover) {
+        &:hover {
+          background-color: $primarycolor;
+        }
+      }
+    }
+    #call-to-action {
+      box-sizing: border-box;
+      position: relative;
+    }
+    @media #{$breakpoint-md} {
+      width: 91%;
+    }
+    @media #{$breakpoint-lg} {
+      width: 84.333%;
+    }
   }
   .card-tab {
     color: $backgroundcolor;

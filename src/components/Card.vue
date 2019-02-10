@@ -1,5 +1,6 @@
 <template>
   <div id="card">
+    <!-- Regular View -->
     <div v-if="!edit" class="grid card-main level-2">
       <div id="header" class="row">
         <span>{{firstName}} {{lastName}}</span>
@@ -25,7 +26,6 @@
         <div class="column-values">{{simpleOptionals[key]}}</div>
       </div>
     </div>
-    <!-- Editing view for card -->
     <div v-else class="grid card-main level-2">
       <div id="header" class="row">
         <span>Editing</span>
@@ -156,22 +156,24 @@ export default {
     vcard: Object,
     initialFirstName: String,
     initialLastName: String,
+    newCard: Boolean,
   },
   events: 'card-update',
   methods: {
     abort: function() {
       // abort changes and return
       // parse orignal card to undo changes
-      const card = JSON.parse(this.original);
-      this.patch.forEach((operation) => {
-        console.log(operation);
-        const attribute = operation.path.substring(1);
-        if (attribute === 'description') {
-          this.description = card.description;
-        } else {
-          this.optional[attribute] = card[attribute] || '';
-        }
-      });
+      if (this.original) {
+        const card = JSON.parse(this.original);
+        this.patch.forEach((operation) => {
+          const attribute = operation.path.substring(1);
+          if (attribute === 'description') {
+            this.description = card.description;
+          } else {
+            this.optional[attribute] = card[attribute] || '';
+          }
+        });
+      }
       this.patch = []; // discard path array
       this.edit = !this.edit;
     },
@@ -213,8 +215,11 @@ export default {
     initialLastName: function(value) {
       this.lastName = value;
     },
+    newCard: function(isNew) {
+      if (isNew !== undefined && isNew) this.edit = true;
+    },
     edit: function(edit) {
-      if (edit === false && this.patch.length !== 0) {
+      if (!edit && this.patch.length !== 0 && !this.newCard) {
         // cleaning up after done editing
         this.$emit('card-update', this.patch);
         this.original = '';
@@ -279,16 +284,20 @@ export default {
         font-size: 1.1rem;
         padding: 0.25em 1em 0.25em 1em;
         border-radius: 6px;
-        &:hover {
-          background-color: $primarycolor;
+        @media (hover: hover) {
+          &:hover {
+            background-color: $primarycolor;
+          }
         }
       }
       .editing-button-error {
-          @extend .editing-button;
-          background-color: $error-red;
+        @extend .editing-button;
+        background-color: $error-red;
+        @media (hover: hover) {
           &:hover {
             background-color: $error-highlight;
           }
+        }
       }
     }
   }
