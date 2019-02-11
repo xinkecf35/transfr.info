@@ -165,6 +165,7 @@ export default {
       // parse orignal card to undo changes
       if (this.original) {
         const card = JSON.parse(this.original);
+        console.log(card);
         this.patch.forEach((operation) => {
           // Extract attribute from path
           const attribute = operation.path.substring(1);
@@ -230,6 +231,8 @@ export default {
       if (!edit && this.patch.length !== 0 && !this.newCard) {
         // cleaning up after done editing
         this.$emit('card-update', this.patch);
+        this.original = '';
+        this.patch = [];
       } else if (!edit && this.patch.length!== 0 && this.newCard) {
         let payload = this.vcard;
         this.patch.forEach((operation) => {
@@ -237,9 +240,9 @@ export default {
           payload[attribute] = operation.value;
         });
         this.$emit('card-create', payload);
+        this.original = '';
+        this.patch = [];
       }
-      this.original = '';
-      this.patch = [];
     },
   },
 };
