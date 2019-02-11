@@ -26,7 +26,7 @@
         v-bind:initialLastName="lastName"
         v-bind:newCard="addCard"
         v-on:card-update="patchCard"
-        v-on:card-create=""/>
+        v-on:card-create="createCard"/>
     </template>
     </keep-alive>
   </div>
@@ -70,14 +70,23 @@ export default {
   methods: {
     createCard: function(payload) {
       if (this.addCard) {
-        addCard = false;
+        this.addCard = false;
       }
+      const index = this.currentCardIndex;
       const cards = this.cards;
       let createURL = 'https://api.transfr.info/v1/userdata/profiles';
       if (process.env.NODE_ENV === 'development') {
-        createURL = 'https://api.transfr.info/v1/userdata/profiles';
+        createURL = 'https://api.transfr.test/v1/userdata/profiles';
       }
       const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
+      const createJSON = JSON.stringify(payload);
+      const createPromise = ajaxRequest('POST', createURL, createJSON, headers);
+      createPromise.then(function(response) {
+        if (!response.meta.success) {
+          throw response.meta.message;
+        }
+        cards.splice(index, 1, response.user);
+      }).catch((err) => console.log(err));
     },
     patchCard: function(payload) {
       const index = this.currentCardIndex;
@@ -102,7 +111,8 @@ export default {
       this.addCard = true;
       this.cards.push({
         description: 'New Card',
-        name: this.lastName +';'+this.firstName,
+        fullName: this.lastName +';'+this.firstName,
+        name: this.firstName + ' ' + this.lastName,
       });
     },
   },

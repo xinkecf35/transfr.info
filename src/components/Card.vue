@@ -166,6 +166,7 @@ export default {
       if (this.original) {
         const card = JSON.parse(this.original);
         this.patch.forEach((operation) => {
+          // Extract attribute from path
           const attribute = operation.path.substring(1);
           if (attribute === 'description') {
             this.description = card.description;
@@ -189,7 +190,14 @@ export default {
         let optional = this.optional;
         const operation =
           generatePatchObject(attribute, optional[attribute], payload[1]);
-        this.patch.push(operation);
+        let index = this.patch.findIndex((op) => op.path === ('/' + attribute));
+        if (index > -1) {
+          // If attribute has already been modified once, replace it
+          this.patch.splice(index, 1, operation);
+        } else {
+          // Push new operation that is modified for first time
+          this.patch.push(operation);
+        }
         optional[attribute] = payload[1];
       }
     },
@@ -222,9 +230,16 @@ export default {
       if (!edit && this.patch.length !== 0 && !this.newCard) {
         // cleaning up after done editing
         this.$emit('card-update', this.patch);
-        this.original = '';
-        this.patch = [];
+      } else if (!edit && this.patch.length!== 0 && this.newCard) {
+        let payload = this.vcard;
+        this.patch.forEach((operation) => {
+          const attribute = operation.path.substring(1);
+          payload[attribute] = operation.value;
+        });
+        this.$emit('card-create', payload);
       }
+      this.original = '';
+      this.patch = [];
     },
   },
 };

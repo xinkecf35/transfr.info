@@ -11,7 +11,8 @@
     <div v-else class="row">
       <div class="column-props">{{attribute}}</div>
       <div class="column-values">
-          <div class="complex-input">
+          <div class="complex-input"
+          v-on:blur.capture="addComplexValue(attribute, complexData)">
             <input type="text" class="control-label" placeholder="Label"
             v-model="label"
             v-on:keyup.enter="addComplexValue(attribute, complexData)">
