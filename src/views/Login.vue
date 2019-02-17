@@ -1,6 +1,6 @@
 <template>
   <div id="login-root">
-    <error v-if="errors.length !== 0">
+    <error v-if="presentError">
       {{ errors[errors.length-1].message }}
     </error>
     <div id="login" class="level-1 account-forms">
@@ -47,6 +47,12 @@ export default {
       },
       errors: [],
     };
+  },
+  computed: {
+    presentError: function() {
+      const errors = this.errors;
+      return errors.length && errors[errors.length-1].field === 'modal-error';
+    },
   },
   components: {
     error,
@@ -100,6 +106,13 @@ export default {
         });
       }
       return valid;
+    },
+  },
+  watch: {
+    presentError: function(value) {
+      if (value) {
+        window.setTimeout(()=> this.errors.pop(), 5000);
+      }
     },
   },
 };
