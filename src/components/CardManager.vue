@@ -2,37 +2,47 @@
   <div id="card-manager">
     <div id="controls">
       <div id="current-card" class="level-1 tabs">
-        {{cardDescription}}
+        <span>
+          {{cardDescription}}
+        </span>
       </div>
-      <div id="more" class="level-1 tabs">
+      <div id="more" class="level-1 tabs" @click="showModal = !showModal">
         ...
       </div>
     </div>
-    <keep-alive>
-    <template v-if="cards.length === 0">
-      <div id="getting-started" class="level-1">
-        <div id="call-to-action">
-          <h2>You don't have any cards, why not add one?</h2>
-            <button class="action-button level-1" @click="pushCard">
-              Add a Card
-            </button>
-        </div>
+    <div id="wrapper">
+      <moreCards v-if="showModal"
+        v-bind:cards="cards"
+        v-on:card-switch="switchCard"/>
+      <div id="wrapper-cards">
+        <keep-alive>
+          <template v-if="cards.length === 0">
+            <div id="getting-started" class="level-1">
+              <div id="call-to-action">
+                <h2>You don't have any cards, why not add one?</h2>
+                  <button class="action-button level-1" @click="pushCard">
+                    Add a Card
+                  </button>
+              </div>
+            </div>
+          </template>
+          <template v-else>
+            <card id="card"
+              v-bind:vcard ="cards[this.currentCardIndex]"
+              v-bind:initialFirstName="firstName"
+              v-bind:initialLastName="lastName"
+              v-bind:newCard="addCard"
+              v-on:card-update="patchCard"
+              v-on:card-create="createCard"/>
+          </template>
+        </keep-alive>
       </div>
-    </template>
-    <template v-else>
-      <card id="card"
-        v-bind:vcard ="cards[this.currentCardIndex]"
-        v-bind:initialFirstName="firstName"
-        v-bind:initialLastName="lastName"
-        v-bind:newCard="addCard"
-        v-on:card-update="patchCard"
-        v-on:card-create="createCard"/>
-    </template>
-    </keep-alive>
+    </div>
   </div>
 </template>
 <script>
 import card from '@/components/Card';
+import moreCards from '@/components/MoreCards';
 import {ajaxRequest, isEmptyOrNull} from '../functions';
 
 export default {
@@ -41,11 +51,13 @@ export default {
       firstName: '',
       lastName: '',
       currentCardIndex: 0,
+      showModal: false,
       addCard: false,
     };
   },
   components: {
     card,
+    moreCards,
   },
   computed: {
     displayName: function() {
@@ -115,6 +127,9 @@ export default {
         name: this.firstName + ' ' + this.lastName,
       });
     },
+    switchCard: function(payload) {
+      this.currentCardIndex = payload;
+    },
   },
   props: {
     cards: Array,
@@ -133,8 +148,10 @@ export default {
 </script>
 <style lang="scss" scoped>
   #controls {
+    position: absolute;
     width: 100%;
-    z-index: 50;
+    z-index: 25;
+    text-overflow: ellipsis;
     &:before {
       content: " ";
       display: table;
@@ -147,21 +164,20 @@ export default {
     #more {
       background-color: $secondarycolor;
       border-bottom: 10px solid $secondarycolor;
-      margin-left: -16px;
+      margin-left: -1.25rem;
       text-align: center;
-      z-index: -1;
+      z-index: 1;
     }
     .tabs {
       @extend .card-tab;
       float: left;
       min-height: 1px;
-      padding: 10px;
       position: relative;
     }
   }
   #card {
     padding: 0;
-    z-index: 100;
+    z-index: 300;
   }
   #getting-started {
     background-color: $backgroundcolor;
@@ -174,7 +190,7 @@ export default {
     min-height: 20rem;
     padding: 2em;
     position: relative;
-    z-index: 100;
+    z-index: 200;
     .action-button {
       background-color: $secondarycolor;
       border: 0;
@@ -203,18 +219,27 @@ export default {
     color: $backgroundcolor;
     font-size: 1.25rem;
     top: 0px;
-    padding: 0.25em 1em 0.2em 1em;
+    padding: 0.3rem 1rem 0.5rem 1rem;
     background-color: $accentcolor;
     border-radius: 10px 10px 0px 0px;
     border-bottom: 10px solid $accentcolor;
-    margin-bottom: -10px;
-    z-index: 50;
-    width: 12.5%;
-    @media #{$breakpoint-md} {
-      width: 16.6666%;
-    }
+    width: 10rem;
     @media #{$breakpoint-sm} {
-      width: 20.6666%;
+      width: 8rem;
     }
+    @media #{$breakpoint-md} {
+      width: 9rem;
+    }
+  }
+  #wrapper {
+    font-size: 16px;
+    position: relative;
+  }
+  #wrapper-cards {
+    position: absolute;
+    width: 100%;
+    z-index: 50;
+    top: 2.25rem;
+    font-size: 16px;
   }
 </style>
