@@ -37,7 +37,7 @@
               type="text" v-model="item.value"
               v-on:change="$emit('update-edit', [attribute, text, index])">
             <button class="control-button"
-              v-on:click="removeComplexValue(attribute, index)">
+              v-on:click="emoveComplexValue(attribute, index)">
               <img src="../assets/minus-round.svg">
             </button>
           </div>
@@ -72,7 +72,7 @@ export default {
         this.label = this.value = '';
       }
     },
-    removeComplexValue: function(attribute, index) {
+    emoveComplexValue: function(attribute, index) {
       this.text.splice(index, 1);
       this.$emit('update-edit', [attribute, this.text, index]);
     },
@@ -98,7 +98,7 @@ input[type="text"]:focus {
 .complex-input{
   display: flex;
   flex-direction: row;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.5em;
 }
 .control {
     border-bottom: 2px solid rgba(25, 139, 28, 0.2);
@@ -109,7 +109,7 @@ input[type="text"]:focus {
 .control-label {
   @extend .control;
   flex: 0 1 25%;
-  margin-right: 0.25rem;
+  margin-right: 0.25em;
 }
 .control-value {
   @extend .control;
@@ -129,7 +129,7 @@ input[type="text"]:focus {
   }
 }
 .grid *{
-  font-size: 1rem;
+  font-size: 1em;
   position: relative;
   box-sizing: border-box;
   width: 100%;

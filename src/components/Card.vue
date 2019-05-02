@@ -62,13 +62,13 @@ import {isEmptyOrNull} from '../functions';
 function generatePatchObject(attribute, currentValue, newValue) {
   let operation = 'replace';
   if (isEmptyOrNull(newValue)) {
-    // If it removes the current value
-    operation = 'remove';
+    // If it emoves the current value
+    operation = 'emove';
   } else if (isEmptyOrNull(currentValue)) {
     operation = 'add';
   }
   let patch;
-  if (operation === 'remove') {
+  if (operation === 'emove') {
     patch = {op: operation, path: '/' + attribute};
   } else {
     patch = {op: operation, path: '/' + attribute, value: newValue};
@@ -251,7 +251,7 @@ export default {
   #card {
     position: relative;
     text-align: left;
-    padding: 14px;
+    padding: 0.8em;
     box-sizing: border-box;
     @media #{$breakpoint-md} {
       width: 91%;
@@ -263,14 +263,13 @@ export default {
   .card-main {
     box-sizing: border-box;
     padding: 2em;
-    font-size: 1.1rem;
+    font-size: 1.1em;
     top:30px;
     background-color: $backgroundcolor;
     border-radius: 12px;
     width: 100%;
     @media #{$breakpoint-sm} {
-      padding: 0.75rem;
-      font-size: 0.8rem;
+      padding: 0.75em;
     }
     @media #{$breakpoint-md} {
       padding: 1.5em;
@@ -283,7 +282,7 @@ export default {
     justify-content: flex-end;
     span {
       flex: 4 2 58.333%;
-      font-size: 1.5rem;
+      font-size: 1.5em;
     }
     #edit{
       display: flex;
@@ -292,14 +291,14 @@ export default {
       .editing-button {
         box-sizing: border-box;
         flex: 0 1 33.333%;
-        margin-left: 0.25rem;
+        margin-left: 0.25em;
         display: block;
         background-color: $secondarycolor;
         border: 0;
         color: $backgroundcolor;
         float: right;
         font-family: nunito, Helvetica, Arial, sans-serif;
-        font-size: 1.1rem;
+        font-size: 1.1em;
         padding: 0.25em 1em 0.25em 1em;
         border-radius: 6px;
         @media (hover: hover) {
@@ -320,7 +319,7 @@ export default {
     }
   }
   .grid *{
-    font-size: 1rem;
+    font-size: 1em;
     position: relative;
     box-sizing: border-box;
     width: 100%;
@@ -340,7 +339,7 @@ export default {
   %column-properties {
     float: left;
     min-height: 1px;
-    padding: 10px;
+    padding: 0.8em;
     position: relative;
   }
   .column-props {

@@ -2,19 +2,20 @@
   <div id="card-manager">
     <div id="controls">
       <div id="current-card" class="level-1 tabs">
-        <span>
-          {{cardDescription}}
-        </span>
+        <span>{{cardDescription}}</span>
       </div>
       <div id="more" class="level-1 tabs" @click="showModal = !showModal">
-        ...
+        <span>...</span>
+      </div>
+      <div id="add" class="level-1 tabs" @click="addNewCard">
+        <span>+</span>
       </div>
     </div>
-    <div id="wrapper">
-      <moreCards v-if="showModal"
+    <div id="wrapper" v-bind:class="{showMore: showModal}">
+      <div id="wrapper-cards">
+        <moreCards v-if="showModal"
         v-bind:cards="cards"
         v-on:card-switch="switchCard"/>
-      <div id="wrapper-cards">
         <keep-alive>
           <template v-if="cards.length === 0">
             <div id="getting-started" class="level-1">
@@ -80,6 +81,15 @@ export default {
     },
   },
   methods: {
+    addNewCard: function() {
+      this.cards.push({
+        description: 'New Card',
+        fullName: this.lastName +';'+this.firstName,
+        name: this.firstName + ' ' + this.lastName,
+      });
+      this.currentCardIndex = this.cards.length - 1;
+      this.addCard = true;
+    },
     createCard: function(payload) {
       if (this.addCard) {
         this.addCard = false;
@@ -147,11 +157,34 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+  #card-manager {
+    font-size: 1rem;
+  }
+  .card-tab {
+    color: $backgroundcolor;
+    font-size: 1.25em;
+    top: 0px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: $accentcolor;
+    border-radius: 10px;
+    padding: 0.35em 0.25em 0.25em 0.25em;
+    box-sizing: border-box;
+    width: $tabsize-lg;
+    height: $tab-height;
+    @media #{$breakpoint-sm} {
+      width: $tabsize-sm;
+    }
+    @media #{$breakpoint-md} {
+      width: $tabsize-md;
+    }
+  }
   #controls {
     position: absolute;
-    width: 100%;
     z-index: 25;
     text-overflow: ellipsis;
+    font-size: 1em;
     &:before {
       content: " ";
       display: table;
@@ -161,12 +194,23 @@ export default {
       display: table;
       clear: both;
     }
-    #more {
+    .layer-tabs {
+      margin-left: -$tab-margin;
       background-color: $secondarycolor;
       border-bottom: 10px solid $secondarycolor;
-      margin-left: -1.25rem;
+      margin-left: -$tab-margin;
       text-align: center;
-      z-index: 1;
+      font-size: 1.5em;
+      padding-top: 0.1em;
+      font-weight: 900;
+    }
+    #more {
+      @extend .layer-tabs;
+      z-index: 20;
+    }
+    #add {
+      @extend .layer-tabs;
+      z-index: 10;
     }
     .tabs {
       @extend .card-tab;
@@ -187,7 +231,7 @@ export default {
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    min-height: 20rem;
+    min-height: 20em;
     padding: 2em;
     position: relative;
     z-index: 200;
@@ -197,7 +241,7 @@ export default {
       border-radius: 6px;
       color: $backgroundcolor;
       flex: 1 1 33%;
-      padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+      padding: 0.5em 0.75em 0.5em 0.75em;
       @media (hover: hover) {
         &:hover {
           background-color: $primarycolor;
@@ -215,31 +259,16 @@ export default {
       width: 84.333%;
     }
   }
-  .card-tab {
-    color: $backgroundcolor;
-    font-size: 1.25rem;
-    top: 0px;
-    padding: 0.3rem 1rem 0.5rem 1rem;
-    background-color: $accentcolor;
-    border-radius: 10px 10px 0px 0px;
-    border-bottom: 10px solid $accentcolor;
-    width: 10rem;
-    @media #{$breakpoint-sm} {
-      width: 8rem;
-    }
-    @media #{$breakpoint-md} {
-      width: 9rem;
-    }
+  .showMore {
+    top: $modal-position;
   }
   #wrapper {
-    font-size: 16px;
     position: relative;
   }
   #wrapper-cards {
     position: absolute;
     width: 100%;
     z-index: 50;
-    top: 2.25rem;
-    font-size: 16px;
+    top: 2.25em;
   }
 </style>
