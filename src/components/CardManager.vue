@@ -29,12 +29,13 @@
           </template>
           <template v-else>
             <card id="card"
-              v-bind:vcard ="cards[this.currentCardIndex]"
+              v-bind:vcard ="currentCard"
               v-bind:initialFirstName="firstName"
               v-bind:initialLastName="lastName"
               v-bind:newCard="addCard"
               v-on:card-update="patchCard"
-              v-on:card-create="createCard"/>
+              v-on:card-create="createCard"
+              v-on:card-new-abort="abortNew"/>
           </template>
         </keep-alive>
       </div>
@@ -81,6 +82,11 @@ export default {
     },
   },
   methods: {
+    abortNew: function() {
+      this.cards.pop();
+      this.currentCardIndex = 0;
+      this.addCard = false;
+    },
     addNewCard: function() {
       this.cards.push({
         description: 'New Card',
@@ -261,6 +267,7 @@ export default {
   }
   .showMore {
     top: $modal-position;
+    transition: all 0.5s ease;
   }
   #wrapper {
     position: relative;
@@ -270,5 +277,9 @@ export default {
     width: 100%;
     z-index: 50;
     top: 2.25em;
+  }
+  // animatitions
+  .slide-enter-active, .slide-leave-active  {
+      transition: all 0.5s ease;
   }
 </style>

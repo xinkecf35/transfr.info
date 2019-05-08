@@ -62,8 +62,8 @@ import {isEmptyOrNull} from '../functions';
 function generatePatchObject(attribute, currentValue, newValue) {
   let operation = 'replace';
   if (isEmptyOrNull(newValue)) {
-    // If it emoves the current value
-    operation = 'emove';
+    // If it removes the current value
+    operation = 'remove';
   } else if (isEmptyOrNull(currentValue)) {
     operation = 'add';
   }
@@ -158,10 +158,21 @@ export default {
     initialLastName: String,
     newCard: Boolean,
   },
-  events: 'card-update',
+  events: [
+    'card-update',
+    'card-new-abort',
+  ],
   methods: {
     abort: function() {
       // abort changes and return
+      // if new card, abort with no changes and emit event to
+      // pop card off list
+      if (this.newCard) {
+        this.patch = [];
+        this.edit = !this.edit;
+        this.$emit('card-new-abort', true);
+        return;
+      }
       // parse orignal card to undo changes
       if (this.original) {
         const card = JSON.parse(this.original);
@@ -205,15 +216,18 @@ export default {
   },
   watch: {
     vcard: function(card) {
-      if (isEmptyOrNull(this.original)) {
-        // Effectively deep copies the card; we do not parse until necessary
-        this.original = JSON.stringify(card);
-      }
+      this.original = JSON.stringify(card);
       // populate data
       const optionalAttributes = Object.keys(this.optional);
       optionalAttributes.forEach((attribute) => {
         if (attribute in card) {
           this.optional[attribute] = card[attribute];
+        } else {
+          if (attribute === 'email' || attribute === 'telephone') {
+            this.optional[attribute] = [];
+          } else {
+            this.optional[attribute] = '';
+          }
         }
       });
       this.description = card.description;
@@ -225,7 +239,9 @@ export default {
       this.lastName = value;
     },
     newCard: function(isNew) {
-      if (isNew !== undefined && isNew) this.edit = true;
+      if (isNew !== undefined && isNew) {
+        this.edit = true;
+      }
     },
     edit: function(edit) {
       if (!edit && this.patch.length !== 0 && !this.newCard) {
