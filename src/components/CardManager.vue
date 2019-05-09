@@ -36,7 +36,8 @@
               v-bind:newCard="addCard"
               v-on:card-update="patchCard"
               v-on:card-create="createCard"
-              v-on:card-new-abort="abortNew"/>
+              v-on:card-new-abort="abortNew"
+              v-on:card-delete="deleteCard"/>
           </template>
         </keep-alive>
       </div>
@@ -118,7 +119,25 @@ export default {
       }).catch((err) => console.log(err));
     },
     deleteCard: function(payload) {
-
+      const cards = this.cards;
+      const profileId = payload.profileId;
+      const deleteIndex = cards.findIndex(
+        (card) => card.profileId == profileId);
+      let deleteURL = 'https://api.transfr.info/v1/userdata/profile/';
+      deleteURL = deleteURL + profileId;
+      if (process.env.NODE_ENV === 'development') {
+        deleteURL = 'https://api.transfr.test/v1/userdata/profile/';
+        deleteURL = deleteURL + profileId;
+      }
+      const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
+      const deletePromise = ajaxRequest('DELETE', deleteURL, null, headers);
+      deletePromise.then((response) => {
+        if (!response.meta.success) {
+          throw response.meta.message;
+        }
+        this.currentCardIndex = response.user.vcards.length - 1;
+        cards.splice(deleteIndex, 1);
+      }).catch((err) => console.log(err));
     },
     patchCard: function(payload) {
       const index = this.currentCardIndex;
