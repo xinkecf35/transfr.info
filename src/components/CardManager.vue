@@ -29,6 +29,7 @@
           </template>
           <template v-else>
             <card id="card"
+              ref="currentCard"
               v-bind:vcard ="currentCard"
               v-bind:initialFirstName="firstName"
               v-bind:initialLastName="lastName"
@@ -147,6 +148,7 @@ export default {
       });
     },
     switchCard: function(payload) {
+      this.$refs.currentCard.edit = false;
       this.currentCardIndex = payload;
     },
   },
