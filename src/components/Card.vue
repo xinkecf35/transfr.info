@@ -45,6 +45,13 @@
         v-bind:initialValue="item.value"
         v-bind:isComplex="item.complex"
         v-on:update-edit="updateEditedCard"/>
+      <div id="footer" class="row">
+        <div id="edit">
+          <button @click="deleteCard()" class="level-1 editing-button-error">
+            Delete
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -68,7 +75,7 @@ function generatePatchObject(attribute, currentValue, newValue) {
     operation = 'add';
   }
   let patch;
-  if (operation === 'emove') {
+  if (operation === 'remove') {
     patch = {op: operation, path: '/' + attribute};
   } else {
     patch = {op: operation, path: '/' + attribute, value: newValue};
@@ -161,6 +168,7 @@ export default {
   events: [
     'card-update',
     'card-new-abort',
+    'card-delete',
   ],
   methods: {
     abort: function() {
@@ -189,6 +197,12 @@ export default {
       }
       this.patch = []; // discard path array
       this.edit = !this.edit;
+    },
+    deleteCard: function() {
+      // discards any patches and emits event for deletion
+      this.patch = [];
+      this.edit = !this.edit;
+      this.$emit('card-delete', {profileId: this.vcard.profileId});
     },
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
@@ -267,10 +281,9 @@ export default {
   #card {
     position: relative;
     text-align: left;
-    padding: 0.8em;
     box-sizing: border-box;
     @media #{$breakpoint-md} {
-      width: 91%;
+      width: 100%;
     }
     @media #{$breakpoint-lg} {
       width: 84.333%;
@@ -304,35 +317,42 @@ export default {
       display: flex;
       flex: 0 1 41.666%;
       justify-content: flex-end;
-      .editing-button {
-        box-sizing: border-box;
-        flex: 0 1 33.333%;
-        margin-left: 0.25em;
-        display: block;
-        background-color: $secondarycolor;
-        border: 0;
-        color: $backgroundcolor;
-        float: right;
-        font-family: nunito, Helvetica, Arial, sans-serif;
-        font-size: 1.1em;
-        padding: 0.25em 1em 0.25em 1em;
-        border-radius: 6px;
-        @media (hover: hover) {
-          &:hover {
-            background-color: $primarycolor;
-          }
-        }
+    }
+    .editing-button {
+      box-sizing: border-box;
+      flex: 0 1 33.333%;
+      margin-left: 0.25em;
+      display: block;
+      background-color: $secondarycolor;
+      border: 0;
+      color: $backgroundcolor;
+      float: right;
+      font-family: nunito, Helvetica, Arial, sans-serif;
+      font-size: 1.1em;
+      padding: 0.25em 1em 0.25em 1em;
+      border-radius: 6px;
+      @media #{$breakpoint-sm} {
+          padding: 0.25em 0.75em 0.25em 0.75em;
+          font-size: 1em;
       }
-      .editing-button-error {
-        @extend .editing-button;
-        background-color: $error-red;
-        @media (hover: hover) {
-          &:hover {
-            background-color: $error-highlight;
-          }
+      @media (hover: hover) {
+        &:hover {
+          background-color: $primarycolor;
         }
       }
     }
+    .editing-button-error {
+      @extend .editing-button;
+      background-color: $error-red;
+      @media (hover: hover) {
+        &:hover {
+          background-color: $error-highlight;
+        }
+      }
+    }
+  }
+  #footer {
+    @extend #header;
   }
   .grid *{
     font-size: 1em;

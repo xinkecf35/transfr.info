@@ -37,7 +37,7 @@
               type="text" v-model="item.value"
               v-on:change="$emit('update-edit', [attribute, text, index])">
             <button class="control-button"
-              v-on:click="emoveComplexValue(attribute, index)">
+              v-on:click="removeComplexValue(attribute, index)">
               <img src="../assets/minus-round.svg">
             </button>
           </div>
@@ -72,7 +72,7 @@ export default {
         this.label = this.value = '';
       }
     },
-    emoveComplexValue: function(attribute, index) {
+    removeComplexValue: function(attribute, index) {
       this.text.splice(index, 1);
       this.$emit('update-edit', [attribute, this.text, index]);
     },
@@ -88,6 +88,24 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.grid *{
+  font-size: 1em;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+}
+.row {
+  padding-bottom: 0.5em;
+  &:before {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
+  }
+}
 input[type="text"] > * {
   border-radius: 2px;
 }
@@ -98,7 +116,9 @@ input[type="text"]:focus {
 .complex-input{
   display: flex;
   flex-direction: row;
+  flex-flow:  row;
   margin-bottom: 0.5em;
+
 }
 .control {
     border-bottom: 2px solid rgba(25, 139, 28, 0.2);
@@ -128,24 +148,6 @@ input[type="text"]:focus {
     align-self: baseline;
   }
 }
-.grid *{
-  font-size: 1em;
-  position: relative;
-  box-sizing: border-box;
-  width: 100%;
-}
-.row {
-  padding-bottom: 0.5em;
-  &:before {
-    content: " ";
-    display: table;
-  }
-  &:after {
-    content: " ";
-    display: table;
-    clear: both;
-  }
-}
 %column-properties {
   float: left;
   min-height: 1px;
@@ -165,6 +167,7 @@ input[type="text"]:focus {
 }
 .column-values {
   @extend %column-properties;
+  display: block;
   width: 80%;
   text-align: left;
   color: #000;

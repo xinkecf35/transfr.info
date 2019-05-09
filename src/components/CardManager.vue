@@ -116,6 +116,9 @@ export default {
         cards.splice(index, 1, response.user);
       }).catch((err) => console.log(err));
     },
+    deleteCard: function(payload) {
+
+    },
     patchCard: function(payload) {
       const index = this.currentCardIndex;
       const cards = this.cards;
@@ -180,6 +183,7 @@ export default {
     width: $tabsize-lg;
     height: $tab-height;
     @media #{$breakpoint-sm} {
+      padding: 0.25em 0.15em 0.15em 0.15em;
       width: $tabsize-sm;
     }
     @media #{$breakpoint-md} {
@@ -217,6 +221,10 @@ export default {
     #add {
       @extend .layer-tabs;
       z-index: 10;
+      // special case for iPhone SE/5
+      @media screen and (max-width: 374px) {
+        width: 4em;
+      }
     }
     .tabs {
       @extend .card-tab;

@@ -27,22 +27,15 @@ export default {
 #modalCards {
   color: $backgroundcolor;
   text-align: left;
-}
-#triangle {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 0.75em solid transparent;
-  border-right: 0.75em solid transparent;
-  border-bottom: 1em solid $secondarycolor;
-  top: -1rem;
+  height: 8em;
+  box-sizing: border-box;
 }
 .modal-control {
   display: block;
   width: 100%;
   border-radius: 12px;
   top: -$modal-position;
-  height: 10rem;
+  height: 20em;
   box-sizing: border-box;
   position: absolute;
   color: $backgroundcolor;
@@ -55,6 +48,8 @@ export default {
     list-style: none;
     margin: 0.25em 0em 0em 0.5em;
     padding: 0;
+    overflow: auto;
+    height: 4em;
   }
   @media #{$breakpoint-md} {
     width: 91%;
