@@ -3,7 +3,7 @@
     <!-- Regular View -->
     <div v-if="!edit" class="grid card-main level-2">
       <div id="header" class="row">
-        <span>{{firstName}} {{lastName}}</span>
+        <span>{{attributes.firstName}} {{attributes.lastName}}</span>
         <div id="edit">
           <button @click="edit = !edit" class="level-1 editing-button">
             Edit
@@ -27,13 +27,16 @@
       </div>
     </div>
     <div v-else class="grid card-main level-2">
+      <Error v-if="presentError">
+        {{errors[0].message}}
+      </Error>
       <div id="header" class="row">
         <span>Editing</span>
         <div id="edit">
           <button @click="abort()" class="level-1 editing-button-error">
             Cancel
           </button>
-          <button @click="edit = !edit" class="level-1 editing-button">
+          <button @click="commitEdits()" class="level-1 editing-button">
             Done
           </button>
         </div>
@@ -57,6 +60,7 @@
 </template>
 <script>
 import EditInput from '@/components/EditInput';
+import Error from '@/components/Error';
 import {isEmptyOrNull} from '../functions';
 
 /**
@@ -86,46 +90,49 @@ function generatePatchObject(attribute, currentValue, newValue) {
 export default {
   data: function() {
     return {
-      description: '',
-      firstName: '',
-      lastName: '',
-      optional: {
-        telephone: [],
-        email: [],
-        organization: '',
-        address: '',
-        nickname: '',
-        note: '',
-        birthday: '',
-        impp: '',
+      attributes: {
+        description: '',
+        firstName: '',
+        lastName: '',
+        optional: {
+          telephone: [],
+          email: [],
+          organization: '',
+          address: '',
+          nickname: '',
+          note: '',
+          birthday: '',
+          impp: '',
+        },
       },
       edit: false,
       patch: [],
       original: '',
+      errors: [],
     };
   },
   computed: {
+    editInputValues: function() {
+      const attributes = this.attributes;
+      return [
+        {attribute: 'Description',
+          value: attributes.description, complex: false},
+        {attribute: 'Address',
+          value: attributes.optional.address, complex: false},
+        {attribute: 'Birthday',
+          value: attributes.optional.birthday, complex: false},
+        {attribute: 'Email', value: attributes.optional.email, complex: true},
+        {attribute: 'Note', value: attributes.optional.note, complex: false},
+        {attribute: 'Nickname',
+          value: attributes.optional.nickname, complex: false},
+        {attribute: 'Organization',
+          value: attributes.optional.organization, complex: false},
+        {attribute: 'Telephone',
+          value: attributes.optional.telephone, complex: true},
+      ];
+    },
     name: function() {
       return this.firstName + ' ' + this.lastName;
-    },
-    /*
-     * This computed property returns properties that are text only
-     * returns an object filled with the simple key-value pairs
-     */
-    simpleOptionals: function() {
-      let result = {};
-      const keys = Object.keys(this.optional);
-      const exclude = ['telephone', 'email', 'description'];
-      const filtered = keys.filter(function(property) {
-        // if the property is not in exclude array, add it
-        return exclude.indexOf(property) === -1;
-      });
-      filtered.forEach((key) => {
-        if (!isEmptyOrNull(this.optional[key])) {
-          result[key] = this.optional[key];
-        }
-      });
-      return result;
     },
     /*
      * This computed property returns properties that are objects
@@ -136,28 +143,39 @@ export default {
       let result = {};
       const include = ['telephone', 'email'];
       include.forEach((key) => {
-        if (this.optional[key].length !== 0) {
-          result[key] = this.optional[key];
+        if (this.attributes.optional[key].length !== 0) {
+          result[key] = this.attributes.optional[key];
         }
       });
       return result;
     },
-    editInputValues: function() {
-      return [
-        {attribute: 'Description', value: this.description, complex: false},
-        {attribute: 'Address', value: this.optional.address, complex: false},
-        {attribute: 'Birthday', value: this.optional.birthday, complex: false},
-        {attribute: 'Email', value: this.optional.email, complex: true},
-        {attribute: 'Note', value: this.optional.note, complex: false},
-        {attribute: 'Nickname', value: this.optional.nickname, complex: false},
-        {attribute: 'Organization',
-          value: this.optional.organization, complex: false},
-        {attribute: 'Telephone', value: this.optional.telephone, complex: true},
-      ];
+    /*
+     * This computed property returns properties that are text only
+     * returns an object filled with the simple key-value pairs
+     */
+    presentError: function() {
+      const errors = this.errors;
+      return errors.length && errors[errors.length-1].field === 'modal-error';
+    },
+    simpleOptionals: function() {
+      let result = {};
+      const keys = Object.keys(this.attributes.optional);
+      const exclude = ['telephone', 'email', 'description'];
+      const filtered = keys.filter(function(property) {
+        // if the property is not in exclude array, add it
+        return exclude.indexOf(property) === -1;
+      });
+      filtered.forEach((key) => {
+        if (!isEmptyOrNull(this.attributes.optional[key])) {
+          result[key] = this.attributes.optional[key];
+        }
+      });
+      return result;
     },
   },
   components: {
     EditInput,
+    Error,
   },
   props: {
     vcard: Object,
@@ -189,7 +207,7 @@ export default {
           // Extract attribute from path
           const attribute = operation.path.substring(1);
           if (attribute === 'description') {
-            this.description = card.description;
+            this.attributes.description = card.description;
           } else {
             this.optional[attribute] = card[attribute] || '';
           }
@@ -197,6 +215,16 @@ export default {
       }
       this.patch = []; // discard path array
       this.edit = !this.edit;
+    },
+    commitEdits: function() {
+      if (!this.attributes.description.length) {
+        this.errors.push({
+          field: 'modal-error',
+          message: 'Description is required',
+        });
+        return;
+      }
+      this.edit = !edit;
     },
     deleteCard: function() {
       // discards any patches and emits event for deletion
@@ -206,14 +234,15 @@ export default {
     },
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
+      const attributes = this.attributes;
       if (attribute === 'description') {
         // Specific case for non optional property
         const operation =
-          generatePatchObject(attribute, this.description, payload[1]);
+          generatePatchObject(attribute, attributes.description, payload[1]);
         this.patch.push(operation);
-        this.description = payload[1];
+        attributes.description = payload[1];
       } else {
-        let optional = this.optional;
+        let optional = attributes.optional;
         const operation =
           generatePatchObject(attribute, optional[attribute], payload[1]);
         let index = this.patch.findIndex((op) => op.path === ('/' + attribute));
@@ -229,34 +258,6 @@ export default {
     },
   },
   watch: {
-    vcard: function(card) {
-      this.original = JSON.stringify(card);
-      // populate data
-      const optionalAttributes = Object.keys(this.optional);
-      optionalAttributes.forEach((attribute) => {
-        if (attribute in card) {
-          this.optional[attribute] = card[attribute];
-        } else {
-          if (attribute === 'email' || attribute === 'telephone') {
-            this.optional[attribute] = [];
-          } else {
-            this.optional[attribute] = '';
-          }
-        }
-      });
-      this.description = card.description;
-    },
-    initialFirstName: function(value) {
-      this.firstName = value;
-    },
-    initialLastName: function(value) {
-      this.lastName = value;
-    },
-    newCard: function(isNew) {
-      if (isNew !== undefined && isNew) {
-        this.edit = true;
-      }
-    },
     edit: function(edit) {
       if (!edit && this.patch.length !== 0 && !this.newCard) {
         // cleaning up after done editing
@@ -273,6 +274,41 @@ export default {
         this.original = '';
         this.patch = [];
       }
+    },
+    initialFirstName: function(value) {
+      this.attributes.firstName = value;
+    },
+    initialLastName: function(value) {
+      this.attributes.lastName = value;
+    },
+    newCard: function(isNew) {
+      if (isNew !== undefined && isNew) {
+        this.edit = true;
+      }
+    },
+    attributes: {
+      handler: function(val) {
+        this.errors = [];
+      },
+      deep: true,
+    },
+    vcard: function(card) {
+      this.original = JSON.stringify(card);
+      // populate data
+      const attributes = this.attributes;
+      const optionalAttributes = Object.keys(attributes.optional);
+      optionalAttributes.forEach((attribute) => {
+        if (attribute in card) {
+          attributes.optional[attribute] = card[attribute];
+        } else {
+          if (attribute === 'email' || attribute === 'telephone') {
+            attributes.optional[attribute] = [];
+          } else {
+            attributes.optional[attribute] = '';
+          }
+        }
+      });
+      attributes.description = card.description;
     },
   },
 };
