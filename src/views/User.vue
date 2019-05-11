@@ -1,12 +1,19 @@
 <template>
   <div id="user">
     <div id="sidebar">
-      <div id='mobile-menu'>
-        <img id="menu-icon" src="../assets/menu-icon.svg">
-        <img class="logo" src="../assets/logo.svg">
-      </div>
-      <div class="mobile-hide">
-        <img class="logo" src="../assets/logo.svg">
+      <img class="logo" src="../assets/logo.svg">
+      <h1>{{displayName}}</h1>
+      <span>Settings</span>
+      <br>
+      <a v-on:click.prevent="logout">Log out</a>
+    </div>
+    <div id='mobile-menu'>
+      <img id="menu-icon" src="../assets/menu-icon.svg"
+        v-on:click="active = !active">
+      <img class="logo" src="../assets/logo.svg">
+      <div class="menu-full-cover"
+        v-on:click="acitve = !active"
+        v-bind:class="{menuActive: active}">
         <h1>{{displayName}}</h1>
         <span>Settings</span>
         <br>
@@ -14,6 +21,7 @@
       </div>
     </div>
     <card-manager id="card-manager"
+      v-bind:class="{menuHide: active}"
       v-bind:cards="cards"
       v-bind:initialFirstName="firstName"
       v-bind:initialLastName="lastName"/>
@@ -27,6 +35,7 @@ export default {
   name: 'user',
   data: function() {
     return {
+      active: false,
       fullName: '',
       email: '',
       cards: [{}],
@@ -86,18 +95,29 @@ export default {
       next(err);
     });
   },
+  watch: {
+    active: function(val) {
+      if (val) {
+        document.body.classList.add('no-scroll');
+      } else {
+        document.body.classList.remove('no-scroll');
+      }
+    },
+  },
 };
 </script>
 <style lang="scss" scoped>
   #user {
     display: flex;
+    background-color: $backgroundcolor;
     flex-wrap: wrap;
     font-size: 1.25em;
     height: 100%;
     padding: 2em 1em 1em 1em;
     @media #{$breakpoint-sm} {
       justify-content: center;
-      padding: 0.25rem;
+      padding: 0.25em;
+      margin-bottom: 1.5em;
     }
   }
   #sidebar {
@@ -112,34 +132,55 @@ export default {
       margin-top: 0.25rem;
       font-size: 2rem;
     }
-    #mobile-menu {
-      display: none;
-      @media #{$breakpoint-sm} {
-        display: block;
-        left: 0;
-        height: 2.5rem;
-        justify-content: space-between;
-        #menu-icon {
-          display: block;
-          height: 100%;
-          float: left;
-        }
-        .logo {
-          float: right;
-          height: 2.5rem;
-        }
-      }
-    }
     @media #{$breakpoint-sm} {
-      flex: 0 2 90%;
+      display: none;
     }
     @media #{$breakpoint-md} {
       flex: 0 1 30%;
     }
   }
+  #mobile-menu {
+    display: none;
+    @media #{$breakpoint-sm} {
+      display: block;
+      left: 0;
+      height: $mobile-menu-height;
+      justify-content: space-between;
+      width: 100%;
+      .logo {
+        float: right;
+        margin-right: 5%;
+        height: 2.5rem;
+      }
+      .menuActive {
+        position: fixed;
+        visibility: visible !important;
+      }
+      #menu-icon {
+        float: left;
+        height: 100%;
+        margin-left: 4%;
+      }
+      .menu-full-cover {
+        display: block;
+        background-color: $backgroundcolor;
+        position: fixed;
+        top: $mobile-menu-height;
+        width: 100%;
+        height: 100%;
+        visibility: hidden;
+        z-index: 1000;
+      }
+    }
+    @media #{$breakpoint-md}, #{$breakpoint-lg} {
+      display: none;
+    }
+  }
   #card-manager {
-    flex: 0 2 66%;
     box-sizing: border-box;
+    margin-top: 0.25rem;
+    flex: 0 2 66%;
+    z-index: 600;
     @media #{$breakpoint-sm} {
       flex: 0 2 90%;
     }

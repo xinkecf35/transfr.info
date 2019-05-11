@@ -7,6 +7,9 @@ body {
 .no-margin {
     margin: 0;
 }
+.no-scroll {
+    overflow: hidden;
+}
 .mobile-hide {
     @media #{$breakpoint-sm} {
         display: none;

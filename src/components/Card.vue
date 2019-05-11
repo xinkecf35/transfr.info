@@ -318,6 +318,7 @@ export default {
     position: relative;
     text-align: left;
     box-sizing: border-box;
+    margin-bottom: 1em;
     @media #{$breakpoint-md} {
       width: 100%;
     }

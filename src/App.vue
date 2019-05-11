@@ -65,7 +65,7 @@ button {
 #nav-links {
   justify-content: flex-end;
   display: flex;
-  flex-direction: row-wrap;
+  flex-direction: row;
   flex-grow: 2;
   order: 2;
   margin-right: 2em;
