@@ -80,18 +80,20 @@ export default {
     cardManager,
   },
   beforeRouteEnter(to, from, next) {
+    // Fetch Data if appropriate
     let userDataURL = 'https://api.transfr.info/v1/userdata/user';
     if (process.env.NODE_ENV === 'development') {
       userDataURL = 'https://api.transfr.test/v1/userdata/user';
     }
+    console.log(userDataURL);
     let userDataPromise = ajaxRequest('GET', userDataURL);
     userDataPromise.then(function(response) {
-      if (response.meta.success) {
-        next((vm) => vm.populateData(response.user));
-      } else {
-        next(false);
-      }
+      next((vm) => vm.populateData(response.user));
     }).catch(function(err) {
+      // failed likely due to a authentication error
+      if (err.status === 401) {
+        next({name: 'login'});
+      }
       next(err);
     });
   },
