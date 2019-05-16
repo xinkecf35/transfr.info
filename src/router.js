@@ -1,13 +1,16 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Home from './views/Home.vue';
-import Login from './views/Login.vue';
-import Signup from './views/Signup.vue';
+import Home from './views/Home';
+import Login from './views/Login';
+import Signup from './views/Signup';
+import NotFound from './views/NotFound';
 
 Vue.use(Router);
 
-const user = () => import(/* webpackChunkName: "user" */ './views/User.vue');
-const about = () => import(/* webpackChunkName: "about" */ './views/About.vue');
+const user = () => import(/* webpackChunkName: "user" */ './views/User');
+const about = () => import(/* webpackChunkName: "about" */ './views/About');
+const publicCard = () => import(/* webpackChunkName:
+    "publicCard" */ './views/PublicCard');
 
 export default new Router({
   mode: 'history',
@@ -34,9 +37,18 @@ export default new Router({
       component: Signup,
     },
     {
+      path: '/card/:card',
+      name: 'publicCard',
+      component: publicCard,
+    },
+    {
       path: '/user/:username',
       name: 'user',
       component: user,
+    },
+    {
+      path: '*',
+      component: NotFound,
     },
   ],
 });

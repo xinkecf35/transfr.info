@@ -12,7 +12,7 @@
         v-on:click="active = !active">
       <img class="logo" src="../assets/logo.svg">
       <div class="menu-full-cover"
-        v-on:click="acitve = !active"
+        v-on:click="active = !active"
         v-bind:class="{menuActive: active}">
         <h1>{{displayName}}</h1>
         <span>Settings</span>
@@ -85,7 +85,6 @@ export default {
     if (process.env.NODE_ENV === 'development') {
       userDataURL = 'https://api.transfr.test/v1/userdata/user';
     }
-    console.log(userDataURL);
     let userDataPromise = ajaxRequest('GET', userDataURL);
     userDataPromise.then(function(response) {
       next((vm) => vm.populateData(response.user));

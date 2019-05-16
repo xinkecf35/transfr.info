@@ -63,6 +63,9 @@ import EditInput from '@/components/EditInput';
 import Error from '@/components/Error';
 import {isEmptyOrNull} from '../functions';
 
+// Array of attributes that should be handled specially
+const complexAttributes = ['address', 'email', 'telephone'];
+
 /**
  * Function to create a patch object for JSON patch (RFC 6902)
  * @param {String} attribute path to be patched
@@ -118,7 +121,7 @@ export default {
         {attribute: 'Description',
           value: attributes.description, complex: false},
         {attribute: 'Address',
-          value: attributes.optional.address, complex: false},
+          value: attributes.optional.address, complex: true},
         {attribute: 'Birthday',
           value: attributes.optional.birthday, complex: false},
         {attribute: 'Email', value: attributes.optional.email, complex: true},
@@ -141,8 +144,7 @@ export default {
      */
     objectOptionals: function() {
       let result = {};
-      const include = ['telephone', 'email'];
-      include.forEach((key) => {
+      complexAttributes.forEach((key) => {
         if (this.attributes.optional[key].length !== 0) {
           result[key] = this.attributes.optional[key];
         }
@@ -160,7 +162,8 @@ export default {
     simpleOptionals: function() {
       let result = {};
       const keys = Object.keys(this.attributes.optional);
-      const exclude = ['telephone', 'email', 'description'];
+
+      const exclude = ['address', 'description', 'email', 'telephone'];
       const filtered = keys.filter(function(property) {
         // if the property is not in exclude array, add it
         return exclude.indexOf(property) === -1;
@@ -301,7 +304,7 @@ export default {
         if (attribute in card) {
           attributes.optional[attribute] = card[attribute];
         } else {
-          if (attribute === 'email' || attribute === 'telephone') {
+          if (complexAttributes.indexOf(attribute) > -1) {
             attributes.optional[attribute] = [];
           } else {
             attributes.optional[attribute] = '';
