@@ -92,8 +92,8 @@ export default {
     addNewCard: function() {
       this.cards.push({
         description: 'New Card',
-        fullName: this.lastName +';'+this.firstName,
-        name: this.firstName + ' ' + this.lastName,
+        name: this.lastName +';'+this.firstName,
+        fullName: this.firstName + ' ' + this.lastName,
       });
       this.currentCardIndex = this.cards.length - 1;
       this.addCard = true;
@@ -162,8 +162,8 @@ export default {
       this.addCard = true;
       this.cards.push({
         description: 'New Card',
-        fullName: this.lastName +';'+this.firstName,
-        name: this.firstName + ' ' + this.lastName,
+        name: this.lastName +';'+this.firstName,
+        fullName: this.firstName + ' ' + this.lastName,
       });
     },
     switchCard: function(payload) {

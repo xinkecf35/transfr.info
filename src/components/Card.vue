@@ -205,7 +205,6 @@ export default {
       // parse orignal card to undo changes
       if (this.original) {
         const card = JSON.parse(this.original);
-        console.log(card);
         this.patch.forEach((operation) => {
           // Extract attribute from path
           const attribute = operation.path.substring(1);
