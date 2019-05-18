@@ -183,7 +183,7 @@ export default {
     flex: 0 2 66%;
     z-index: 600;
     @media #{$breakpoint-sm} {
-      flex: 0 2 90%;
+      flex: 0 2 95%;
     }
     @media #{$breakpoint-md} {
       flex: 0 2 70%;

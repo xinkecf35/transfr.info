@@ -15,8 +15,18 @@
         <div class="column-values column-list">
           <ul>
             <li v-for="item in objectOptionals[key]" :key="item.id">
-              <div>{{item.type}}</div>
-              <div>{{item.value}}</div>
+              <div class="column-list-label" >{{item.type}}</div>
+              <div class="column-list-value" v-if="key !== 'address'">
+                <span>{{item.value}}</span>
+              </div>
+              <div v-else>
+                <ul style="min-width: 50%; float:right">
+                  <li v-for="item in extractLexicalArray(item.value)"
+                    :key="item.id" class="address-list">
+                    <span>{{item}}</span>
+                  </li>
+                </ul>
+              </div>
             </li>
           </ul>
         </div>
@@ -234,6 +244,16 @@ export default {
       this.edit = !this.edit;
       this.$emit('card-delete', {profileId: this.vcard.profileId});
     },
+    extractLexicalArray(data) {
+      const components = data.split(';');
+      return [
+        // in Format: 1st Line Adr., PO, 2nd Line Adr., City State ZIP, 
+        components[2],
+        components[0],
+        components[1],
+        components[3] + ' ' + ' ' + components[4] + ' ' + components[5],
+      ];
+    },
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
       const attributes = this.attributes;
@@ -419,7 +439,7 @@ export default {
   }
   .column-props {
     @extend %column-properties;
-    width: 35%;
+    width: 30%;
     text-align: right;
     font-weight: 600;
     @media #{$breakpoint-sm} {
@@ -429,7 +449,7 @@ export default {
   }
   .column-values {
     @extend %column-properties;
-    width: 65%;
+    width: 70%;
     text-align: left;
     @media #{$breakpoint-sm} {
       width: 95%;
@@ -442,10 +462,18 @@ export default {
     ul {
       padding: 0;
       list-style: none;
-      margin: 0;
+      margin: 0 0 0.1em 0;
       li {
         display: flex;
+        flex-flow: row nowrap;
         justify-content: space-around;
+      }
+      .column-list-label {
+        flex: 1 1 35%;
+      }
+      .column-list-value {
+        flex: 3 3 65%;
+        text-align: left;
       }
     }
   }
