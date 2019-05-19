@@ -6,6 +6,7 @@
       <div class="column-values">
         <input type="text" class="control"
           v-model="text"
+          v-on:focus.capture="addressFocusCheck()"
           v-on:change="$emit('update-edit', [attribute, text])">
       </div>
     </div>
@@ -13,25 +14,31 @@
     <div v-else-if="attribute === 'Address'" class="row">
       <div class="column-props">{{attribute}}</div>
       <div class="column-values">
-          <div class="address-input">
-            <input type="text" class="control-label" placeholder="Label"
-            v-model="label">
+          <div class="address-input" v-on:focus.capture="addressFocusCheck()">
+            <input type="text" v-model="label"
+            id="address-label" class="control-label" placeholder="Label">
             <div class ="address-inputs">
-              <input type="text" class="control-address-value"
-              placeholder="Address Line 1" v-model="addressComponents.line1">
-              <input type="text" class="control-address-value"
-              placeholder="Address Line 2" v-model="addressComponents.line2">
+              <input type="text" placeholder="Address Line 1"
+              id="address-line1" class="control-address-value"
+              v-model="addressComponents.line1">
+              <input type="text" placeholder="Address Line 2"
+              id="address-line2" class="control-address-value"
+              v-model="addressComponents.line2">
               <div class="control-address-row">
-                <input type="text" class="sub-left control-address-value"
-                  placeholder="City" v-model="addressComponents.city">
-                <input type="text" class="sub-right control-address-value"
-                  placeholder="State" v-model="addressComponents.state">
+                <input type="text" placeholder="City"
+                  id="address-city" class="sub-left control-address-value"
+                  v-model="addressComponents.city">
+                <input type="text" placeholder="State"
+                  id="address-state"  class="sub-right control-address-value"
+                  v-model="addressComponents.state">
               </div>
               <div class="control-address-row">
-                <input type="text" class="sub-left control-address-value"
-                  placeholder="ZIP Code" v-model="addressComponents.zipcode">
-                <input type="text" class="sub-right control-address-value"
-                  placeholder="PO Box" v-model="addressComponents.POBox">
+                <input type="text" placeholder="ZIP Code"
+                  id="address-zip" class="sub-left control-address-value"
+                  v-model="addressComponents.zipcode">
+                <input type="text" placeholder="PO Box"
+                  id="address-pobox" class="sub-right control-address-value"
+                  v-model="addressComponents.POBox">
               </div>
             </div>
             <button class="control-button"
@@ -40,6 +47,7 @@
             </button>
           </div>
           <div class="address-input"
+            v-on:focus.capture="addressFocusCheck()"
             v-for="(item, index) in formattedAddresses" :key="item.id">
             <input class="control-label" type="text" v-model="item.type"
               v-on:change="$emit('update-edit', [attribute, text, index])">
@@ -76,9 +84,10 @@
     </div>
     <div v-else class="row">
       <div class="column-props">{{attribute}}</div>
-      <div class="column-values">
+      <div class="column-values" v-on:focus.capture="addressFocusCheck()">
           <div class="complex-input"
-          v-on:blur.capture="addComplexValue(attribute, complexData)">
+            v-on:focus.capture="addressFocusCheck()"
+            v-on:blur.capture="addComplexValue(attribute, complexData)">
             <input type="text" class="control-label" placeholder="Label"
             v-model="label"
             v-on:keyup.enter="addComplexValue(attribute, complexData)">
@@ -92,6 +101,7 @@
           </div>
           <!-- show other values for editting -->
           <div class="complex-input"
+            v-on:focus.capture="addressFocusCheck()"
             v-for="(item, index) in text" :key="item.id">
             <input class="control-label" type="text" v-model="item.type"
               v-on:change="$emit('update-edit', [attribute, text, index])">
@@ -128,13 +138,6 @@ export default {
     addressKeys: function() {
       return Object.keys(this.addressComponents);
     },
-    complexData: function() {
-      if (this.label !== '' && this.value !== '') {
-        return {type: this.label, value: this.value};
-      } else {
-        return null;
-      }
-    },
     addressData: function() {
       const components = this.addressComponents;
       const keys = this.addressKeys;
@@ -146,6 +149,13 @@ export default {
         };
       }
       return null;
+    },
+    complexData: function() {
+      if (this.label !== '' && this.value !== '') {
+        return {type: this.label, value: this.value};
+      } else {
+        return null;
+      }
     },
     formattedAddresses: function() {
       if (this.attribute !== 'Address') return undefined;
@@ -166,7 +176,7 @@ export default {
       return addresses;
     },
   },
-  event: 'update:edit',
+  event: 'update-edit',
   methods: {
     addComplexValue: function(attribute, data) {
       if (data !== null) {
@@ -176,6 +186,14 @@ export default {
         this.addressKeys.forEach((key) => {
           this.addressComponents[key] = '';
         });
+      }
+    },
+    addAddressValue: function(data) {
+      console.log(window.event);
+    },
+    addressFocusCheck: function() {
+      if (document.activeElement.id.indexOf('address-') === -1) {
+        this.addComplexValue('Address', this.addressData);
       }
     },
     updateAddress: function(data, index) {
@@ -253,9 +271,6 @@ export default {
     display: table;
     clear: both;
   }
-}
-input[type="text"] > * {
-  border-radius: 2px;
 }
 input[type="text"]:focus {
   outline: none;

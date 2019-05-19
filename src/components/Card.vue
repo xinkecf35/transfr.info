@@ -221,7 +221,7 @@ export default {
           if (attribute === 'description') {
             this.attributes.description = card.description;
           } else {
-            this.optional[attribute] = card[attribute] || '';
+            this.attributes.optional[attribute] = card[attribute] || '';
           }
         });
       }
