@@ -1,7 +1,10 @@
 <template>
   <div id="card">
     <div id="card-info" class="level-1">
-
+      <p>Now preparing to download contact information for</p>
+        <h2>{{name}}</h2>
+      <p>If download does not start automatically click</p>
+      <a>here.</a>
     </div>
   </div>
 </template>
@@ -35,7 +38,7 @@ export default {
     }
     let cardDataPromise = ajaxRequest('GET', cardDataURL);
     cardDataPromise.then(function(response) {
-      next((vm) => vm.convertJSONtoVCard(response.card));
+      next((vm) => vm.createVCard(response.card));
     }).catch(function(err) {
       if (err.status === 404) {
         next((vm) => vm.notFound = true);
@@ -43,8 +46,26 @@ export default {
       next(err);
     });
   },
+  data: function() {
+    return {
+      name: '',
+      blob: {},
+    };
+  },
   methods: {
-    createVCard: function() {
+    createVCard: function(cardJSON) {
+      this.name = cardJSON.fullName || '';
+      const data = this.convertJSONtoVCard(cardJSON);
+      // creating file with Blob constructor, subject to change
+      const vCardBlob = new Blob([data], {type: 'text/vcard'});
+      this.blob = vCardBlob;
+      // add create a tag and automatically click it to start download
+      const element = document.createElement('a');
+      element.href = window.URL.createObjectURL(vCardBlob);
+      element.download = 'transfr.vcf';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
     },
     convertJSONtoVCard: function(cardJSON) {
       // Prefix data with VCard identifier and Product ID
@@ -72,7 +93,6 @@ export default {
       });
       // End Data with VCard terminator
       vCardData += 'END:VCARD\r\n';
-      console.log(vCardData);
       return vCardData;
     },
   },
