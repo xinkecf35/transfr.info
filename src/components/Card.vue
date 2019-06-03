@@ -5,6 +5,16 @@
       <div id="header" class="row">
         <span>{{attributes.firstName}} {{attributes.lastName}}</span>
         <div id="edit">
+          <div id="share-button-container">
+            <button id="share-modal" class="level-1 share-button"
+              @click="presentShareModal()">
+              Share
+            </button>
+            <div id="share-popover" class="level-1">
+              <h4>Link to Card:</h4>
+              <input v-model="shareURL" readonly>
+            </div>
+          </div>
           <button @click="edit = !edit" class="level-1 editing-button">
             Edit
           </button>
@@ -118,6 +128,7 @@ export default {
           impp: '',
         },
       },
+      profileId: '',
       edit: false,
       patch: [],
       original: '',
@@ -185,6 +196,13 @@ export default {
       });
       return result;
     },
+    shareURL: function() {
+      let URL = 'https://transfr.info/card/' + this.profileId;
+      if (process.env.NODE_ENV === 'development') {
+        URL = 'https://transfr.test/card/' + this.profileId;
+      }
+      return URL;
+    },
   },
   components: {
     EditInput,
@@ -247,12 +265,30 @@ export default {
     extractLexicalArray(data) {
       const components = data.split(';');
       return [
-        // in Format: 1st Line Adr., PO, 2nd Line Adr., City State ZIP, 
+        // in Format: 1st Line Adr., PO, 2nd Line Adr., City State ZIP,
         components[2],
         components[0],
         components[1],
         components[3] + ' ' + ' ' + components[4] + ' ' + components[5],
       ];
+    },
+    presentShareModal: function() {
+      const shareElementRect =
+        document.getElementById('share-modal').getBoundingClientRect();
+      const popOverElement = document.getElementById('share-popover');
+      this.share = !this.share;
+      if (this.share) {
+        popOverElement.style.display = 'block';
+      } else {
+        popOverElement.style.display = 'none';
+        return;
+      }
+      const popOverElementRect = popOverElement.getBoundingClientRect();
+      const shareMidPoint = shareElementRect.width / 2;
+      const popOverMidPoint = popOverElementRect.width / 2;
+      const offset = Math.round(Math.abs(popOverMidPoint - shareMidPoint));
+      console.log(offset);
+      popOverElement.style.left = '-' + offset + 'px';
     },
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
@@ -296,6 +332,7 @@ export default {
         this.original = '';
         this.patch = [];
       }
+      this.share = false;
     },
     initialFirstName: function(value) {
       this.attributes.firstName = value;
@@ -318,6 +355,7 @@ export default {
       this.original = JSON.stringify(card);
       // populate data
       const attributes = this.attributes;
+      this.profileId = card.profileId;
       const optionalAttributes = Object.keys(attributes.optional);
       optionalAttributes.forEach((attribute) => {
         if (attribute in card) {
@@ -345,7 +383,7 @@ export default {
       width: 100%;
     }
     @media #{$breakpoint-lg} {
-      width: 84.333%;
+      width: 91.667%;
     }
   }
   .card-main {
@@ -374,7 +412,7 @@ export default {
     }
     #edit{
       display: flex;
-      flex: 0 1 41.666%;
+      flex: 1 1 41.666%;
       justify-content: flex-end;
     }
     .editing-button {
@@ -403,10 +441,40 @@ export default {
     .editing-button-error {
       @extend .editing-button;
       background-color: $error-red;
+      flex: 0 1 16.666%;
       @media (hover: hover) {
         &:hover {
           background-color: $error-highlight;
         }
+      }
+    }
+    #share-button-container {
+      box-sizing: border-box;
+      flex: 0 1 33.333%;
+    }
+    .share-button {
+      @extend .editing-button;
+      background-color: $accentcolor;
+    }
+    #share-popover {
+      display: none;
+      background-color: $backgroundcolor;
+      border-radius: 6px;
+      box-sizing: border-box;
+      font-size: 0.85em;
+      position: absolute;
+      padding: 1em;
+      top: 3em;
+      width: 20rem;
+      @media #{$breakpoint-sm} {
+        width: 13.5rem;
+      }
+      @media #{$breakpoint-md} {
+        width: 18rem;
+      }
+      h4 {
+        font-size: 1.1em;
+        margin: 0.5em 0em 0.25em 0em;
       }
     }
   }

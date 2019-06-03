@@ -3,13 +3,16 @@
     <div id="card-info" class="level-1">
       <p>Now preparing to download contact information for</p>
         <h2>{{name}}</h2>
-      <p>If download does not start automatically click</p>
-      <a>here.</a>
+      <p>If download does not start automatically start click</p>
+      <a id="card-download" href="#card-download"
+        v-on:click.prevent="manualDownload($event)">
+        here.
+      </a>
     </div>
   </div>
 </template>
 <script>
-import {ajaxRequest} from '@/functions';
+import {ajaxRequest, isEmptyOrNull} from '@/functions';
 
 // Array of attributes that should be handled specially
 const complexAttributes = ['address', 'email', 'telephone'];
@@ -37,9 +40,9 @@ export default {
       cardDataURL = 'https://api.transfr.test/v1/card/' + cardId;
     }
     let cardDataPromise = ajaxRequest('GET', cardDataURL);
-    cardDataPromise.then(function(response) {
-      next((vm) => vm.createVCard(response.card));
-    }).catch(function(err) {
+    cardDataPromise.then(
+      (response) => next((vm) => vm.createVCard(response.card))
+    ).catch(function(err) {
       if (err.status === 404) {
         next((vm) => vm.notFound = true);
       }
@@ -49,7 +52,7 @@ export default {
   data: function() {
     return {
       name: '',
-      blob: {},
+      data: '',
     };
   },
   methods: {
@@ -58,13 +61,13 @@ export default {
       const data = this.convertJSONtoVCard(cardJSON);
       // creating file with Blob constructor, subject to change
       const vCardBlob = new Blob([data], {type: 'text/vcard'});
-      this.blob = vCardBlob;
+      this.data = data;
       // add create a tag and automatically click it to start download
       const element = document.createElement('a');
       element.href = window.URL.createObjectURL(vCardBlob);
       element.download = 'transfr.vcf';
       document.body.appendChild(element);
-      element.click();
+      window.setTimeout(() => element.click(), 2000);
       document.body.removeChild(element);
     },
     convertJSONtoVCard: function(cardJSON) {
@@ -94,6 +97,21 @@ export default {
       // End Data with VCard terminator
       vCardData += 'END:VCARD\r\n';
       return vCardData;
+    },
+    manualDownload: function(e) {
+      const cardId = this.$router.currentRoute.params.card;
+      if (!isEmptyOrNull(this.data)) {
+        let cardDataURL = 'https://api.transfr.info/v1/card/' + cardId;
+        if (process.env.NODE_ENV === 'development') {
+          cardDataURL = 'https://api.transfr.test/v1/card/' + cardId;
+        }
+        const dataPromise = ajaxRequest('GET', cardDataURL);
+        dataPromise.then(
+          (response) => this.convertJSONtoVCard(response.card)
+        ).then((vcard) => {
+          this.data = vcard;
+        }).catch((err) => console.log(err));
+      }
     },
   },
   props: {
