@@ -12,7 +12,13 @@
             </button>
             <div id="share-popover" class="level-1">
               <h4>Link to Card:</h4>
-              <input v-model="shareURL" readonly>
+              <div id="share-link-row">
+                <input type="text" class="share-link-text" readonly
+                   v-model="shareURL">
+                <button id="copyLink" class="share-link-button">
+                  <img src="../assets/clipboard.svg">
+                </button>
+              </div>
             </div>
           </div>
           <button @click="edit = !edit" class="level-1 editing-button">
@@ -466,15 +472,39 @@ export default {
       padding: 1em;
       top: 3em;
       width: 20rem;
+      h4 {
+        font-size: 1.1em;
+        margin: 0.5em 0em 0.25em 0em;
+      }
+      #share-link-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: row nowrap;
+        align-items: center;
+        height: 2em;
+      }
+      .share-link-text {
+        flex: auto;
+        min-width: 0;
+      }
+      .share-link-button {
+        flex: 1 1 15%;
+        background-color: transparent;
+        border: none;
+        margin: 0;
+        img {
+          width: 100%;
+          height: 2em;
+          &:hover {
+            box-shadow: 0 4px 4px -1px rgba(196, 202, 29, 0.33);
+          }
+        }
+      }
       @media #{$breakpoint-sm} {
         width: 13.5rem;
       }
       @media #{$breakpoint-md} {
         width: 18rem;
-      }
-      h4 {
-        font-size: 1.1em;
-        margin: 0.5em 0em 0.25em 0em;
       }
     }
   }

@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   devServer: {
     compress: true,
-    public: 'transfr.test',
+    public: 'transfr.test' 
   },
   chainWebpack: (config) => {
     const types = ['vue-modules', 'vue', 'normal-modules', 'normal'];
