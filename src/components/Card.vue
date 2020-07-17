@@ -293,7 +293,6 @@ export default {
       const shareMidPoint = shareElementRect.width / 2;
       const popOverMidPoint = popOverElementRect.width / 2;
       const offset = Math.round(Math.abs(popOverMidPoint - shareMidPoint));
-      console.log(offset);
       popOverElement.style.left = '-' + offset + 'px';
     },
     updateEditedCard: function(payload) {

@@ -73,7 +73,7 @@ export default {
       logoutPromise.then(function(response) {
         sessionStorage.removeItem('csrf');
         router.push({name: 'home'});
-      }).catch((err) => console.log(err));
+      }).catch((err) => this.$emit('error/api-fetch', err));
     },
   },
   components: {
@@ -92,8 +92,9 @@ export default {
       // failed likely due to a authentication error
       if (err.status === 401) {
         next({name: 'login'});
+      } else {
+        next(err);
       }
-      next(err);
     });
   },
   watch: {

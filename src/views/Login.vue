@@ -63,7 +63,6 @@ export default {
       const router = this.$router;
       let errors = this.errors = [];
       if (this.isValidInput()) {
-        console.log('Sending request');
         const requestBody = JSON.stringify(userInput);
         let authURL = 'https://api.transfr.info/v1/users/';
         if (process.env.NODE_ENV === 'development') {
