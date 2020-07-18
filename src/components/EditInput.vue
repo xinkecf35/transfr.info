@@ -188,9 +188,6 @@ export default {
         });
       }
     },
-    addAddressValue: function(data) {
-      console.log(window.event);
-    },
     addressFocusCheck: function() {
       if (document.activeElement.id.indexOf('address-') === -1) {
         this.addComplexValue('Address', this.addressData);

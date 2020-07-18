@@ -110,7 +110,7 @@ export default {
           (response) => this.convertJSONtoVCard(response.card)
         ).then((vcard) => {
           this.data = vcard;
-        }).catch((err) => console.log(err));
+        }).catch((err) => this.$emit('error/api-fetch', err));
       }
     },
   },

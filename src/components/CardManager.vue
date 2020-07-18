@@ -116,7 +116,7 @@ export default {
           throw response.meta.message;
         }
         cards.splice(index, 1, response.user);
-      }).catch((err) => console.log(err));
+      }).catch((err) => this.$emit('error/api-fetch', err));
     },
     deleteCard: function(payload) {
       const cards = this.cards;
@@ -137,7 +137,7 @@ export default {
         }
         this.currentCardIndex = response.user.vcards.length - 1;
         cards.splice(deleteIndex, 1);
-      }).catch((err) => console.log(err));
+      }).catch((err) => this.$emit('error/api-fetch', err));
     },
     patchCard: function(payload) {
       const index = this.currentCardIndex;
@@ -156,7 +156,7 @@ export default {
           throw response.meta.message;
         }
         cards.splice(index, 1, response.card);
-      }).catch((err) => console.log(err));
+      }).catch((err) => this.$emit('error/api-fetch', err));
     },
     pushCard: function() {
       this.addCard = true;
