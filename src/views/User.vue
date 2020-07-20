@@ -28,7 +28,7 @@
   </div>
 </template>
 <script>
-import {mapState} from 'vuex';
+import {mapActions, mapGetters, mapState} from 'vuex';
 import {ajaxRequest} from '@/functions';
 import cardManager from '@/components/CardManager';
 
@@ -37,34 +37,17 @@ export default {
   data: function() {
     return {
       active: false,
-      fullName: '',
-      email: '',
-      cards: [{}],
     };
   },
   computed: {
-    firstName: function() {
-      const names = this.fullName.split(';');
-      return names[1];
-    },
-    lastName: function() {
-      const names = this.fullName.split(';');
-      return names[0];
-    },
-    displayName: function() {
-      return this.firstName + ' ' + this.lastName;
-    },
     ...mapState({
       csrfToken: (state) => state.csrf,
+      email: (state) => state.user.email,
     }),
+    ...mapGetters('user', ['displayName', 'firstName', 'lastName']),
+    ...mapGetters('cards', {cards: 'cardsArray'}),
   },
   methods: {
-    populateData: function(data) {
-      this.fullName = data.name;
-      this.email = data.email;
-      this.cards = data.vcards;
-      this.$store.dispatch('loadDataOnLogin');
-    },
     logout: function() {
       let logoutURL = 'https://api.transfr.info/v1/users/token?logout=true';
       if (process.env.NODE_ENV === 'development') {
@@ -73,10 +56,12 @@ export default {
       const router = this.$router;
       let logoutPromise = ajaxRequest('POST', logoutURL);
       logoutPromise.then((response) => {
-        this.$store.commit('clearCSRF');
-        router.push({name: 'home'});
+        this.$store.dispatch('clear').then(() => {
+          router.push({name: 'home'});
+        });
       }).catch((err) => this.$emit('error/api-fetch', err));
     },
+    ...mapActions(['loadDataOnLogin']),
   },
   components: {
     cardManager,
@@ -88,8 +73,8 @@ export default {
       userDataURL = 'https://api.transfr.test/v1/userdata/user';
     }
     let userDataPromise = ajaxRequest('GET', userDataURL);
-    userDataPromise.then(function(response) {
-      next((vm) => vm.populateData(response.user));
+    userDataPromise.then(() => {
+      next((vm) => vm.loadDataOnLogin());
     }).catch(function(err) {
       // failed likely due to a authentication error
       if (err.status === 403) {

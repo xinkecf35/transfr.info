@@ -4,10 +4,18 @@
 
 const state = () => {};
 
-const actions = {
+const actions = {};
+
+const getters = {
+  cardsArray(state) {
+    return Object.values(state);
+  },
 };
 
 const mutations = {
+  clear(state) {
+    Object.keys(state).forEach((key) => delete state[key]);
+  },
   // Takes the cards array and flattens it a little
   // basically profileId is mapped to the cards instead
   // of the old style of using array indexes
@@ -15,7 +23,6 @@ const mutations = {
     if (cards instanceof Array) {
       cards.forEach((card) => {
         const profileId = card.profileId;
-        delete card.profileId;
         state[profileId] = card;
       });
     }
@@ -25,6 +32,7 @@ const mutations = {
 export default {
   namespaced: true,
   actions,
+  getters,
   mutations,
   state,
 };
