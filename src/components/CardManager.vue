@@ -30,9 +30,7 @@
           <template v-else>
             <card id="card"
               ref="currentCard"
-              v-bind:vcard ="currentCard"
-              v-bind:initialFirstName="firstName"
-              v-bind:initialLastName="lastName"
+              :profileId="currentCardId"
               v-bind:newCard="addCard"
               v-on:card-update="patchCard"
               v-on:card-create="createCard"
@@ -45,7 +43,7 @@
   </div>
 </template>
 <script>
-import {mapState} from 'vuex';
+import {mapGetters, mapState} from 'vuex';
 import card from '@/components/Card';
 import moreCards from '@/components/MoreCards';
 import {ajaxRequest, isEmptyOrNull} from '../functions';
@@ -69,17 +67,17 @@ export default {
       return this.firstName + ' ' + this.lastName;
     },
     cardDescription: function() {
-      if (isEmptyOrNull(this.currentCard)) {
+      if (isEmptyOrNull(this.currentCardId)) {
         return 'Welcome';
       }
-      return this.currentCard.description;
+      return this.$store.state.cards[this.currentCardId].description;
     },
-    currentCard: function() {
-      if (this.cards.length !== 0) {
-        return this.cards[this.currentCardIndex];
-      }
-      return null;
+    currentCardId() {
+      return this.cards[this.currentCardIndex].profileId;
     },
+    ...mapGetters('cards', {
+      cards: 'cardsArray',
+    }),
     ...mapState({
       csrfToken: (state) => state.csrf,
     }),
@@ -170,19 +168,6 @@ export default {
     switchCard: function(payload) {
       this.$refs.currentCard.edit = false;
       this.currentCardIndex = payload;
-    },
-  },
-  props: {
-    cards: Array,
-    initialFirstName: String,
-    initialLastName: String,
-  },
-  watch: {
-    initialFirstName: function(value) {
-      this.firstName = value;
-    },
-    initialLastName: function(value) {
-      this.lastName = value;
     },
   },
 };

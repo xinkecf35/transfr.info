@@ -3,7 +3,7 @@
     <!-- Regular View -->
     <div v-if="!edit" class="grid card-main level-2">
       <div id="header" class="row">
-        <span>{{attributes.firstName}} {{attributes.lastName}}</span>
+        <span>{{firstName}} {{lastName}}</span>
         <div id="edit">
           <div id="share-button-container">
             <button id="share-modal" class="level-1 share-button"
@@ -85,9 +85,10 @@
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex';
 import EditInput from '@/components/EditInput';
 import Error from '@/components/Error';
-import {isEmptyOrNull} from '../functions';
+import {isEmptyOrNull} from '@/functions';
 
 // Array of attributes that should be handled specially
 const complexAttributes = ['address', 'email', 'telephone'];
@@ -117,12 +118,10 @@ function generatePatchObject(attribute, currentValue, newValue) {
 }
 
 export default {
-  data: function() {
+  data() {
     return {
       attributes: {
         description: '',
-        firstName: '',
-        lastName: '',
         optional: {
           telephone: [],
           email: [],
@@ -134,7 +133,6 @@ export default {
           impp: '',
         },
       },
-      profileId: '',
       edit: false,
       patch: [],
       original: '',
@@ -161,7 +159,7 @@ export default {
           value: attributes.optional.telephone, complex: true},
       ];
     },
-    name: function() {
+    name() {
       return this.firstName + ' ' + this.lastName;
     },
     /*
@@ -169,7 +167,7 @@ export default {
      * This simply uses an array as include and iterates over that
      * returns an object filled the key value pairs
      */
-    objectOptionals: function() {
+    objectOptionals() {
       let result = {};
       complexAttributes.forEach((key) => {
         if (this.attributes.optional[key].length !== 0) {
@@ -209,15 +207,17 @@ export default {
       }
       return URL;
     },
+    ...mapGetters('user', ['firstName', 'lastName']),
   },
   components: {
     EditInput,
     Error,
   },
   props: {
-    vcard: Object,
-    initialFirstName: String,
-    initialLastName: String,
+    profileId: {
+      type: String,
+      required: true,
+    },
     newCard: Boolean,
   },
   events: [
@@ -278,6 +278,26 @@ export default {
         components[3] + ' ' + ' ' + components[4] + ' ' + components[5],
       ];
     },
+    // For watcher
+    populateData(id) {
+      const card = this.$store.state.cards[id];
+      this.original = JSON.stringify(card);
+      // populate data to local state
+      const attributes = this.attributes;
+      const optionalAttributes = Object.keys(attributes.optional);
+      optionalAttributes.forEach((attribute) => {
+        if (attribute in card) {
+          attributes.optional[attribute] = card[attribute];
+        } else {
+          if (complexAttributes.indexOf(attribute) > -1) {
+            attributes.optional[attribute] = [];
+          } else {
+            attributes.optional[attribute] = '';
+          }
+        }
+      });
+      attributes.description = card.description;
+    },
     presentShareModal: function() {
       const shareElementRect =
         document.getElementById('share-modal').getBoundingClientRect();
@@ -321,6 +341,10 @@ export default {
     },
   },
   watch: {
+    profileId: {
+      handler: 'populateData',
+      immediate: true,
+    },
     edit: function(edit) {
       if (!edit && this.patch.length !== 0 && !this.newCard) {
         // cleaning up after done editing
@@ -339,12 +363,6 @@ export default {
       }
       this.share = false;
     },
-    initialFirstName: function(value) {
-      this.attributes.firstName = value;
-    },
-    initialLastName: function(value) {
-      this.attributes.lastName = value;
-    },
     newCard: function(isNew) {
       if (isNew !== undefined && isNew) {
         this.edit = true;
@@ -355,25 +373,6 @@ export default {
         this.errors = [];
       },
       deep: true,
-    },
-    vcard: function(card) {
-      this.original = JSON.stringify(card);
-      // populate data
-      const attributes = this.attributes;
-      this.profileId = card.profileId;
-      const optionalAttributes = Object.keys(attributes.optional);
-      optionalAttributes.forEach((attribute) => {
-        if (attribute in card) {
-          attributes.optional[attribute] = card[attribute];
-        } else {
-          if (complexAttributes.indexOf(attribute) > -1) {
-            attributes.optional[attribute] = [];
-          } else {
-            attributes.optional[attribute] = '';
-          }
-        }
-      });
-      attributes.description = card.description;
     },
   },
 };

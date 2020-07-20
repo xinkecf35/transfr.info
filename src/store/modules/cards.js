@@ -17,8 +17,7 @@ const mutations = {
     Object.keys(state).forEach((key) => delete state[key]);
   },
   // Takes the cards array and flattens it a little
-  // basically profileId is mapped to the cards instead
-  // of the old style of using array indexes
+  // basically profileId is mapped to the cards
   setCards(state, cards) {
     if (cards instanceof Array) {
       cards.forEach((card) => {

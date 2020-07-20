@@ -21,10 +21,7 @@
       </div>
     </div>
     <card-manager id="card-manager"
-      v-bind:class="{menuHide: active}"
-      v-bind:cards="cards"
-      v-bind:initialFirstName="firstName"
-      v-bind:initialLastName="lastName"/>
+      v-bind:class="{menuHide: active}"/>
   </div>
 </template>
 <script>
@@ -44,8 +41,7 @@ export default {
       csrfToken: (state) => state.csrf,
       email: (state) => state.user.email,
     }),
-    ...mapGetters('user', ['displayName', 'firstName', 'lastName']),
-    ...mapGetters('cards', {cards: 'cardsArray'}),
+    ...mapGetters('user', ['displayName']),
   },
   methods: {
     logout: function() {
