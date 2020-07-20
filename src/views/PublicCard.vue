@@ -40,9 +40,9 @@ export default {
       cardDataURL = 'https://api.transfr.test/v1/card/' + cardId;
     }
     let cardDataPromise = ajaxRequest('GET', cardDataURL);
-    cardDataPromise.then(
-      (response) => next((vm) => vm.createVCard(response.card))
-    ).catch(function(err) {
+    cardDataPromise.then((response) => {
+      next((vm) => vm.createVCard(response.card));
+    }).catch(function(err) {
       if (err.status === 404) {
         next((vm) => vm.notFound = true);
       }
@@ -106,9 +106,9 @@ export default {
           cardDataURL = 'https://api.transfr.test/v1/card/' + cardId;
         }
         const dataPromise = ajaxRequest('GET', cardDataURL);
-        dataPromise.then(
-          (response) => this.convertJSONtoVCard(response.card)
-        ).then((vcard) => {
+        dataPromise.then((response) => {
+          this.convertJSONtoVCard(response.card);
+        }).then((vcard) => {
           this.data = vcard;
         }).catch((err) => this.$emit('error/api-fetch', err));
       }

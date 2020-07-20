@@ -45,6 +45,7 @@
   </div>
 </template>
 <script>
+import {mapState} from 'vuex';
 import card from '@/components/Card';
 import moreCards from '@/components/MoreCards';
 import {ajaxRequest, isEmptyOrNull} from '../functions';
@@ -73,15 +74,15 @@ export default {
       }
       return this.currentCard.description;
     },
-    csrfToken: function() {
-      return sessionStorage.getItem('csrf');
-    },
     currentCard: function() {
       if (this.cards.length !== 0) {
         return this.cards[this.currentCardIndex];
       }
       return null;
     },
+    ...mapState({
+      csrfToken: (state) => state.csrf,
+    }),
   },
   methods: {
     abortNew: function() {

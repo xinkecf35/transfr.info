@@ -28,6 +28,7 @@
   </div>
 </template>
 <script>
+import {mapState} from 'vuex';
 import {ajaxRequest} from '@/functions';
 import cardManager from '@/components/CardManager';
 
@@ -53,9 +54,9 @@ export default {
     displayName: function() {
       return this.firstName + ' ' + this.lastName;
     },
-    csrfToken: function() {
-      return sessionStorage.getItem('csrf');
-    },
+    ...mapState({
+      csrfToken: (state) => state.csrf,
+    }),
   },
   methods: {
     populateData: function(data) {
@@ -70,8 +71,8 @@ export default {
       }
       const router = this.$router;
       let logoutPromise = ajaxRequest('POST', logoutURL);
-      logoutPromise.then(function(response) {
-        sessionStorage.removeItem('csrf');
+      logoutPromise.then((response) => {
+        this.$store.commit('clearCSRF');
         router.push({name: 'home'});
       }).catch((err) => this.$emit('error/api-fetch', err));
     },

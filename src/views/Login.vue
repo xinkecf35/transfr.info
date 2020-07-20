@@ -69,8 +69,8 @@ export default {
           authURL = 'https://api.transfr.test/v1/users/';
         }
         let authPromise = ajaxRequest('POST', authURL, requestBody);
-        authPromise.then(function(response) {
-          sessionStorage.setItem('csrf', response.csrf);
+        authPromise.then((response) => {
+          this.$store.commit('setCSRF', response.csrf);
           router.push({name: 'user', params: {username: userInput.username}});
         }).catch(function(err) {
           if (err.status === 401) {
