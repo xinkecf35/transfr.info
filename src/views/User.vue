@@ -63,6 +63,7 @@ export default {
       this.fullName = data.name;
       this.email = data.email;
       this.cards = data.vcards;
+      this.$store.dispatch('loadDataOnLogin');
     },
     logout: function() {
       let logoutURL = 'https://api.transfr.info/v1/users/token?logout=true';
@@ -91,7 +92,7 @@ export default {
       next((vm) => vm.populateData(response.user));
     }).catch(function(err) {
       // failed likely due to a authentication error
-      if (err.status === 401) {
+      if (err.status === 403) {
         next({name: 'login'});
       } else {
         next(err);
