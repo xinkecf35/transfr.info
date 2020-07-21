@@ -51,8 +51,6 @@ import {ajaxRequest, isEmptyOrNull} from '../functions';
 export default {
   data: function() {
     return {
-      firstName: '',
-      lastName: '',
       currentCardIndex: 0,
       showModal: false,
       addCard: false,
@@ -70,7 +68,7 @@ export default {
       if (isEmptyOrNull(this.currentCardId)) {
         return 'Welcome';
       }
-      return this.$store.state.cards[this.currentCardId].description;
+      return this.cards[this.currentCardIndex].description;
     },
     currentCardId() {
       return this.cards[this.currentCardIndex].profileId;

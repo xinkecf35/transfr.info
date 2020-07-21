@@ -32,6 +32,15 @@ export function ajaxRequest(method, url, body = null, headers = null) {
 }
 
 /**
+ *
+ * @param {string} string uncapitalized string
+ * @return {string} Capitalized String
+ */
+export function capitalize(string) {
+  return string.charAt(0).toUpperCase().concat(string.slice(1));
+}
+
+/**
  * Null/Empty/Undefined Check for string
  * @param {String} string string to be checked
  * @return {Boolean} Is string empty, null or undefined
@@ -53,4 +62,4 @@ export function isObjectEmpty(object) {
   }
 }
 
-export default {ajaxRequest, isEmptyOrNull, isObjectEmpty};
+export default {ajaxRequest, capitalize, isEmptyOrNull, isObjectEmpty};

@@ -37,9 +37,9 @@
               </div>
               <div v-else>
                 <ul style="min-width: 50%; float:right">
-                  <li v-for="item in extractLexicalArray(item.value)"
-                    :key="item.id" class="address-list">
-                    <span>{{item}}</span>
+                  <li v-for="address in extractLexicalArray(item.value)"
+                    :key="address.id" class="address-list">
+                    <span>{{address}}</span>
                   </li>
                 </ul>
               </div>
@@ -69,11 +69,11 @@
       </div>
       <edit-input
         v-for="item in editInputValues"
-        v-bind:key="item.id"
-        v-bind:attribute="item.attribute"
-        v-bind:initialValue="item.value"
-        v-bind:isComplex="item.complex"
-        v-on:update-edit="updateEditedCard"/>
+        :profileId="profileId"
+        :displayText="item.displayText"
+        :attribute="item.attribute"
+        :isComplex="item.complex"
+        :key="item.id"/>
       <div id="footer" class="row">
         <div id="edit">
           <button @click="deleteCard()" class="level-1 editing-button-error">
@@ -86,12 +86,24 @@
 </template>
 <script>
 import {mapGetters} from 'vuex';
-import EditInput from '@/components/EditInput';
+import EditInput from '@/components/EditInputs/EditInput';
 import Error from '@/components/Error';
-import {isEmptyOrNull} from '@/functions';
+import {capitalize, isEmptyOrNull} from '@/functions';
 
-// Array of attributes that should be handled specially
+const requiredAttributes = ['description'];
+const optionalAttributes = [
+  'telephone',
+  'email',
+  'organization',
+  'address',
+  'nickname',
+  'note',
+  'birthday',
+  // 'impp', Future development
+];
+const cardAttributes = requiredAttributes.concat(optionalAttributes);
 const complexAttributes = ['address', 'email', 'telephone'];
+const textForAttribute = (attr) => attr !== 'IMPP' ? capitalize(attr) : 'IMPP';
 
 /**
  * Function to create a patch object for JSON patch (RFC 6902)
@@ -120,18 +132,16 @@ function generatePatchObject(attribute, currentValue, newValue) {
 export default {
   data() {
     return {
-      attributes: {
+      values: {
         description: '',
-        optional: {
-          telephone: [],
-          email: [],
-          organization: '',
-          address: '',
-          nickname: '',
-          note: '',
-          birthday: '',
-          impp: '',
-        },
+        telephone: [],
+        email: [],
+        organization: '',
+        address: [],
+        nickname: '',
+        note: '',
+        birthday: '',
+        impp: '',
       },
       edit: false,
       patch: [],
@@ -140,24 +150,13 @@ export default {
     };
   },
   computed: {
-    editInputValues: function() {
-      const attributes = this.attributes;
-      return [
-        {attribute: 'Description',
-          value: attributes.description, complex: false},
-        {attribute: 'Address',
-          value: attributes.optional.address, complex: true},
-        {attribute: 'Birthday',
-          value: attributes.optional.birthday, complex: false},
-        {attribute: 'Email', value: attributes.optional.email, complex: true},
-        {attribute: 'Note', value: attributes.optional.note, complex: false},
-        {attribute: 'Nickname',
-          value: attributes.optional.nickname, complex: false},
-        {attribute: 'Organization',
-          value: attributes.optional.organization, complex: false},
-        {attribute: 'Telephone',
-          value: attributes.optional.telephone, complex: true},
-      ];
+    editInputValues() {
+      return cardAttributes.map((attribute) => ({
+        attribute,
+        displayText: textForAttribute(attribute),
+        complex: complexAttributes.indexOf(attribute) > -1,
+        value: this.values[attribute],
+      }));
     },
     name() {
       return this.firstName + ' ' + this.lastName;
@@ -167,11 +166,12 @@ export default {
      * This simply uses an array as include and iterates over that
      * returns an object filled the key value pairs
      */
-    objectOptionals() {
+    objectOptionals: function() {
       let result = {};
       complexAttributes.forEach((key) => {
-        if (this.attributes.optional[key].length !== 0) {
-          result[key] = this.attributes.optional[key];
+        const values = this.values[key];
+        if (values.length !== 0) {
+          result[key] = values.filter((value) => !isEmptyOrNull(value));
         }
       });
       return result;
@@ -185,27 +185,23 @@ export default {
       return errors.length && errors[errors.length-1].field === 'modal-error';
     },
     simpleOptionals: function() {
-      let result = {};
-      const keys = Object.keys(this.attributes.optional);
-
+      const result = {};
       const exclude = ['address', 'description', 'email', 'telephone'];
-      const filtered = keys.filter(function(property) {
-        // if the property is not in exclude array, add it
+      const filtered = cardAttributes.filter((property) => {
         return exclude.indexOf(property) === -1;
       });
       filtered.forEach((key) => {
-        if (!isEmptyOrNull(this.attributes.optional[key])) {
-          result[key] = this.attributes.optional[key];
+        if (!isEmptyOrNull(this.values[key])) {
+          result[key] = this.values[key];
         }
       });
       return result;
     },
     shareURL: function() {
-      let URL = 'https://transfr.info/card/' + this.profileId;
-      if (process.env.NODE_ENV === 'development') {
-        URL = 'https://transfr.test/card/' + this.profileId;
-      }
-      return URL;
+      const shareBaseURL = process.env.NODE_ENV === 'development' ?
+        'https://transfr.test/card' :
+        'https://transfr.info/card';
+      return `${shareBaseURL}/${this.profileId}`;
     },
     ...mapGetters('user', ['firstName', 'lastName']),
   },
@@ -218,7 +214,10 @@ export default {
       type: String,
       required: true,
     },
-    newCard: Boolean,
+    newCard: {
+      type: Boolean,
+      default: true,
+    },
   },
   events: [
     'card-update',
@@ -226,6 +225,7 @@ export default {
     'card-delete',
   ],
   methods: {
+    // Move functionality into vuex somehwo
     abort: function() {
       // abort changes and return
       // if new card, abort with no changes and emit event to
@@ -242,18 +242,14 @@ export default {
         this.patch.forEach((operation) => {
           // Extract attribute from path
           const attribute = operation.path.substring(1);
-          if (attribute === 'description') {
-            this.attributes.description = card.description;
-          } else {
-            this.attributes.optional[attribute] = card[attribute] || '';
-          }
+          this.values[attribute] = card[attribute] || '';
         });
       }
       this.patch = []; // discard path array
       this.edit = !this.edit;
     },
     commitEdits: function() {
-      if (!this.attributes.description.length) {
+      if (!this.values.description.length) {
         this.errors.push({
           field: 'modal-error',
           message: 'Description is required',
@@ -262,6 +258,7 @@ export default {
       }
       this.edit = !edit;
     },
+    // Redo for Vuex refactor
     deleteCard: function() {
       // discards any patches and emits event for deletion
       this.patch = [];
@@ -282,21 +279,18 @@ export default {
     populateData(id) {
       const card = this.$store.state.cards[id];
       this.original = JSON.stringify(card);
-      // populate data to local state
-      const attributes = this.attributes;
-      const optionalAttributes = Object.keys(attributes.optional);
-      optionalAttributes.forEach((attribute) => {
+      // populate/update data to local state
+      cardAttributes.forEach((attribute) => {
         if (attribute in card) {
-          attributes.optional[attribute] = card[attribute];
+          this.values[attribute] = card[attribute];
         } else {
           if (complexAttributes.indexOf(attribute) > -1) {
-            attributes.optional[attribute] = [];
+            this.values[attribute] = [];
           } else {
-            attributes.optional[attribute] = '';
+            this.values[attribute] = '';
           }
         }
       });
-      attributes.description = card.description;
     },
     presentShareModal: function() {
       const shareElementRect =
@@ -315,9 +309,10 @@ export default {
       const offset = Math.round(Math.abs(popOverMidPoint - shareMidPoint));
       popOverElement.style.left = '-' + offset + 'px';
     },
+    // Remove for Vuex refactor
     updateEditedCard: function(payload) {
       let attribute = payload[0].toLowerCase();
-      const attributes = this.attributes;
+      const attributes = cardAttributes;
       if (attribute === 'description') {
         // Specific case for non optional property
         const operation =
@@ -325,7 +320,7 @@ export default {
         this.patch.push(operation);
         attributes.description = payload[1];
       } else {
-        let optional = attributes.optional;
+        let optional = this.values;
         const operation =
           generatePatchObject(attribute, optional[attribute], payload[1]);
         let index = this.patch.findIndex((op) => op.path === ('/' + attribute));
