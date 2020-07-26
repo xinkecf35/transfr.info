@@ -8,14 +8,15 @@ const actions = {};
 
 const getters = {
   displayName(state) {
-    const names = state.fullName.split(';');
-    return `${names[1]} ${names[0]}`;
+    const [lastName='', firstName=''] = state.fullName.split(';');
+
+    return `${firstName} ${lastName}`;
   },
   firstName(state) {
-    return state.fullName.split(';')[1];
+    return state.fullName.split(';')[1] || '';
   },
   lastName(state) {
-    return state.fullName.split(';')[0];
+    return state.fullName.split(';')[0] || '';
   },
 };
 

@@ -62,23 +62,17 @@ export default {
   components: {
     cardManager,
   },
-  beforeRouteEnter(to, from, next) {
-    // Fetch Data if appropriate
-    let userDataURL = 'https://api.transfr.info/v1/userdata/user';
-    if (process.env.NODE_ENV === 'development') {
-      userDataURL = 'https://api.transfr.test/v1/userdata/user';
-    }
-    let userDataPromise = ajaxRequest('GET', userDataURL);
-    userDataPromise.then(() => {
-      next((vm) => vm.loadDataOnLogin());
-    }).catch(function(err) {
-      // failed likely due to a authentication error
-      if (err.status === 403) {
-        next({name: 'login'});
-      } else {
-        next(err);
-      }
-    });
+  beforeRouteUpdate(to, from, next) {
+    this.loadDataOnLogin()
+      .then(() => next())
+      .catch(function(err) {
+        // failed likely due to a authentication error
+        if (err.status === 403) {
+          next({name: 'login'});
+        } else {
+          next(err);
+        }
+      });
   },
   watch: {
     active: function(val) {

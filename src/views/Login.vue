@@ -28,6 +28,7 @@
   </div>
 </template>
 <script>
+import {mapActions} from 'vuex';
 import {ajaxRequest} from '../functions.js';
 import error from '@/components/Error';
 
@@ -71,6 +72,8 @@ export default {
         let authPromise = ajaxRequest('POST', authURL, requestBody);
         authPromise.then((response) => {
           this.$store.commit('setCSRF', response.csrf);
+          return this.loadDataOnLogin();
+        }).then(() => {
           router.push({name: 'user', params: {username: userInput.username}});
         }).catch(function(err) {
           if (err.status === 401) {
@@ -78,6 +81,12 @@ export default {
               field: 'modal-error',
               message: 'Authentication failed,'
               +' please check username and password',
+            });
+          } else if (err.status === 403) {
+            errors.push({
+              field: 'modal-error',
+              message: 'Authentication failed,'
+              +' please check username and password or try again later',
             });
           } else {
             errors.push({
@@ -106,6 +115,7 @@ export default {
       }
       return valid;
     },
+    ...mapActions(['loadDataOnLogin']),
   },
   watch: {
     presentError: function(value) {
