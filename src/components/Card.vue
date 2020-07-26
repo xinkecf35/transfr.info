@@ -1,45 +1,84 @@
 <template>
   <div id="card">
     <!-- Regular View -->
-    <div v-if="!edit" class="grid card-main level-2">
-      <div id="header" class="row">
-        <span>{{firstName}} {{lastName}}</span>
+    <div
+      v-if="!edit"
+      class="grid card-main level-2"
+    >
+      <div
+        id="header"
+        class="row"
+      >
+        <span>{{ firstName }} {{ lastName }}</span>
         <div id="edit">
           <div id="share-button-container">
-            <button id="share-modal" class="level-1 share-button"
-              @click="presentShareModal()">
+            <button
+              id="share-modal"
+              class="level-1 share-button"
+              @click="presentShareModal()"
+            >
               Share
             </button>
-            <div id="share-popover" class="level-1">
+            <div
+              id="share-popover"
+              class="level-1"
+            >
               <h4>Link to Card:</h4>
               <div id="share-link-row">
-                <input type="text" class="share-link-text" readonly
-                   v-model="shareURL">
-                <button id="copyLink" class="share-link-button">
+                <input
+                  v-model="shareURL"
+                  type="text"
+                  class="share-link-text"
+                  readonly
+                >
+                <button
+                  id="copyLink"
+                  class="share-link-button"
+                >
                   <img src="../assets/clipboard.svg">
                 </button>
               </div>
             </div>
           </div>
-          <button @click="edit = !edit" class="level-1 editing-button">
+          <button
+            class="level-1 editing-button"
+            @click="edit = !edit"
+          >
             Edit
           </button>
         </div>
       </div>
-      <div class="row" v-for="key in Object.keys(objectOptionals)" :key="key">
-        <div class="column-props">{{key}}</div>
+      <div
+        v-for="key in Object.keys(objectOptionals)"
+        :key="key"
+        class="row"
+      >
+        <div class="column-props">
+          {{ key }}
+        </div>
         <div class="column-values column-list">
           <ul>
-            <li v-for="item in objectOptionals[key]" :key="item.id">
-              <div class="column-list-label" >{{item.type}}</div>
-              <div class="column-list-value" v-if="key !== 'address'">
-                <span>{{item.value}}</span>
+            <li
+              v-for="item in objectOptionals[key]"
+              :key="item.id"
+            >
+              <div class="column-list-label">
+                {{ item.type }}
+              </div>
+              <div
+                v-if="key !== 'address'"
+                class="column-list-value"
+              >
+                <span>{{ item.value }}</span>
               </div>
               <div v-else>
                 <ul style="min-width: 50%; float:right">
-                  <li v-for="address in extractLexicalArray(item.value)"
-                    :key="address.id" class="address-list">
-                    <span>{{address}}</span>
+                  <li
+                    v-for="address in extractLexicalArray(item.value)"
+                    :key="address.id"
+                    class="address-list"
+                  >
+                    <span>{{ address }}</span>
                   </li>
                 </ul>
               </div>
@@ -47,36 +86,63 @@
           </ul>
         </div>
       </div>
-      <div class="row" v-for="key in Object.keys(simpleOptionals)" :key="key">
-        <div class="column-props">{{key}}</div>
-        <div class="column-values">{{simpleOptionals[key]}}</div>
+      <div
+        v-for="key in Object.keys(simpleOptionals)"
+        :key="key"
+        class="row"
+      >
+        <div class="column-props">
+          {{ key }}
+        </div>
+        <div class="column-values">
+          {{ simpleOptionals[key] }}
+        </div>
       </div>
     </div>
-    <div v-else class="grid card-main level-2">
+    <div
+      v-else
+      class="grid card-main level-2"
+    >
       <Error v-if="presentError">
-        {{errors[0].message}}
+        {{ errors[0].message }}
       </Error>
-      <div id="header" class="row">
+      <div
+        id="header"
+        class="row"
+      >
         <span>Editing</span>
         <div id="edit">
-          <button @click="abort()" class="level-1 editing-button-error">
+          <button
+            class="level-1 editing-button-error"
+            @click="abort()"
+          >
             Cancel
           </button>
-          <button @click="commitEdits()" class="level-1 editing-button">
+          <button
+            class="level-1 editing-button"
+            @click="commitEdits()"
+          >
             Done
           </button>
         </div>
       </div>
       <edit-input
         v-for="item in editInputValues"
-        :profileId="profileId"
-        :displayText="item.displayText"
+        :key="item.id"
+        :profile-id="profileId"
+        :display-text="item.displayText"
         :attribute="item.attribute"
-        :isComplex="item.complex"
-        :key="item.id"/>
-      <div id="footer" class="row">
+        :is-complex="item.complex"
+      />
+      <div
+        id="footer"
+        class="row"
+      >
         <div id="edit">
-          <button @click="deleteCard()" class="level-1 editing-button-error">
+          <button
+            class="level-1 editing-button-error"
+            @click="deleteCard()"
+          >
             Delete
           </button>
         </div>
@@ -103,7 +169,8 @@ const optionalAttributes = [
 ];
 const cardAttributes = requiredAttributes.concat(optionalAttributes);
 const complexAttributes = ['address', 'email', 'telephone'];
-const textForAttribute = (attr) => attr !== 'IMPP' ? capitalize(attr) : 'IMPP';
+const textForAttribute = (attr) =>
+  attr !== 'IMPP' ? capitalize(attr) : 'IMPP';
 
 /**
  * Function to create a patch object for JSON patch (RFC 6902)
@@ -130,6 +197,20 @@ function generatePatchObject(attribute, currentValue, newValue) {
 }
 
 export default {
+  components: {
+    EditInput,
+    Error,
+  },
+  props: {
+    profileId: {
+      type: String,
+      required: true,
+    },
+    newCard: {
+      type: Boolean,
+      default: true,
+    },
+  },
   data() {
     return {
       values: {
@@ -171,7 +252,8 @@ export default {
       complexAttributes.forEach((key) => {
         const values = this.values[key];
         if (values.length !== 0) {
-          result[key] = values.filter((value) => !isEmptyOrNull(value));
+          const getValues = this.$store.getters['cards/getObjectValues'];
+          result[key] = getValues(this.profileId, key);
         }
       });
       return result;
@@ -182,7 +264,7 @@ export default {
      */
     presentError: function() {
       const errors = this.errors;
-      return errors.length && errors[errors.length-1].field === 'modal-error';
+      return errors.length && errors[errors.length - 1].field === 'modal-error';
     },
     simpleOptionals: function() {
       const result = {};
@@ -198,32 +280,50 @@ export default {
       return result;
     },
     shareURL: function() {
-      const shareBaseURL = process.env.NODE_ENV === 'development' ?
-        'https://transfr.test/card' :
-        'https://transfr.info/card';
+      const shareBaseURL =
+        process.env.NODE_ENV === 'development'
+          ? 'https://transfr.test/card'
+          : 'https://transfr.info/card';
       return `${shareBaseURL}/${this.profileId}`;
     },
     ...mapGetters('user', ['firstName', 'lastName']),
   },
-  components: {
-    EditInput,
-    Error,
-  },
-  props: {
+  events: ['card-update', 'card-new-abort', 'card-delete'],
+  watch: {
     profileId: {
-      type: String,
-      required: true,
+      handler: 'populateData',
+      immediate: true,
     },
-    newCard: {
-      type: Boolean,
-      default: true,
+    edit: function(edit) {
+      if (!edit && this.patch.length !== 0 && !this.newCard) {
+        // cleaning up after done editing
+        this.$emit('card-update', this.patch);
+        this.original = '';
+        this.patch = [];
+      } else if (!edit && this.patch.length !== 0 && this.newCard) {
+        let payload = this.vcard;
+        this.patch.forEach((operation) => {
+          const attribute = operation.path.substring(1);
+          payload[attribute] = operation.value;
+        });
+        this.$emit('card-create', payload);
+        this.original = '';
+        this.patch = [];
+      }
+      this.share = false;
+    },
+    newCard: function(isNew) {
+      if (isNew !== undefined && isNew) {
+        this.edit = true;
+      }
+    },
+    attributes: {
+      handler: function(val) {
+        this.errors = [];
+      },
+      deep: true,
     },
   },
-  events: [
-    'card-update',
-    'card-new-abort',
-    'card-delete',
-  ],
   methods: {
     // Move functionality into vuex somehwo
     abort: function() {
@@ -277,7 +377,7 @@ export default {
     },
     // For watcher
     populateData(id) {
-      const card = this.$store.state.cards[id];
+      const card = this.$store.state.cards.profile[id];
       this.original = JSON.stringify(card);
       // populate/update data to local state
       cardAttributes.forEach((attribute) => {
@@ -293,8 +393,9 @@ export default {
       });
     },
     presentShareModal: function() {
-      const shareElementRect =
-        document.getElementById('share-modal').getBoundingClientRect();
+      const shareElementRect = document
+        .getElementById('share-modal')
+        .getBoundingClientRect();
       const popOverElement = document.getElementById('share-popover');
       this.share = !this.share;
       if (this.share) {
@@ -315,15 +416,21 @@ export default {
       const attributes = cardAttributes;
       if (attribute === 'description') {
         // Specific case for non optional property
-        const operation =
-          generatePatchObject(attribute, attributes.description, payload[1]);
+        const operation = generatePatchObject(
+          attribute,
+          attributes.description,
+          payload[1]
+        );
         this.patch.push(operation);
         attributes.description = payload[1];
       } else {
         let optional = this.values;
-        const operation =
-          generatePatchObject(attribute, optional[attribute], payload[1]);
-        let index = this.patch.findIndex((op) => op.path === ('/' + attribute));
+        const operation = generatePatchObject(
+          attribute,
+          optional[attribute],
+          payload[1]
+        );
+        let index = this.patch.findIndex((op) => op.path === '/' + attribute);
         if (index > -1) {
           // If attribute has already been modified once, replace it
           this.patch.splice(index, 1, operation);
@@ -335,237 +442,201 @@ export default {
       }
     },
   },
-  watch: {
-    profileId: {
-      handler: 'populateData',
-      immediate: true,
-    },
-    edit: function(edit) {
-      if (!edit && this.patch.length !== 0 && !this.newCard) {
-        // cleaning up after done editing
-        this.$emit('card-update', this.patch);
-        this.original = '';
-        this.patch = [];
-      } else if (!edit && this.patch.length!== 0 && this.newCard) {
-        let payload = this.vcard;
-        this.patch.forEach((operation) => {
-          const attribute = operation.path.substring(1);
-          payload[attribute] = operation.value;
-        });
-        this.$emit('card-create', payload);
-        this.original = '';
-        this.patch = [];
-      }
-      this.share = false;
-    },
-    newCard: function(isNew) {
-      if (isNew !== undefined && isNew) {
-        this.edit = true;
-      }
-    },
-    attributes: {
-      handler: function(val) {
-        this.errors = [];
-      },
-      deep: true,
-    },
-  },
 };
 </script>
 <style lang="scss" scoped>
-  #card {
-    position: relative;
-    text-align: left;
-    box-sizing: border-box;
-    margin-bottom: 1em;
-    @media #{$breakpoint-md} {
-      width: 100%;
-    }
-    @media #{$breakpoint-lg} {
-      width: 91.667%;
-    }
-  }
-  .card-main {
-    box-sizing: border-box;
-    padding: 2em;
-    font-size: 1.1em;
-    top:30px;
-    background-color: $backgroundcolor;
-    border-radius: 12px;
+#card {
+  position: relative;
+  text-align: left;
+  box-sizing: border-box;
+  margin-bottom: 1em;
+  @media #{$breakpoint-md} {
     width: 100%;
-    @media #{$breakpoint-sm} {
-      padding: 0.75em;
-    }
-    @media #{$breakpoint-md} {
-      padding: 1.5em;
-    }
   }
-  #header {
+  @media #{$breakpoint-lg} {
+    width: 91.667%;
+  }
+}
+.card-main {
+  box-sizing: border-box;
+  padding: 2em;
+  font-size: 1.1em;
+  top: 30px;
+  background-color: $backgroundcolor;
+  border-radius: 12px;
+  width: 100%;
+  @media #{$breakpoint-sm} {
+    padding: 0.75em;
+  }
+  @media #{$breakpoint-md} {
+    padding: 1.5em;
+  }
+}
+#header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  span {
+    flex: 4 2 58.333%;
+    font-size: 1.5em;
+  }
+  #edit {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    flex: 1 1 41.666%;
     justify-content: flex-end;
-    span {
-      flex: 4 2 58.333%;
-      font-size: 1.5em;
-    }
-    #edit{
-      display: flex;
-      flex: 1 1 41.666%;
-      justify-content: flex-end;
-    }
-    .editing-button {
-      box-sizing: border-box;
-      flex: 0 1 33.333%;
-      margin-left: 0.25em;
-      display: block;
-      background-color: $secondarycolor;
-      border: 0;
-      color: $backgroundcolor;
-      float: right;
-      font-family: nunito, Helvetica, Arial, sans-serif;
-      font-size: 1.1em;
-      padding: 0.25em 1em 0.25em 1em;
-      border-radius: 6px;
-      @media #{$breakpoint-sm} {
-          padding: 0.25em 0.75em 0.25em 0.75em;
-          font-size: 1em;
-      }
-      @media (hover: hover) {
-        &:hover {
-          background-color: $primarycolor;
-        }
-      }
-    }
-    .editing-button-error {
-      @extend .editing-button;
-      background-color: $error-red;
-      flex: 0 1 16.666%;
-      @media (hover: hover) {
-        &:hover {
-          background-color: $error-highlight;
-        }
-      }
-    }
-    #share-button-container {
-      box-sizing: border-box;
-      flex: 0 1 33.333%;
-    }
-    .share-button {
-      @extend .editing-button;
-      background-color: $accentcolor;
-    }
-    #share-popover {
-      display: none;
-      background-color: $backgroundcolor;
-      border-radius: 6px;
-      box-sizing: border-box;
-      font-size: 0.85em;
-      position: absolute;
-      padding: 1em;
-      top: 3em;
-      width: 20rem;
-      h4 {
-        font-size: 1.1em;
-        margin: 0.5em 0em 0.25em 0em;
-      }
-      #share-link-row {
-        display: flex;
-        flex-direction: row;
-        flex-wrap: row nowrap;
-        align-items: center;
-        height: 2em;
-      }
-      .share-link-text {
-        flex: auto;
-        min-width: 0;
-      }
-      .share-link-button {
-        flex: 1 1 15%;
-        background-color: transparent;
-        border: none;
-        margin: 0;
-        img {
-          width: 100%;
-          height: 2em;
-          &:hover {
-            box-shadow: 0 4px 4px -1px rgba(196, 202, 29, 0.33);
-          }
-        }
-      }
-      @media #{$breakpoint-sm} {
-        width: 13.5rem;
-      }
-      @media #{$breakpoint-md} {
-        width: 18rem;
-      }
-    }
   }
-  #footer {
-    @extend #header;
-  }
-  .grid *{
-    font-size: 1em;
-    position: relative;
+  .editing-button {
     box-sizing: border-box;
-    width: 100%;
-  }
-  .row {
-    padding-bottom: 0.5em;
-    &:before {
-      content: " ";
-      display: table;
-    }
-    &:after {
-      content: " ";
-      display: table;
-      clear: both;
-    }
-  }
-  %column-properties {
-    float: left;
-    min-height: 1px;
-    padding: 0.8em;
-    position: relative;
-  }
-  .column-props {
-    @extend %column-properties;
-    width: 30%;
-    text-align: right;
-    font-weight: 600;
+    flex: 0 1 33.333%;
+    margin-left: 0.25em;
+    display: block;
+    background-color: $secondarycolor;
+    border: 0;
+    color: $backgroundcolor;
+    float: right;
+    font-family: nunito, Helvetica, Arial, sans-serif;
+    font-size: 1.1em;
+    padding: 0.25em 1em 0.25em 1em;
+    border-radius: 6px;
     @media #{$breakpoint-sm} {
-      width: 100%;
+      padding: 0.25em 0.75em 0.25em 0.75em;
+      font-size: 1em;
+    }
+    @media (hover: hover) {
+      &:hover {
+        background-color: $primarycolor;
+      }
+    }
+  }
+  .editing-button-error {
+    @extend .editing-button;
+    background-color: $error-red;
+    flex: 0 1 16.666%;
+    @media (hover: hover) {
+      &:hover {
+        background-color: $error-highlight;
+      }
+    }
+  }
+  #share-button-container {
+    box-sizing: border-box;
+    flex: 0 1 33.333%;
+  }
+  .share-button {
+    @extend .editing-button;
+    background-color: $accentcolor;
+  }
+  #share-popover {
+    display: none;
+    background-color: $backgroundcolor;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 0.85em;
+    position: absolute;
+    padding: 1em;
+    top: 3em;
+    width: 20rem;
+    h4 {
+      font-size: 1.1em;
+      margin: 0.5em 0em 0.25em 0em;
+    }
+    #share-link-row {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: row nowrap;
+      align-items: center;
+      height: 2em;
+    }
+    .share-link-text {
+      flex: auto;
+      min-width: 0;
+    }
+    .share-link-button {
+      flex: 1 1 15%;
+      background-color: transparent;
+      border: none;
+      margin: 0;
+      img {
+        width: 100%;
+        height: 2em;
+        &:hover {
+          box-shadow: 0 4px 4px -1px rgba(196, 202, 29, 0.33);
+        }
+      }
+    }
+    @media #{$breakpoint-sm} {
+      width: 13.5rem;
+    }
+    @media #{$breakpoint-md} {
+      width: 18rem;
+    }
+  }
+}
+#footer {
+  @extend #header;
+}
+.grid * {
+  font-size: 1em;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+}
+.row {
+  padding-bottom: 0.5em;
+  &:before {
+    content: " ";
+    display: table;
+  }
+  &:after {
+    content: " ";
+    display: table;
+    clear: both;
+  }
+}
+%column-properties {
+  float: left;
+  min-height: 1px;
+  padding: 0.8em;
+  position: relative;
+}
+.column-props {
+  @extend %column-properties;
+  width: 30%;
+  text-align: right;
+  font-weight: 600;
+  @media #{$breakpoint-sm} {
+    width: 100%;
+    text-align: left;
+  }
+}
+.column-values {
+  @extend %column-properties;
+  width: 70%;
+  text-align: left;
+  @media #{$breakpoint-sm} {
+    width: 95%;
+    margin-left: 5%;
+    padding: 0;
+  }
+}
+.column-list {
+  ul {
+    padding: 0;
+    list-style: none;
+    margin: 0 0 0.1em 0;
+    li {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: space-around;
+    }
+    .column-list-label {
+      flex: 1 1 35%;
+    }
+    .column-list-value {
+      flex: 3 3 65%;
       text-align: left;
     }
   }
-  .column-values {
-    @extend %column-properties;
-    width: 70%;
-    text-align: left;
-    @media #{$breakpoint-sm} {
-      width: 95%;
-      margin-left: 5%;
-      padding: 0;
-    }
-
-  }
-  .column-list {
-    ul {
-      padding: 0;
-      list-style: none;
-      margin: 0 0 0.1em 0;
-      li {
-        display: flex;
-        flex-flow: row nowrap;
-        justify-content: space-around;
-      }
-      .column-list-label {
-        flex: 1 1 35%;
-      }
-      .column-list-value {
-        flex: 3 3 65%;
-        text-align: left;
-      }
-    }
-  }
+}
 </style>

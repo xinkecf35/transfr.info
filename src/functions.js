@@ -21,11 +21,17 @@ export function ajaxRequest(method, url, body = null, headers = null) {
       if (this.status >= 200 && this.status < 300) {
         resolve(JSON.parse(xhr.response));
       } else {
-        reject({status: xhr.status, response: xhr.response});
+        reject({
+          status: xhr.status,
+          response: xhr.response,
+        });
       }
     };
     xhr.onerror = function() {
-      reject({status: xhr.status, response: xhr.response});
+      reject({
+        status: xhr.status,
+        response: xhr.response,
+      });
     };
     xhr.send(body);
   });
@@ -38,6 +44,18 @@ export function ajaxRequest(method, url, body = null, headers = null) {
  */
 export function capitalize(string) {
   return string.charAt(0).toUpperCase().concat(string.slice(1));
+}
+
+/**
+ * Returns a random integer within a range
+ * @param {Nubmer} min lower bound, inclusive,
+ * @param {Number} max upper bound, exclusibe
+ * @return {Number} a random integer
+ */
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
 }
 
 /**
@@ -62,4 +80,10 @@ export function isObjectEmpty(object) {
   }
 }
 
-export default {ajaxRequest, capitalize, isEmptyOrNull, isObjectEmpty};
+export default {
+  ajaxRequest,
+  getRandomInt,
+  capitalize,
+  isEmptyOrNull,
+  isObjectEmpty,
+};
