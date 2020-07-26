@@ -15,7 +15,11 @@ export default {
         return this.$store.state.cards[this.profileId][this.attribute];
       },
       set(value) {
-        const options = {id: profileId, attribute, value};
+        const options = {
+          id: this.profileId,
+          attribute: this.attribute,
+          value,
+        };
         this.$store.commit('cards/updateAttributeForId', options);
       },
     },

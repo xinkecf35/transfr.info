@@ -16,9 +16,10 @@ const mutations = {
   clear(state) {
     Object.keys(state).forEach((key) => delete state[key]);
   },
-  // updateAttributeForId(state, {id, attribute, value}) {
-
-  // },
+  updateAttributeForId(state, {id, attribute, value}) {
+    const card = state[id];
+    card[attribute] = value;
+  },
   // Takes the cards array and flattens it a little
   // basically profileId is mapped to the cards
   setCards(state, cards) {
