@@ -3,15 +3,19 @@
     <simple-input
       v-if="!isComplex"
       :attribute="attribute"
-      :displayText="displayText"
-      :profileId="profileId" />
+      :display-text="displayText"
+      :profile-id="profileId"
+    />
     <address-input
       v-else-if="attribute === 'address'"
-      :profileId="profileId" />
-    <labeled-input v-else
+      :profile-id="profileId"
+    />
+    <labeled-input
+      v-else
       :attribute="attribute"
-      :displayText="displayText"
-      :profileId="profileId" />
+      :display-text="displayText"
+      :profile-id="profileId"
+    />
   </div>
 </template>
 <script>
@@ -26,9 +30,6 @@ export default {
     LabeledInput,
     SimpleInput,
   },
-  computed: {},
-  event: 'update-edit',
-  methods: {},
   props: {
     attribute: {
       type: String,
@@ -47,6 +48,9 @@ export default {
       default: false,
     },
   },
+  computed: {},
+  event: 'update-edit',
+  methods: {},
 };
 </script>
 <style lang="scss" scoped>

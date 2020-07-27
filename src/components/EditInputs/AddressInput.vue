@@ -1,70 +1,139 @@
 <template>
   <div class="row">
-    <div class="column-props">Address</div>
+    <div class="column-props">
+      Address
+    </div>
     <div class="column-values">
-      <div class="address-input" v-on:focus.capture="addressFocusCheck()">
-        <input type="text" v-model="label"
-        id="address-label" class="control-label" placeholder="Label">
-        <div class ="address-inputs">
-          <input type="text" placeholder="Address Line 1"
-          id="address-line1" class="control-address-value"
-          v-model="addressComponents.line1">
-          <input type="text" placeholder="Address Line 2"
-          id="address-line2" class="control-address-value"
-          v-model="addressComponents.line2">
+      <div
+        class="address-input"
+        @focus.capture="addressFocusCheck()"
+      >
+        <input
+          id="address-label"
+          v-model="label"
+          type="text"
+          class="control-label"
+          placeholder="Label"
+        >
+        <div class="address-inputs">
+          <input
+            id="address-line1"
+            v-model="addressComponents.line1"
+            type="text"
+            placeholder="Address Line 1"
+            class="control-address-value"
+          >
+          <input
+            id="address-line2"
+            v-model="addressComponents.line2"
+            type="text"
+            placeholder="Address Line 2"
+            class="control-address-value"
+          >
           <div class="control-address-row">
-            <input type="text" placeholder="City"
-              id="address-city" class="sub-left control-address-value"
-              v-model="addressComponents.city">
-            <input type="text" placeholder="State"
-              id="address-state"  class="sub-right control-address-value"
-              v-model="addressComponents.state">
+            <input
+              id="address-city"
+              v-model="addressComponents.city"
+              type="text"
+              placeholder="City"
+              class="sub-left control-address-value"
+            >
+            <input
+              id="address-state"
+              v-model="addressComponents.state"
+              type="text"
+              placeholder="State"
+              class="sub-right control-address-value"
+            >
           </div>
           <div class="control-address-row">
-            <input type="text" placeholder="ZIP Code"
-              id="address-zip" class="sub-left control-address-value"
-              v-model="addressComponents.zipcode">
-            <input type="text" placeholder="PO Box"
-              id="address-pobox" class="sub-right control-address-value"
-              v-model="addressComponents.POBox">
+            <input
+              id="address-zip"
+              v-model="addressComponents.zipcode"
+              type="text"
+              placeholder="ZIP Code"
+              class="sub-left control-address-value"
+            >
+            <input
+              id="address-pobox"
+              v-model="addressComponents.POBox"
+              type="text"
+              placeholder="PO Box"
+              class="sub-right control-address-value"
+            >
           </div>
         </div>
-        <button class="control-button"
-          v-on:click="console.log('TODO: Add address')">
+        <button
+          class="control-button"
+          @click="console.log('TODO: Add address')"
+        >
           <img src="@/assets/plus-round.svg">
         </button>
       </div>
-      <div class="address-input"
-        v-on:focus.capture="addressFocusCheck()"
-        v-for="(item, index) in formattedAddresses" :key="item.id">
-        <input class="control-label" type="text" v-model="item.type"
-          v-on:change="$emit('update-edit', [attribute, text, index])">
-        <div class ="address-inputs">
-          <input type="text" class="control-address-value"
-          v-on:change="updateAddress(formattedAddresses, index)"
-          placeholder="Address Line 1" v-model="item.value.line1">
-          <input type="text" class="control-address-value"
-          v-on:change="updateAddress(formattedAddresses, index)"
-          placeholder="Address Line 2" v-model="item.value.line2">
+      <div
+        v-for="(item, index) in formattedAddresses"
+        :key="item.id"
+        class="address-input"
+        @focus.capture="addressFocusCheck()"
+      >
+        <input
+          v-model="item.type"
+          class="control-label"
+          type="text"
+          @change="$emit('update-edit', [attribute, text, index])"
+        >
+        <div class="address-inputs">
+          <input
+            v-model="item.value.line1"
+            type="text"
+            class="control-address-value"
+            placeholder="Address Line 1"
+            @change="updateAddress(formattedAddresses, index)"
+          >
+          <input
+            v-model="item.value.line2"
+            type="text"
+            class="control-address-value"
+            placeholder="Address Line 2"
+            @change="updateAddress(formattedAddresses, index)"
+          >
           <div class="control-address-row">
-            <input type="text" class="sub-left control-address-value"
-              v-on:change="updateAddress(formattedAddresses, index)"
-              placeholder="City" v-model="item.value.city">
-            <input type="text" class="sub-right control-address-value"
-              v-on:change="updateAddress(formattedAddresses, index)"
-              placeholder="State" v-model="item.value.state">
+            <input
+              v-model="item.value.city"
+              type="text"
+              class="sub-left control-address-value"
+              placeholder="City"
+              @change="updateAddress(formattedAddresses, index)"
+            >
+            <input
+              v-model="item.value.state"
+              type="text"
+              class="sub-right control-address-value"
+              placeholder="State"
+              @change="updateAddress(formattedAddresses, index)"
+            >
           </div>
           <div class="control-address-row">
-            <input type="text" class="sub-left control-address-value"
-              v-on:change="updateAddress(formattedAddresses, index)"
-              placeholder="ZIP Code" v-model="item.value.zipcode">
-            <input type="text" class="sub-right control-address-value"
-              v-on:change="updateAddress(formattedAddresses, index)"
-              placeholder="PO Box" v-model="item.value.POBox">
+            <input
+              v-model="item.value.zipcode"
+              type="text"
+              class="sub-left control-address-value"
+              placeholder="ZIP Code"
+              @change="updateAddress(formattedAddresses, index)"
+            >
+            <input
+              v-model="item.value.POBox"
+              type="text"
+              class="sub-right control-address-value"
+              placeholder="PO Box"
+              @change="updateAddress(formattedAddresses, index)"
+            >
           </div>
         </div>
-        <button class="control-button"
-          v-on:click="removeComplexValue(attribute, index)">
+        <button
+          class="control-button"
+          @click="removeComplexValue(attribute, index)"
+        >
           <img src="@/assets/minus-round.svg">
         </button>
       </div>
@@ -72,8 +141,13 @@
   </div>
 </template>
 <script>
-
 export default {
+  props: {
+    profileId: {
+      type: String,
+      required: true,
+    },
+  },
   data: function() {
     return {
       label: '',
@@ -152,12 +226,6 @@ export default {
       this.$emit('update-edit', [attribute, this.text, index]);
     },
   },
-  props: {
-    profileId: {
-      type: String,
-      required: true,
-    },
-  },
 };
 </script>
 <style lang="scss" scoped>
@@ -196,7 +264,7 @@ export default {
     min-width: 0;
   }
 }
-.grid *{
+.grid * {
   font-size: 1em;
   position: relative;
   box-sizing: border-box;
@@ -218,18 +286,17 @@ input[type="text"]:focus {
   outline: none;
   box-shadow: 0 4px 4px -1px rgba(196, 202, 29, 0.33);
 }
-.complex-input{
+.complex-input {
   display: flex;
   flex-direction: row;
   flex-flow: row nowrap;
   margin-bottom: 0.5em;
-
 }
 .control {
-    border-bottom: 2px solid rgba(25, 139, 28, 0.2);
-    border-left: 0;
-    border-top: 0;
-    border-right: 0;
+  border-bottom: 2px solid rgba(25, 139, 28, 0.2);
+  border-left: 0;
+  border-top: 0;
+  border-right: 0;
 }
 .control-label {
   @extend .control;
@@ -266,9 +333,9 @@ input[type="text"]:focus {
   text-align: right;
   font-weight: 600;
   @media #{$breakpoint-sm} {
-      width: 100%;
-      text-align: left;
-      padding: 10px 0px 10px 0px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 0px 10px 0px;
   }
 }
 .column-values {
@@ -278,8 +345,8 @@ input[type="text"]:focus {
   text-align: left;
   color: #000;
   @media #{$breakpoint-sm} {
-      width: 100%;
-      padding: 0;
+    width: 100%;
+    padding: 0;
   }
 }
 .column-list {

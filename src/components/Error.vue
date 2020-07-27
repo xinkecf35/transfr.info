@@ -1,5 +1,8 @@
 <template>
-  <div id="error" class="modal level-2">
+  <div
+    id="error"
+    class="modal level-2"
+  >
     <slot>
       <span>Sorry, something has gone wrong, please try again later.</span>
     </slot>

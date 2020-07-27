@@ -1,11 +1,18 @@
 <template>
-  <div id="modalCards" class="modal-control level-2">
+  <div
+    id="modalCards"
+    class="modal-control level-2"
+  >
     <span>More Cards</span>
     <ul>
-      <li v-for="(card, index) in cards" :key="card.id">
-        <span role="button" @click="switchCard(index)">
-          {{card.description}}
-        </span>
+      <li
+        v-for="(card, index) in cards"
+        :key="card.id"
+      >
+        <span
+          role="button"
+          @click="switchCard(index)"
+        >{{ card.description }}</span>
       </li>
     </ul>
   </div>
@@ -14,7 +21,10 @@
 export default {
   events: 'card-switch',
   props: {
-    cards: Array,
+    cards: {
+      type: Array,
+      required: true,
+    },
   },
   methods: {
     switchCard: function(index) {

@@ -1,27 +1,40 @@
 <template>
   <div id="user">
     <div id="sidebar">
-      <img class="logo" src="../assets/logo.svg">
-      <h1>{{displayName}}</h1>
+      <img
+        class="logo"
+        src="../assets/logo.svg"
+      >
+      <h1>{{ displayName }}</h1>
       <span>Settings</span>
       <br>
-      <a v-on:click.prevent="logout">Log out</a>
+      <a @click.prevent="logout">Log out</a>
     </div>
-    <div id='mobile-menu'>
-      <img id="menu-icon" src="../assets/menu-icon.svg"
-        v-on:click="active = !active">
-      <img class="logo" src="../assets/logo.svg">
-      <div class="menu-full-cover"
-        v-on:click="active = !active"
-        v-bind:class="{menuActive: active}">
-        <h1>{{displayName}}</h1>
+    <div id="mobile-menu">
+      <img
+        id="menu-icon"
+        src="../assets/menu-icon.svg"
+        @click="active = !active"
+      >
+      <img
+        class="logo"
+        src="../assets/logo.svg"
+      >
+      <div
+        class="menu-full-cover"
+        :class="{menuActive: active}"
+        @click="active = !active"
+      >
+        <h1>{{ displayName }}</h1>
         <span>Settings</span>
         <br>
-        <a v-on:click.prevent="logout">Log out</a>
+        <a @click.prevent="logout">Log out</a>
       </div>
     </div>
-    <card-manager id="card-manager"
-      v-bind:class="{menuHide: active}"/>
+    <card-manager
+      id="card-manager"
+      :class="{menuHide: active}"
+    />
   </div>
 </template>
 <script>
@@ -30,7 +43,10 @@ import {ajaxRequest} from '@/functions';
 import cardManager from '@/components/CardManager';
 
 export default {
-  name: 'user',
+  name: 'User',
+  components: {
+    cardManager,
+  },
   data: function() {
     return {
       active: false,
@@ -42,6 +58,15 @@ export default {
       email: (state) => state.user.email,
     }),
     ...mapGetters('user', ['displayName']),
+  },
+  watch: {
+    active: function(val) {
+      if (val) {
+        document.body.classList.add('no-scroll');
+      } else {
+        document.body.classList.remove('no-scroll');
+      }
+    },
   },
   methods: {
     logout: function() {
@@ -59,9 +84,6 @@ export default {
     },
     ...mapActions(['loadDataOnLogin']),
   },
-  components: {
-    cardManager,
-  },
   beforeRouteUpdate(to, from, next) {
     this.loadDataOnLogin()
       .then(() => next())
@@ -73,15 +95,6 @@ export default {
           next(err);
         }
       });
-  },
-  watch: {
-    active: function(val) {
-      if (val) {
-        document.body.classList.add('no-scroll');
-      } else {
-        document.body.classList.remove('no-scroll');
-      }
-    },
   },
 };
 </script>

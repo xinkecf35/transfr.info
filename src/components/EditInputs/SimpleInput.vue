@@ -1,29 +1,19 @@
 <template>
   <div class="row">
-    <div class="column-props">{{displayText}}</div>
+    <div class="column-props">
+      {{ displayText }}
+    </div>
     <div class="column-values">
-      <input type="text" class="control"
-        v-model="value">
+      <input
+        v-model="value"
+        type="text"
+        class="control"
+      >
     </div>
   </div>
 </template>
 <script>
 export default {
-  computed: {
-    value: {
-      get() {
-        return this.$store.state.cards[this.profileId][this.attribute];
-      },
-      set(value) {
-        const options = {
-          id: this.profileId,
-          attribute: this.attribute,
-          value,
-        };
-        this.$store.commit('cards/updateAttributeForId', options);
-      },
-    },
-  },
 
   props: {
     attribute: {
@@ -37,6 +27,21 @@ export default {
     profileId: {
       type: String,
       required: true,
+    },
+  },
+  computed: {
+    value: {
+      get() {
+        return this.$store.state.cards[this.profileId][this.attribute];
+      },
+      set(value) {
+        const options = {
+          id: this.profileId,
+          attribute: this.attribute,
+          value,
+        };
+        this.$store.commit('cards/updateAttributeForId', options);
+      },
     },
   },
 };

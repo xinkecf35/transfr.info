@@ -3,27 +3,49 @@
     <error v-if="presentError">
       {{ errors[errors.length-1].message }}
     </error>
-    <div id="login" class="level-1 account-forms">
+    <div
+      id="login"
+      class="level-1 account-forms"
+    >
       <router-link to="/">
-        <img id="login-form" src="../assets/logo.svg">
+        <img
+          id="login-form"
+          src="../assets/logo.svg"
+        >
       </router-link>
       <h1>Log In</h1>
-      <form v-on:submit.prevent="login">
-        <div v-for="error in errors" :key="error.id">
-          <span v-if="error.field ==='username'">{{error.message}}</span>
+      <form @submit.prevent="login">
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
+          <span v-if="error.field ==='username'">{{ error.message }}</span>
         </div>
-        <input type="text" placeholder="Username"
-          v-model="input.username">
+        <input
+          v-model="input.username"
+          type="text"
+          placeholder="Username"
+        >
         <br>
-        <div v-for="error in errors" :key="error.id">
-          <span v-if="error.field ==='password'">{{error.message}}</span>
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
+          <span v-if="error.field ==='password'">{{ error.message }}</span>
         </div>
-        <input type="password" placeholder="Password"
-          v-model="input.password">
+        <input
+          v-model="input.password"
+          type="password"
+          placeholder="Password"
+        >
         <br>
-        <button class="level-1">Log in</button>
+        <button class="level-1">
+          Log in
+        </button>
       </form>
-      <router-link to="/signup">New here? Create an account.</router-link>
+      <router-link to="/signup">
+        New here? Create an account.
+      </router-link>
     </div>
   </div>
 </template>
@@ -33,12 +55,9 @@ import {ajaxRequest} from '../functions.js';
 import error from '@/components/Error';
 
 export default {
-  name: 'login',
-  beforeMount() {
-    document.body.classList.toggle('secondary');
-  },
-  destroyed() {
-    document.body.classList.toggle('secondary');
+  name: 'Login',
+  components: {
+    error,
   },
   data: function() {
     return {
@@ -55,8 +74,18 @@ export default {
       return errors.length && errors[errors.length-1].field === 'modal-error';
     },
   },
-  components: {
-    error,
+  watch: {
+    presentError: function(value) {
+      if (value) {
+        window.setTimeout(()=> this.errors.pop(), 5000);
+      }
+    },
+  },
+  beforeMount() {
+    document.body.classList.toggle('secondary');
+  },
+  destroyed() {
+    document.body.classList.toggle('secondary');
   },
   methods: {
     login: function() {
@@ -116,13 +145,6 @@ export default {
       return valid;
     },
     ...mapActions(['loadDataOnLogin']),
-  },
-  watch: {
-    presentError: function(value) {
-      if (value) {
-        window.setTimeout(()=> this.errors.pop(), 5000);
-      }
-    },
   },
 };
 </script>

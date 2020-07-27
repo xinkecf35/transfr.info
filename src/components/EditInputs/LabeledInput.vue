@@ -1,37 +1,78 @@
 <template>
   <div class="row">
-      <div class="column-props">{{attribute}}</div>
-      <div class="column-values" >
-          <div class="complex-input"
-            v-on:blur.capture="addCombinedValue(attribute, complexData)">
-            <input type="text" class="control-label" placeholder="Label"
-            v-model="label"
-            v-on:keyup.enter="addCombinedValue(attribute, complexData)">
-            <input type="text" class="control-value"
-            v-bind:placeholder="attribute" v-model="value"
-            v-on:keyup.enter="addCombinedValue(attribute, complexData)">
-            <button class="control-button"
-              v-on:click="addCombinedValue(attribute, complexData)">
-              <img src="@/assets/plus-round.svg">
-            </button>
-          </div>
-          <!-- show other values for editting -->
-          <div class="complex-input"
-            v-for="(item, index) in values" :key="item.id">
-            <input class="control-label" type="text" v-model="item.type"
-              v-on:change="$emit('update-edit', [attribute, text, index])">
-            <input class="control-value" type="text" v-model="item.value"
-              v-on:change="$emit('update-edit', [attribute, text, index])">
-            <button class="control-button"
-              v-on:click="removeCombinedValue(attribute, index)">
-              <img src="@/assets/minus-round.svg">
-            </button>
-          </div>
+    <div class="column-props">
+      {{ attribute }}
+    </div>
+    <div class="column-values">
+      <div
+        class="complex-input"
+        @blur.capture="addCombinedValue(attribute, complexData)"
+      >
+        <input
+          v-model="label"
+          type="text"
+          class="control-label"
+          placeholder="Label"
+          @keyup.enter="addCombinedValue(attribute, complexData)"
+        >
+        <input
+          v-model="value"
+          type="text"
+          class="control-value"
+          :placeholder="attribute"
+          @keyup.enter="addCombinedValue(attribute, complexData)"
+        >
+        <button
+          class="control-button"
+          @click="addCombinedValue(attribute, complexData)"
+        >
+          <img src="@/assets/plus-round.svg">
+        </button>
+      </div>
+      <!-- show other values for editting -->
+      <div
+        v-for="(item, index) in values"
+        :key="item.id"
+        class="complex-input"
+      >
+        <input
+          v-model="item.type"
+          class="control-label"
+          type="text"
+          @change="$emit('update-edit', [attribute, text, index])"
+        >
+        <input
+          v-model="item.value"
+          class="control-value"
+          type="text"
+          @change="$emit('update-edit', [attribute, text, index])"
+        >
+        <button
+          class="control-button"
+          @click="removeCombinedValue(attribute, index)"
+        >
+          <img src="@/assets/minus-round.svg">
+        </button>
       </div>
     </div>
+  </div>
 </template>
 <script>
 export default {
+  props: {
+    attribute: {
+      type: String,
+      required: true,
+    },
+    displayText: {
+      type: String,
+      required: true,
+    },
+    profileId: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       label: '',
@@ -65,20 +106,6 @@ export default {
     removeCombinedValue: function(attribute, index) {
       this.text.splice(index, 1);
       this.$emit('update-edit', [attribute, this.text, index]);
-    },
-  },
-  props: {
-    attribute: {
-      type: String,
-      require: true,
-    },
-    displayText: {
-      type: String,
-      required: true,
-    },
-    profileId: {
-      type: String,
-      required: true,
     },
   },
 };

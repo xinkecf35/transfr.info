@@ -1,41 +1,65 @@
 <template>
   <div id="card-manager">
     <div id="controls">
-      <div id="current-card" class="level-1 tabs">
-        <span>{{cardDescription}}</span>
+      <div
+        id="current-card"
+        class="level-1 tabs"
+      >
+        <span>{{ cardDescription }}</span>
       </div>
-      <div id="more" class="level-1 tabs" @click="showModal = !showModal">
+      <div
+        id="more"
+        class="level-1 tabs"
+        @click="showModal = !showModal"
+      >
         <span>...</span>
       </div>
-      <div id="add" class="level-1 tabs" @click="addNewCard">
+      <div
+        id="add"
+        class="level-1 tabs"
+        @click="addNewCard"
+      >
         <span>+</span>
       </div>
     </div>
-    <div id="wrapper" v-bind:class="{showMore: showModal}">
+    <div
+      id="wrapper"
+      :class="{showMore: showModal}"
+    >
       <div id="wrapper-cards">
-        <moreCards v-if="showModal"
-        v-bind:cards="cards"
-        v-on:card-switch="switchCard"/>
+        <moreCards
+          v-if="showModal"
+          :cards="cards"
+          @card-switch="switchCard"
+        />
         <keep-alive>
           <template v-if="cards.length === 0">
-            <div id="getting-started" class="level-1">
+            <div
+              id="getting-started"
+              class="level-1"
+            >
               <div id="call-to-action">
                 <h2>You don't have any cards, why not add one?</h2>
-                  <button class="action-button level-1" @click="pushCard">
-                    Add a Card
-                  </button>
+                <button
+                  class="action-button level-1"
+                  @click="pushCard"
+                >
+                  Add a Card
+                </button>
               </div>
             </div>
           </template>
           <template v-else>
-            <card id="card"
+            <card
+              id="card"
               ref="currentCard"
-              :profileId="currentCardId"
-              v-bind:newCard="addCard"
-              v-on:card-update="patchCard"
-              v-on:card-create="createCard"
-              v-on:card-new-abort="abortNew"
-              v-on:card-delete="deleteCard"/>
+              :profile-id="currentCardId"
+              :new-card="addCard"
+              @card-update="patchCard"
+              @card-create="createCard"
+              @card-new-abort="abortNew"
+              @card-delete="deleteCard"
+            />
           </template>
         </keep-alive>
       </div>
@@ -49,16 +73,16 @@ import moreCards from '@/components/MoreCards';
 import {ajaxRequest, isEmptyOrNull} from '../functions';
 
 export default {
+  components: {
+    card,
+    moreCards,
+  },
   data: function() {
     return {
       currentCardIndex: 0,
       showModal: false,
       addCard: false,
     };
-  },
-  components: {
-    card,
-    moreCards,
   },
   computed: {
     displayName: function() {

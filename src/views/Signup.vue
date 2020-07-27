@@ -3,35 +3,76 @@
     <error v-if="errors.length !== 0">
       {{ errors[errors.length-1].message }}
     </error>
-    <div id="signup" class="level-1 account-forms">
+    <div
+      id="signup"
+      class="level-1 account-forms"
+    >
       <h1>Sign Up</h1>
-      <form v-on:submit.prevent="createAccount()">
-        <div v-for="error in errors" :key="error.id">
-          <span v-if="error.field ==='username'">{{error.message}}</span>
+      <form @submit.prevent="createAccount()">
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
+          <span v-if="error.field ==='username'">{{ error.message }}</span>
         </div>
-        <input type="text" v-model="input.username" placeholder="Username">
-        <div v-for="error in errors" :key="error.id">
+        <input
+          v-model="input.username"
+          type="text"
+          placeholder="Username"
+        >
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
           <span v-if="error.field ==='firstName' || error.field ==='lastName'">
-            {{error.message}}
+            {{ error.message }}
           </span>
         </div>
         <div class="row-input">
-          <input type="text" v-model="input.firstName" placeholder="First Name">
-          <input type="text" v-model="input.lastName" placeholder="Last Name">
+          <input
+            v-model="input.firstName"
+            type="text"
+            placeholder="First Name"
+          >
+          <input
+            v-model="input.lastName"
+            type="text"
+            placeholder="Last Name"
+          >
         </div>
-        <div v-for="error in errors" :key="error.id">
-          <span v-if="error.field ==='email'">{{error.message}}</span>
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
+          <span v-if="error.field ==='email'">{{ error.message }}</span>
         </div>
-        <input type="email" v-model="input.email" placeholder="Email">
-        <div v-for="error in errors" :key="error.id">
-          <span v-if="error.field ==='password'">{{error.message}}</span>
+        <input
+          v-model="input.email"
+          type="email"
+          placeholder="Email"
+        >
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
+          <span v-if="error.field ==='password'">{{ error.message }}</span>
         </div>
-        <input type="password" v-model="input.password" placeholder="Password">
-        <div v-for="error in errors" :key="error.id">
-          <span v-if="error.field ==='confirm'">{{error.message}}</span>
+        <input
+          v-model="input.password"
+          type="password"
+          placeholder="Password"
+        >
+        <div
+          v-for="error in errors"
+          :key="error.id"
+        >
+          <span v-if="error.field ==='confirm'">{{ error.message }}</span>
         </div>
-        <input type="password" v-model="input.confirm"
-          placeholder="Confirm Password">
+        <input
+          v-model="input.confirm"
+          type="password"
+          placeholder="Confirm Password"
+        >
         <button>Create</button>
       </form>
       <router-link to="/login">
@@ -45,12 +86,9 @@ import {ajaxRequest} from '../functions.js';
 import error from '@/components/Error';
 
 export default {
-  name: 'signup',
-  beforeMount() {
-    document.body.classList.toggle('secondary');
-  },
-  destroyed() {
-    document.body.classList.toggle('secondary');
+  name: 'Signup',
+  components: {
+    error,
   },
   data: function() {
     return {
@@ -64,9 +102,6 @@ export default {
       },
       errors: [],
     };
-  },
-  components: {
-    error,
   },
   computed: {
     name: function() {
@@ -82,6 +117,12 @@ export default {
       };
       return body;
     },
+  },
+  beforeMount() {
+    document.body.classList.toggle('secondary');
+  },
+  destroyed() {
+    document.body.classList.toggle('secondary');
   },
   methods: {
     createAccount: function() {

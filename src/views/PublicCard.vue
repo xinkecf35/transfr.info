@@ -1,11 +1,17 @@
 <template>
   <div id="card">
-    <div id="card-info" class="level-1">
+    <div
+      id="card-info"
+      class="level-1"
+    >
       <p>Now preparing to download contact information for</p>
-        <h2>{{name}}</h2>
+      <h2>{{ name }}</h2>
       <p>If download does not start automatically start click</p>
-      <a id="card-download" href="#card-download"
-        v-on:click.prevent="manualDownload($event)">
+      <a
+        id="card-download"
+        href="#card-download"
+        @click.prevent="manualDownload($event)"
+      >
         here.
       </a>
     </div>
@@ -31,7 +37,7 @@ const VCardFieldMap = {
 };
 
 export default {
-  name: 'publicCard',
+  name: 'PublicCard',
   beforeRouteEnter(to, from, next) {
     // Fetch Data if appropriate
     const cardId = to.params.card;
@@ -48,6 +54,12 @@ export default {
       }
       next(err);
     });
+  },
+  props: {
+    notFound: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: function() {
     return {
@@ -112,12 +124,6 @@ export default {
           this.data = vcard;
         }).catch((err) => this.$emit('error/api-fetch', err));
       }
-    },
-  },
-  props: {
-    notFound: {
-      type: Boolean,
-      default: false,
     },
   },
 };
