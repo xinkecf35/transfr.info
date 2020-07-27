@@ -88,7 +88,9 @@ export default {
       }
     },
     values() {
-      return this.$store.state.cards[this.profileId][this.attribute];
+      // can this be made into a getter somehow?
+      const getValues = this.$store.getters['cards/getObjectValues'];
+      return getValues(this.profileId, this.attribute);
     },
   },
   event: 'update-edit',

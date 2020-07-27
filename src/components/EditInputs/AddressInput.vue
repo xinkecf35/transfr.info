@@ -164,7 +164,10 @@ export default {
   },
   computed: {
     addresses() {
-      return this.$store.state.cards[this.profileId].address;
+      const cardsModule = this.$store.state.cards;
+      const card = cardsModule.profile[this.profileId];
+      const addressesMap = cardsModule.address;
+      return card['address'].map((id) => addressesMap[id]) || [];
     },
     addressKeys: function() {
       return Object.keys(this.addressComponents);

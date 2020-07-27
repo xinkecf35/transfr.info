@@ -32,7 +32,8 @@ export default {
   computed: {
     value: {
       get() {
-        return this.$store.state.cards[this.profileId][this.attribute];
+        const card = this.$store.state.cards.profile[this.profileId];
+        return card[this.attribute];
       },
       set(value) {
         const options = {

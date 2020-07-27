@@ -35,7 +35,7 @@
                   id="copyLink"
                   class="share-link-button"
                 >
-                  <img src="../assets/clipboard.svg">
+                  <img src="@/assets/clipboard.svg">
                 </button>
               </div>
             </div>
