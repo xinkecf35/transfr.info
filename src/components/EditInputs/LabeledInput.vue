@@ -31,21 +31,21 @@
       </div>
       <!-- show other values for editting -->
       <div
-        v-for="(item, index) in values"
-        :key="item.id"
+        v-for="item in values"
+        :key="item._id"
         class="complex-input"
       >
         <input
-          v-model="item.type"
+          :value="item.type"
           class="control-label"
           type="text"
-          @change="$emit('update-edit', [attribute, text, index])"
+          @input="updateValue($event, item._id, 'type')"
         >
         <input
-          v-model="item.value"
+          :value="item.value"
           class="control-value"
           type="text"
-          @change="$emit('update-edit', [attribute, text, index])"
+          @input="updateValue($event, item._id, 'value')"
         >
         <button
           class="control-button"
@@ -58,6 +58,8 @@
   </div>
 </template>
 <script>
+import {mapMutations} from 'vuex';
+
 export default {
   props: {
     attribute: {
@@ -105,10 +107,20 @@ export default {
         });
       }
     },
+    updateValue(e, id, field) {
+      const params = {
+        id,
+        attr: this.attribute,
+        field,
+        value: e.target.value,
+      };
+      this.updateValueInArray(params);
+    },
     removeCombinedValue: function(attribute, index) {
       this.text.splice(index, 1);
       this.$emit('update-edit', [attribute, this.text, index]);
     },
+    ...mapMutations('cards', ['updateValueInArray']),
   },
 };
 </script>

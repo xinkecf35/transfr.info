@@ -19,6 +19,12 @@ const getters = {
     const values = attrIds.map((id) => state[attribute][id] || undefined);
     return values.filter((value) => !isEmptyOrNull(value));
   },
+  getIdsForAttribute: (state) => (id, attr) => {
+    return state.profile[id][attr];
+  },
+  getValueFromArray: (state) => (id, attr, field) => {
+    return state[attr][id][field];
+  },
 };
 
 const mutations = {
@@ -28,6 +34,9 @@ const mutations = {
   updateAttributeForId(state, {id, attribute, value}) {
     const card = state.profile[id];
     card[attribute] = value;
+  },
+  updateValueInArray(state, {id, attr, field, value}) {
+    state[attr][id][field] = value;
   },
   // Takes the cards array and flattens it a little
   // basically profileId is mapped to the cards
