@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="column-props">
-      {{ attribute }}
+      {{ displayText }}
     </div>
     <div class="column-values">
       <div
@@ -49,7 +49,7 @@
         >
         <button
           class="control-button"
-          @click="removeCombinedValue(attribute, index)"
+          @click="removeCombinedValue(item._id)"
         >
           <img src="@/assets/minus-round.svg">
         </button>
@@ -116,11 +116,15 @@ export default {
       };
       this.updateValueInArray(params);
     },
-    removeCombinedValue: function(attribute, index) {
-      this.text.splice(index, 1);
-      this.$emit('update-edit', [attribute, this.text, index]);
+    removeCombinedValue(id) {
+      const params = {
+        cardId: this.profileId,
+        attrId: id,
+        attribute: this.attribute,
+      };
+      this.removeValueInArray(params);
     },
-    ...mapMutations('cards', ['updateValueInArray']),
+    ...mapMutations('cards', ['updateValueInArray', 'removeValueInArray']),
   },
 };
 </script>

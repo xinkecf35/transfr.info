@@ -154,7 +154,7 @@
 import {mapGetters} from 'vuex';
 import EditInput from '@/components/EditInputs/EditInput';
 import Error from '@/components/Error';
-import {capitalize, isEmptyOrNull} from '@/functions';
+import {isEmptyOrNull} from '@/functions';
 
 const requiredAttributes = ['description'];
 const optionalAttributes = [
@@ -169,8 +169,9 @@ const optionalAttributes = [
 ];
 const cardAttributes = requiredAttributes.concat(optionalAttributes);
 const complexAttributes = ['address', 'email', 'telephone'];
+// No longer entirely necessarily buy may change mind on text stuff
 const textForAttribute = (attr) =>
-  attr !== 'IMPP' ? capitalize(attr) : 'IMPP';
+  attr !== 'IMPP' ? String(attr) : 'IMPP';
 
 /**
  * Function to create a patch object for JSON patch (RFC 6902)

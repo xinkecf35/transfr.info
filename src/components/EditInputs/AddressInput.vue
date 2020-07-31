@@ -1,12 +1,11 @@
 <template>
   <div class="row">
     <div class="column-props">
-      Address
+      address
     </div>
     <div class="column-values">
       <div
         class="address-input"
-        @focus.capture="addressFocusCheck()"
       >
         <input
           id="address-label"
@@ -74,13 +73,12 @@
         v-for="(item, index) in formattedAddresses"
         :key="item.id"
         class="address-input"
-        @focus.capture="addressFocusCheck()"
       >
         <input
           v-model="item.type"
           class="control-label"
           type="text"
-          @change="$emit('update-edit', [attribute, text, index])"
+          @change="updateLabel(item.id, item.type)"
         >
         <div class="address-inputs">
           <input
@@ -88,14 +86,14 @@
             type="text"
             class="control-address-value"
             placeholder="Address Line 1"
-            @change="updateAddress(formattedAddresses, index)"
+            @change="updateAddress(item.id, item.value)"
           >
           <input
             v-model="item.value.line2"
             type="text"
             class="control-address-value"
             placeholder="Address Line 2"
-            @change="updateAddress(formattedAddresses, index)"
+            @change="updateAddress(item.id, item.value)"
           >
           <div class="control-address-row">
             <input
@@ -103,14 +101,14 @@
               type="text"
               class="sub-left control-address-value"
               placeholder="City"
-              @change="updateAddress(formattedAddresses, index)"
+              @change="updateAddress(item.id, item.value)"
             >
             <input
               v-model="item.value.state"
               type="text"
               class="sub-right control-address-value"
               placeholder="State"
-              @change="updateAddress(formattedAddresses, index)"
+              @change="updateAddress(item.id, item.value)"
             >
           </div>
           <div class="control-address-row">
@@ -119,14 +117,14 @@
               type="text"
               class="sub-left control-address-value"
               placeholder="ZIP Code"
-              @change="updateAddress(formattedAddresses, index)"
+              @change="updateAddress(item.id, item.value)"
             >
             <input
               v-model="item.value.POBox"
               type="text"
               class="sub-right control-address-value"
               placeholder="PO Box"
-              @change="updateAddress(formattedAddresses, index)"
+              @change="updateAddress(item.id, item.value)"
             >
           </div>
         </div>
@@ -141,6 +139,8 @@
   </div>
 </template>
 <script>
+import {mapMutations} from 'vuex';
+
 export default {
   props: {
     profileId: {
@@ -169,10 +169,10 @@ export default {
       const addressesMap = cardsModule.address;
       return card['address'].map((id) => addressesMap[id]) || [];
     },
-    addressKeys: function() {
+    addressKeys() {
       return Object.keys(this.addressComponents);
     },
-    addressData: function() {
+    addressData() {
       const components = this.addressComponents;
       const keys = this.addressKeys;
       const validKeys = keys.filter((key) => components[key] !== '');
@@ -184,16 +184,8 @@ export default {
       }
       return null;
     },
-    complexData: function() {
-      if (this.label !== '' && this.value !== '') {
-        return {type: this.label, value: this.value};
-      } else {
-        return null;
-      }
-    },
-    formattedAddresses: function() {
-      const addresses = [];
-      this.addresses.forEach((address) => {
+    formattedAddresses() {
+      return this.addresses.map((address) => {
         const components = address.value.split(';');
         const formattedAddress = {
           POBox: components[0],
@@ -204,30 +196,35 @@ export default {
           zipcode: components[5],
           country: components[6],
         };
-        addresses.push({type: address.type, value: formattedAddress});
+        return {
+          id: address._id,
+          type: address.type,
+          value: formattedAddress,
+        };
       });
-      return addresses;
     },
   },
-  event: 'update-edit',
   methods: {
-    // This won't work anymore
-    addressFocusCheck: function() {
-      if (document.activeElement.id.indexOf('address-') === -1) {
-        console.log('address hit');
-      }
-    },
-    updateAddress: function(data, index) {
-      let address = data[index];
-      const keys = this.addressKeys;
-      let modified = Array.from(keys, (key) => address.value[key]).join(';');
-      this.text[index].value = modified;
-      this.$emit('update-edit', ['Address', this.text, index]);
+    updateLabel(id, value) {
+      const params = {id, attr: 'address', field: 'type', value};
+      this.updateValueInArray(params);
     },
     removeComplexValue: function(attribute, index) {
       this.text.splice(index, 1);
       this.$emit('update-edit', [attribute, this.text, index]);
     },
+    updateAddress(id, value) {
+      const keys = this.addressKeys;
+      const modified = Array.from(keys, (key) => value[key]).join(';');
+      const params = {
+        id,
+        attr: 'address',
+        field: 'value',
+        value: modified,
+      };
+      this.updateValueInArray(params);
+    },
+    ...mapMutations('cards', ['updateValueInArray']),
   },
 };
 </script>

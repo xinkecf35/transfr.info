@@ -31,6 +31,11 @@ const mutations = {
   clear(state) {
     Object.keys(state).forEach((key) => delete state[key]);
   },
+  removeValueInArray(state, {attrId, cardId, attribute}) {
+    delete state[attribute][attrId];
+    const attrValues = state.profile[cardId][attribute];
+    attrValues.splice(attrValues.indexOf(attrId), 1);
+  },
   updateAttributeForId(state, {id, attribute, value}) {
     const card = state.profile[id];
     card[attribute] = value;
