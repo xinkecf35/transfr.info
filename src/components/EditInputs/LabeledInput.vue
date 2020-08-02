@@ -6,32 +6,34 @@
     <div class="column-values">
       <div
         class="complex-input"
-        @blur.capture="addCombinedValue(attribute, complexData)"
+        @blur.capture="addCombinedValue()"
       >
         <input
           v-model="label"
           type="text"
           class="control-label"
           placeholder="Label"
-          @keyup.enter="addCombinedValue(attribute, complexData)"
+          @keyup.enter="addCombinedValue()"
         >
         <input
           v-model="value"
           type="text"
           class="control-value"
           :placeholder="attribute"
-          @keyup.enter="addCombinedValue(attribute, complexData)"
+          @keyup.enter="addCombinedValue()"
         >
         <button
           class="control-button"
-          @click="addCombinedValue(attribute, complexData)"
+          @click="addCombinedValue()"
         >
           <img src="@/assets/plus-round.svg">
         </button>
       </div>
       <!-- show other values for editting -->
+      <!-- Following is a little unorthodox but using a method
+          Seems to work in terms of reactivity -->
       <div
-        v-for="item in values"
+        v-for="item in getValues(ids)"
         :key="item._id"
         class="complex-input"
       >
@@ -59,6 +61,7 @@
 </template>
 <script>
 import {mapMutations} from 'vuex';
+import {isEmptyOrNull} from '@/functions';
 
 export default {
   props: {
@@ -82,6 +85,9 @@ export default {
     };
   },
   computed: {
+    allValues() {
+      return this.$store.state.cards[this.attribute];
+    },
     complexData: function() {
       if (this.label !== '' && this.value !== '') {
         return {type: this.label, value: this.value};
@@ -89,32 +95,29 @@ export default {
         return null;
       }
     },
-    values() {
-      // can this be made into a getter somehow?
-      const getValues = this.$store.getters['cards/getObjectValues'];
-      return getValues(this.profileId, this.attribute);
+    ids() {
+      const getters = this.$store.getters;
+      const getterName = 'cards/getIdsForAttribute';
+      return getters[getterName](this.profileId, this.attribute);
     },
   },
   event: 'update-edit',
   methods: {
-    addCombinedValue: function(attribute, data) {
-      if (data !== null) {
-        let index = this.text.push(data) - 1;
-        this.$emit('update-edit', [attribute, this.text, index]);
-        this.label = this.value = '';
-        this.addressKeys.forEach((key) => {
-          this.addressComponents[key] = '';
-        });
+    addCombinedValue() {
+      if (!isEmptyOrNull(this.label) && !isEmptyOrNull(this.value)) {
+        const params = {
+          id: this.profileId,
+          attribute: this.attribute,
+          type: this.label,
+          value: this.value,
+        };
+        this.addValueInArray(params);
+        this.label = '';
+        this.value = '';
       }
     },
-    updateValue(e, id, field) {
-      const params = {
-        id,
-        attr: this.attribute,
-        field,
-        value: e.target.value,
-      };
-      this.updateValueInArray(params);
+    getValues(ids) {
+      return this.ids.map((id) => this.allValues[id]);
     },
     removeCombinedValue(id) {
       const params = {
@@ -124,7 +127,20 @@ export default {
       };
       this.removeValueInArray(params);
     },
-    ...mapMutations('cards', ['updateValueInArray', 'removeValueInArray']),
+    updateValue(e, id, field) {
+      const params = {
+        id,
+        attribute: this.attribute,
+        field,
+        value: e.target.value,
+      };
+      this.updateValueInArray(params);
+    },
+    ...mapMutations('cards', [
+      'addValueInArray',
+      'updateValueInArray',
+      'removeValueInArray',
+    ]),
   },
 };
 </script>
