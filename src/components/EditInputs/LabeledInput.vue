@@ -33,7 +33,7 @@
       <!-- Following is a little unorthodox but using a method
           Seems to work in terms of reactivity -->
       <div
-        v-for="item in getValues(ids)"
+        v-for="item in getValues()"
         :key="item._id"
         class="complex-input"
       >
@@ -82,6 +82,7 @@ export default {
     return {
       label: '',
       value: '',
+      values: [],
     };
   },
   computed: {
@@ -101,7 +102,6 @@ export default {
       return getters[getterName](this.profileId, this.attribute);
     },
   },
-  event: 'update-edit',
   methods: {
     addCombinedValue() {
       if (!isEmptyOrNull(this.label) && !isEmptyOrNull(this.value)) {
@@ -116,7 +116,7 @@ export default {
         this.value = '';
       }
     },
-    getValues(ids) {
+    getValues() {
       return this.ids.map((id) => this.allValues[id]);
     },
     removeCombinedValue(id) {
@@ -126,6 +126,8 @@ export default {
         attribute: this.attribute,
       };
       this.removeValueInArray(params);
+      // Why only this works and not the typical splice?
+      this.$forceUpdate();
     },
     updateValue(e, id, field) {
       const params = {

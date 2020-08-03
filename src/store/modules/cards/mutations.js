@@ -20,7 +20,7 @@ export default {
     }
   },
   removeValueInArray(state, {attrId, cardId, attribute}) {
-    delete state[attribute][attrId];
+    Vue.delete(state[attribute], attrId);
     const attrValues = state.profile[cardId][attribute];
     attrValues.splice(attrValues.indexOf(attrId), 1);
   },
