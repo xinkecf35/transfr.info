@@ -1,28 +1,43 @@
 <template>
   <div id="app">
-    <div id="nav" v-show="showNav">
-      <img id="nav-logo" alt="transfr logo" src="./assets/logo-invert.svg">
+    <div
+      v-show="showNav"
+      id="nav"
+    >
+      <img
+        id="nav-logo"
+        alt="transfr logo"
+        src="./assets/logo-invert.svg"
+      >
       <div id="nav-links">
-        <router-link to="/">Home</router-link>
-        <router-link to="/about">About</router-link>
-        <router-link to="/login">Log In</router-link>
-        <router-link to="/signup">Sign Up</router-link>
+        <router-link to="/">
+          Home
+        </router-link>
+        <router-link to="/about">
+          About
+        </router-link>
+        <router-link to="/login">
+          Log In
+        </router-link>
+        <router-link to="/signup">
+          Sign Up
+        </router-link>
       </div>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 <script>
 export default {
-  beforeCreate() {
-    document.body.classList.add('home');
-    document.body.classList.add('no-margin');
-  },
   computed: {
     showNav: function() {
       const routes = ['user', 'login', 'signup'];
       return !(routes.indexOf(this.$route.name) > -1);
     },
+  },
+  beforeCreate() {
+    document.body.classList.add('home');
+    document.body.classList.add('no-margin');
   },
 };
 </script>
