@@ -6,6 +6,8 @@
     <div class="column-values">
       <div
         class="address-input"
+        @blur.capture="isFocused = false"
+        @focus.capture="isFocused = true"
       >
         <input
           id="address-label"
@@ -139,7 +141,9 @@
   </div>
 </template>
 <script>
+import debounce from 'lodash.debounce';
 import {mapMutations} from 'vuex';
+import {isEmptyOrNull} from '@/functions';
 
 export default {
   props: {
@@ -160,6 +164,7 @@ export default {
         zipcode: '',
         country: '',
       },
+      isFocused: false,
     };
   },
   computed: {
@@ -204,7 +209,33 @@ export default {
       });
     },
   },
+  watch: {
+    isFocused() {
+      this.debouncedAddAddress();
+    },
+  },
   methods: {
+    addAddress() {
+      if (!isEmptyOrNull(this.label) &&
+          !isEmptyOrNull(this.addressData.value)) {
+        const {type, value} = this.addressData;
+        const params = {
+          id: this.profileId,
+          attribute: 'address',
+          type,
+          value,
+        };
+        this.addValueInArray(params);
+        this.label = '';
+        Object
+          .keys(this.addressComponents)
+          .forEach((key) => this.addressComponents[key] = '');
+      }
+    },
+    debouncedAddAddress: debounce(function() {
+      // eslint-disable-next-line no-invalid-this
+      if (!this.isFocused) this.addAddress();
+    }, 200),
     updateLabel(id, value) {
       const params = {id, attr: 'address', field: 'type', value};
       this.updateValueInArray(params);
@@ -224,7 +255,7 @@ export default {
       };
       this.updateValueInArray(params);
     },
-    ...mapMutations('cards', ['updateValueInArray']),
+    ...mapMutations('cards', ['addValueInArray', 'updateValueInArray']),
   },
 };
 </script>
