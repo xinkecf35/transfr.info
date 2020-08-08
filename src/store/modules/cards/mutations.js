@@ -11,7 +11,7 @@ export default {
   },
   addValueInArray(state, {id, attribute, type, value}) {
     const tempId = `temp-${id}-${getRandomInt(100, 1000)}`;
-    Vue.set(state[attribute], tempId, {_id: id, type, value});
+    Vue.set(state[attribute], tempId, {_id: tempId, type, value});
     const attrIdsForCard = state.profile[id][attribute];
     if (Array.isArray(attrIdsForCard) && attrIdsForCard.length) {
       state.profile[id][attribute].push(tempId);

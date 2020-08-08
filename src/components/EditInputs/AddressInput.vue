@@ -66,13 +66,13 @@
         </div>
         <button
           class="control-button"
-          @click="console.log('TODO: Add address')"
+          @click="addAddress()"
         >
           <img src="@/assets/plus-round.svg">
         </button>
       </div>
       <div
-        v-for="(item, index) in formattedAddresses"
+        v-for="item in getFormattedAddresses()"
         :key="item.id"
         class="address-input"
       >
@@ -132,7 +132,7 @@
         </div>
         <button
           class="control-button"
-          @click="removeComplexValue(attribute, index)"
+          @click="removeAddress(item.id)"
         >
           <img src="@/assets/minus-round.svg">
         </button>
@@ -168,11 +168,8 @@ export default {
     };
   },
   computed: {
-    addresses() {
-      const cardsModule = this.$store.state.cards;
-      const card = cardsModule.profile[this.profileId];
-      const addressesMap = cardsModule.address;
-      return card['address'].map((id) => addressesMap[id]) || [];
+    allAddresses() {
+      return this.$store.state.cards['address'];
     },
     addressKeys() {
       return Object.keys(this.addressComponents);
@@ -189,8 +186,39 @@ export default {
       }
       return null;
     },
-    formattedAddresses() {
-      return this.addresses.map((address) => {
+    ids() {
+      const getters = this.$store.getters;
+      const getterName = 'cards/getIdsForAttribute';
+      return getters[getterName](this.profileId, 'address');
+    },
+  },
+  watch: {
+    isFocused() {
+      this.debouncedAddAddress();
+    },
+  },
+  methods: {
+    addAddress() {
+      if (!isEmptyOrNull(this.label) && !isEmptyOrNull(this.addressData)) {
+        const {type, value} = this.addressData;
+        const params = {
+          id: this.profileId,
+          attribute: 'address',
+          type,
+          value,
+        };
+        this.addValueInArray(params);
+        this.label = '';
+        this.addressKeys.forEach((key) => this.addressComponents[key] = '');
+      }
+    },
+    debouncedAddAddress: debounce(function() {
+      // eslint-disable-next-line no-invalid-this
+      if (!this.isFocused) this.addAddress();
+    }, 200),
+    getFormattedAddresses() {
+      return this.ids.map((id) => {
+        const address = this.allAddresses[id];
         const components = address.value.split(';');
         const formattedAddress = {
           POBox: components[0],
@@ -202,60 +230,41 @@ export default {
           country: components[6],
         };
         return {
-          id: address._id,
+          id,
           type: address.type,
           value: formattedAddress,
         };
       });
     },
-  },
-  watch: {
-    isFocused() {
-      this.debouncedAddAddress();
-    },
-  },
-  methods: {
-    addAddress() {
-      if (!isEmptyOrNull(this.label) &&
-          !isEmptyOrNull(this.addressData.value)) {
-        const {type, value} = this.addressData;
-        const params = {
-          id: this.profileId,
-          attribute: 'address',
-          type,
-          value,
-        };
-        this.addValueInArray(params);
-        this.label = '';
-        Object
-          .keys(this.addressComponents)
-          .forEach((key) => this.addressComponents[key] = '');
-      }
-    },
-    debouncedAddAddress: debounce(function() {
-      // eslint-disable-next-line no-invalid-this
-      if (!this.isFocused) this.addAddress();
-    }, 200),
     updateLabel(id, value) {
       const params = {id, attr: 'address', field: 'type', value};
       this.updateValueInArray(params);
     },
-    removeComplexValue: function(attribute, index) {
-      this.text.splice(index, 1);
-      this.$emit('update-edit', [attribute, this.text, index]);
+    removeAddress(id) {
+      const params = {
+        cardId: this.profileId,
+        attrId: id,
+        attribute: 'address',
+      };
+      this.removeValueInArray(params);
+      this.$forceUpdate();
     },
     updateAddress(id, value) {
       const keys = this.addressKeys;
       const modified = Array.from(keys, (key) => value[key]).join(';');
       const params = {
         id,
-        attr: 'address',
+        attribute: 'address',
         field: 'value',
         value: modified,
       };
       this.updateValueInArray(params);
     },
-    ...mapMutations('cards', ['addValueInArray', 'updateValueInArray']),
+    ...mapMutations('cards', [
+      'addValueInArray',
+      'updateValueInArray',
+      'removeValueInArray',
+    ]),
   },
 };
 </script>
