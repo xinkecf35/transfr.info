@@ -155,47 +155,12 @@ import {mapGetters} from 'vuex';
 import EditInput from '@/components/EditInputs/EditInput';
 import Error from '@/components/Error';
 import {isEmptyOrNull} from '@/functions';
+import {cardAttributes, complexAttributes} from '@/global-vars';
 
-const requiredAttributes = ['description'];
-const optionalAttributes = [
-  'telephone',
-  'email',
-  'organization',
-  'address',
-  'nickname',
-  'note',
-  'birthday',
-  // 'impp', Future development
-];
-const cardAttributes = requiredAttributes.concat(optionalAttributes);
-const complexAttributes = ['address', 'email', 'telephone'];
 // No longer entirely necessarily buy may change mind on text stuff
 const textForAttribute = (attr) =>
   attr !== 'IMPP' ? String(attr) : 'IMPP';
 
-/**
- * Function to create a patch object for JSON patch (RFC 6902)
- * @param {String} attribute path to be patched
- * @param {any} currentValue value that is currently assigned
- * @param {any} newValue New value that is to be patched
- * @return {Object} dictionary of items in line with JSON Patch
- */
-function generatePatchObject(attribute, currentValue, newValue) {
-  let operation = 'replace';
-  if (isEmptyOrNull(newValue)) {
-    // If it removes the current value
-    operation = 'remove';
-  } else if (isEmptyOrNull(currentValue)) {
-    operation = 'add';
-  }
-  let patch;
-  if (operation === 'remove') {
-    patch = {op: operation, path: '/' + attribute};
-  } else {
-    patch = {op: operation, path: '/' + attribute, value: newValue};
-  }
-  return patch;
-}
 
 export default {
   components: {

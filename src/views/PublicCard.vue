@@ -10,7 +10,7 @@
       <a
         id="card-download"
         href="#card-download"
-        @click.prevent="manualDownload($event)"
+        @click.prevent="manualDownload()"
       >
         here.
       </a>
@@ -19,9 +19,7 @@
 </template>
 <script>
 import {ajaxRequest, isEmptyOrNull} from '@/functions';
-
-// Array of attributes that should be handled specially
-const complexAttributes = ['address', 'email', 'telephone'];
+import {baseURL, complexAttributes} from '@/global-vars';
 
 const VCardFieldMap = {
   address: 'ADR',
@@ -41,11 +39,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     // Fetch Data if appropriate
     const cardId = to.params.card;
-    let cardDataURL = 'https://api.transfr.info/v1/card/' + cardId;
-    if (process.env.NODE_ENV === 'development') {
-      cardDataURL = 'https://api.transfr.test/v1/card/' + cardId;
-    }
-    let cardDataPromise = ajaxRequest('GET', cardDataURL);
+    const cardDataURL = `${baseURL}/card/${cardId}`;
+    const cardDataPromise = ajaxRequest('GET', cardDataURL);
     cardDataPromise.then((response) => {
       next((vm) => vm.createVCard(response.card));
     }).catch(function(err) {
@@ -68,7 +63,7 @@ export default {
     };
   },
   methods: {
-    createVCard: function(cardJSON) {
+    createVCard(cardJSON) {
       this.name = cardJSON.fullName || '';
       const data = this.convertJSONtoVCard(cardJSON);
       // creating file with Blob constructor, subject to change
@@ -82,7 +77,7 @@ export default {
       window.setTimeout(() => element.click(), 2000);
       document.body.removeChild(element);
     },
-    convertJSONtoVCard: function(cardJSON) {
+    convertJSONtoVCard(cardJSON) {
       // Prefix data with VCard identifier and Product ID
       let vCardData = 'BEGIN:VCARD\r\nVERSION:3.0\r\n';
       vCardData += 'PRODID:-//transfr.info//Web Client\r\n';
@@ -110,19 +105,18 @@ export default {
       vCardData += 'END:VCARD\r\n';
       return vCardData;
     },
-    manualDownload: function(e) {
+    // What was I thining?
+    // probably an alternative to Blob?
+    manualDownload() {
       const cardId = this.$router.currentRoute.params.card;
       if (!isEmptyOrNull(this.data)) {
-        let cardDataURL = 'https://api.transfr.info/v1/card/' + cardId;
-        if (process.env.NODE_ENV === 'development') {
-          cardDataURL = 'https://api.transfr.test/v1/card/' + cardId;
-        }
+        const cardDataURL = `${baseURL}/card/${cardId}`;
         const dataPromise = ajaxRequest('GET', cardDataURL);
-        dataPromise.then((response) => {
-          this.convertJSONtoVCard(response.card);
-        }).then((vcard) => {
-          this.data = vcard;
-        }).catch((err) => this.$emit('error/api-fetch', err));
+        dataPromise
+          .then((response) => this.convertJSONtoVCard(response.card))
+          .then((vcard) => this.data = vcard)
+          .then(() => this.createVCard)
+          .catch((err) => this.$emit('error/api-fetch', err));
       }
     },
   },

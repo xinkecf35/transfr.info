@@ -82,8 +82,9 @@
   </div>
 </template>
 <script>
-import {ajaxRequest} from '../functions.js';
+import {ajaxRequest} from '@/functions.js';
 import error from '@/components/Error';
+import {baseURL} from '@/global-vars';
 
 export default {
   name: 'Signup',
@@ -130,10 +131,7 @@ export default {
         const router = this.$router;
         let errors = this.errors;
         const requestBody = JSON.stringify(this.computedBody);
-        let signupURL = 'https://api.transfr.info/v1/users/new';
-        if (process.env.NODE_ENV === 'development') {
-          signupURL = 'https://api.transfr.test/v1/users/new';
-        }
+        let signupURL = `${baseURL}/users/new`;
         let signupPromise = ajaxRequest('POST', signupURL, requestBody);
         signupPromise.then(function(response) {
           router.push({path: 'login'});

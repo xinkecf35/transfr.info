@@ -51,7 +51,8 @@
 </template>
 <script>
 import {mapActions} from 'vuex';
-import {ajaxRequest} from '../functions.js';
+import {ajaxRequest} from '@/functions.js';
+import {baseURL} from '@/global-vars';
 import error from '@/components/Error';
 
 export default {
@@ -94,10 +95,7 @@ export default {
       let errors = this.errors = [];
       if (this.isValidInput()) {
         const requestBody = JSON.stringify(userInput);
-        let authURL = 'https://api.transfr.info/v1/users/';
-        if (process.env.NODE_ENV === 'development') {
-          authURL = 'https://api.transfr.test/v1/users/';
-        }
+        let authURL = `${baseURL}/users/`;
         let authPromise = ajaxRequest('POST', authURL, requestBody);
         authPromise.then((response) => {
           this.$store.commit('setCSRF', response.csrf);
