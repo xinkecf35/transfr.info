@@ -151,7 +151,7 @@
   </div>
 </template>
 <script>
-import {mapGetters} from 'vuex';
+import {mapActions, mapGetters} from 'vuex';
 import EditInput from '@/components/EditInputs/EditInput';
 import Error from '@/components/Error';
 import {isEmptyOrNull} from '@/functions';
@@ -261,12 +261,13 @@ export default {
       immediate: true,
     },
     edit: function(edit) {
-      if (!edit && this.patch.length !== 0 && !this.newCard) {
+      if (!edit && !this.newCard) {
         // cleaning up after done editing
-        this.$emit('card-update', this.patch);
+        console.log('here');
+        this.updateEditedCard();
         this.original = '';
         this.patch = [];
-      } else if (!edit && this.patch.length !== 0 && this.newCard) {
+      } else if (!edit && this.newCard) {
         let payload = this.vcard;
         this.patch.forEach((operation) => {
           const attribute = operation.path.substring(1);
@@ -322,6 +323,7 @@ export default {
         });
         return;
       }
+      console.log('commitEdits here');
       this.edit = !edit;
     },
     // Redo for Vuex refactor
@@ -377,36 +379,14 @@ export default {
       popOverElement.style.left = '-' + offset + 'px';
     },
     // Remove for Vuex refactor
-    updateEditedCard: function(payload) {
-      let attribute = payload[0].toLowerCase();
-      const attributes = cardAttributes;
-      if (attribute === 'description') {
-        // Specific case for non optional property
-        const operation = generatePatchObject(
-          attribute,
-          attributes.description,
-          payload[1]
-        );
-        this.patch.push(operation);
-        attributes.description = payload[1];
-      } else {
-        let optional = this.values;
-        const operation = generatePatchObject(
-          attribute,
-          optional[attribute],
-          payload[1]
-        );
-        let index = this.patch.findIndex((op) => op.path === '/' + attribute);
-        if (index > -1) {
-          // If attribute has already been modified once, replace it
-          this.patch.splice(index, 1, operation);
-        } else {
-          // Push new operation that is modified for first time
-          this.patch.push(operation);
-        }
-        optional[attribute] = payload[1];
-      }
+    updateEditedCard() {
+      const params = {
+        id: this.profileId,
+        original: this.original,
+      };
+      this.updateCardByPatch(params);
     },
+    ...mapActions('cards', ['updateCardByPatch']),
   },
 };
 </script>

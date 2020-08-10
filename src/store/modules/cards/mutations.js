@@ -24,12 +24,13 @@ export default {
     const attrValues = state.profile[cardId][attribute];
     attrValues.splice(attrValues.indexOf(attrId), 1);
   },
-  updateAttributeForId(state, {id, attribute, value}) {
-    const card = state.profile[id];
-    card[attribute] = value;
-  },
-  updateValueInArray(state, {id, attribute, field, value}) {
-    state[attribute][id][field] = value;
+  resetCard(state, {id, original}) {
+    if (typeof original === 'string') {
+      // For restoring from JSON
+      Vue.set(state.profile, id, JSON.parse(original));
+    } else {
+      Vue.set(state.profile, id, original);
+    }
   },
   // Takes the cards array and flattens it a little
   // basically profileId is mapped to the cards
@@ -37,5 +38,12 @@ export default {
     const {entities, result} = normalize(cards, profiles);
     Object.keys(entities).forEach((key) => state[key] = entities[key]);
     state.ids = result;
+  },
+  updateAttributeForId(state, {id, attribute, value}) {
+    const card = state.profile[id];
+    card[attribute] = value;
+  },
+  updateValueInArray(state, {id, attribute, field, value}) {
+    state[attribute][id][field] = value;
   },
 };
