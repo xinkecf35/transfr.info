@@ -263,7 +263,6 @@ export default {
     edit: function(edit) {
       if (!edit && !this.newCard) {
         // cleaning up after done editing
-        console.log('here');
         this.updateEditedCard();
         this.original = '';
         this.patch = [];
@@ -346,7 +345,9 @@ export default {
     // For watcher
     populateData(id) {
       const card = this.$store.state.cards.profile[id];
-      this.original = JSON.stringify(card);
+      const getDenormalizedCard =
+        this.$store.getters['cards/getDenormalizedCard'];
+      this.original = JSON.stringify(getDenormalizedCard(id));
       // populate/update data to local state
       cardAttributes.forEach((attribute) => {
         if (attribute in card) {

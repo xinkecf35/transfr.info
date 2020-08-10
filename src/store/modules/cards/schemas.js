@@ -12,9 +12,9 @@ export const telephoneSchema = new schema.Entity('telephone', {}, {
   idAttribute: '_id',
 });
 
-export const profile = new schema.Entity('profile', {
+export const profileSchema = new schema.Entity('profile', {
   address: [addressSchema],
   email: [emailSchema],
   telephone: [telephoneSchema],
 }, {idAttribute: 'profileId'});
-export const profiles = [profile];
+export const profiles = [profileSchema];
