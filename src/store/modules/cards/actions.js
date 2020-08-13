@@ -1,6 +1,6 @@
 import isEqual from 'lodash.isequal';
 import {cardAttributes, complexAttributes} from '@/global-vars';
-import {isEmptyOrNull} from '@/functions';
+import {isEmptyOrNull, isObjectEmpty} from '@/functions';
 // import {addressSchema, emailSchema, telephoneSchema} from './schemas';
 
 const simpleAttributes = cardAttributes.filter((attr) => {
@@ -30,7 +30,7 @@ function generatePatchObject(attribute, currentValue, newValue, idx=-1) {
     operation = 'add';
   }
   let patch;
-  let path = ''/' + attribute';
+  let path = '/' + attribute;
   if (idx !== -1 ) {
     path = `/${attribute}/${idx}`;
   }
@@ -56,12 +56,21 @@ function generatePatchesOverArray(attr, originalValues, newValues) {
     return val._id.indexOf('temp') === -1;
   });
 
-  // map original values indexes to modified index over previously inserted
-  //  values; fill with empty object if object at index is different
-  // or non-existent.
   const newToModifiedMap = mapOriginalIndexesToModified();
-
-  return newToModifiedMap.concat(addedValues);
+  // note sort the following with enum (or have backend figure it out)
+  const existingValuePatches = newToModifiedMap.map((val, idx) => {
+    if (isObjectEmpty(val.current)) {
+      return generatePatchObject(attr, val.original, undefined, idx);
+    } else if (!isEqual(val.original, val.current)) {
+      return generatePatchObject(attr, val.original, val.current, idx);
+    }
+  }).filter((val) => !isEmptyOrNull(val));
+  const newValuePatches = addedValues.map((val) => {
+    delete val._id;
+    return generatePatchObject(attr, '', val);
+  });
+  const patches = existingValuePatches.concat(newValuePatches);
+  return patches;
 
   /**
    * Helper function to map indexes of orignal values;
