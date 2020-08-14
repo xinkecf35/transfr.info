@@ -1,17 +1,10 @@
 import isEqual from 'lodash.isequal';
 import {cardAttributes, complexAttributes} from '@/global-vars';
 import {isEmptyOrNull, isObjectEmpty} from '@/functions';
-// import {addressSchema, emailSchema, telephoneSchema} from './schemas';
 
 const simpleAttributes = cardAttributes.filter((attr) => {
   return complexAttributes.indexOf(attr) === -1;
 });
-
-// const attrSchemaMap = {
-//   'address': addressSchema,
-//   'email': emailSchema,
-//   'telephone': telephoneSchema,
-// };
 
 /**
  * Function to create a patch object for JSON patch (RFC 6902)
@@ -70,7 +63,7 @@ function generatePatchesOverArray(attr, originalValues, newValues) {
     return generatePatchObject(attr, '', val);
   });
   const patches = existingValuePatches.concat(newValuePatches);
-  return patches;
+  return patches.sort(comparePatches);
 
   /**
    * Helper function to map indexes of orignal values;
@@ -95,6 +88,21 @@ function generatePatchesOverArray(attr, originalValues, newValues) {
       }
     });
   }
+
+  /**
+   * compare function to sort patch objects
+   * @param {object} a patch object with op property
+   * @param {object} b patch object with op property
+   * @return {number} different between ops, based on compareFunction convention
+   */
+  function comparePatches(a, b) {
+    const opEnum = {
+      'replace': 1,
+      'remove': 2,
+      'add': 3,
+    };
+    return opEnum[a.op] - opEnum[b.op];
+  }
 }
 
 /**
@@ -115,9 +123,9 @@ function generateDiffForPatch(state, original, modified) {
   const combinedPatchAttr = complexAttributes.filter(combinedFilterForPatch);
   const combinedPatchOps = combinedPatchAttr.map((attr) => {
     return generatePatchesOverArray(attr, original[attr], modified[attr]);
-  });
+  }).flat(1);
 
-  return simplePatchOps.concat(combinedPatchOps.flat(2));
+  return simplePatchOps.concat(combinedPatchOps);
 
   /**
    * Inner function to generate patch object on given attributes
