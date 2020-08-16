@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import {normalize} from 'normalizr';
 import {getRandomInt} from '@/functions';
-import {profiles} from './schemas';
+import {profiles, profileSchema} from './schemas';
 
 
 // Mutations for cards vuex module
@@ -27,9 +27,15 @@ export default {
   resetCard(state, {id, original}) {
     if (typeof original === 'string') {
       // For restoring from JSON
-      Vue.set(state.profile, id, JSON.parse(original));
+      const {entities} = normalize(JSON.parse(original), profileSchema);
+      Object.keys(entities).forEach((key) => {
+        state[key] = Object.assign({}, state[key], entities[key]);
+      });
     } else {
-      Vue.set(state.profile, id, original);
+      const {entities} = normalize(original, profileSchema);
+      Object.keys(entities).forEach((key) => {
+        state[key] = Object.assign({}, state[key], entities[key]);
+      });
     }
   },
   // Takes the cards array and flattens it a little
@@ -45,5 +51,11 @@ export default {
   },
   updateValueInArray(state, {id, attribute, field, value}) {
     state[attribute][id][field] = value;
+  },
+  updateCardFromPatch(state, {id, card}) {
+    const {entities} = normalize(card, profileSchema);
+    Object.keys(entities).forEach((key) => {
+      state[key] = Object.assign({}, state[key], entities[key]);
+    });
   },
 };

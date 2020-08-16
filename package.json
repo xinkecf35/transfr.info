@@ -12,6 +12,7 @@
     "ajv": "^6.12.3",
     "ajv-keywords": "^3.5.1",
     "lodash.debounce": "^4.0.8",
+    "lodash.isequal": "^4.5.0",
     "normalizr": "^3.6.0",
     "vue": "^2.6.11",
     "vue-router": "^3.3.4",

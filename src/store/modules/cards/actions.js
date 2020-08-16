@@ -1,6 +1,6 @@
 import isEqual from 'lodash.isequal';
-import {cardAttributes, complexAttributes} from '@/global-vars';
-import {isEmptyOrNull, isObjectEmpty} from '@/functions';
+import {baseURL, cardAttributes, complexAttributes} from '@/global-vars';
+import {ajaxRequest, isEmptyOrNull, isObjectEmpty} from '@/functions';
 
 const simpleAttributes = cardAttributes.filter((attr) => {
   return complexAttributes.indexOf(attr) === -1;
@@ -58,9 +58,10 @@ function generatePatchesOverArray(attr, originalValues, newValues) {
       return generatePatchObject(attr, val.original, val.current, idx);
     }
   }).filter((val) => !isEmptyOrNull(val));
-  const newValuePatches = addedValues.map((val) => {
+  const newValuePatches = addedValues.map((val, idx) => {
     delete val._id;
-    return generatePatchObject(attr, '', val);
+    const newIndex = originalValues.length + idx;
+    return generatePatchObject(attr, '', val, newIndex);
   });
   const patches = existingValuePatches.concat(newValuePatches);
   return patches.sort(comparePatches);
@@ -97,9 +98,9 @@ function generatePatchesOverArray(attr, originalValues, newValues) {
    */
   function comparePatches(a, b) {
     const opEnum = {
-      'replace': 1,
-      'remove': 2,
-      'add': 3,
+      'add': 1,
+      'replace': 2,
+      'remove': 3,
     };
     return opEnum[a.op] - opEnum[b.op];
   }
@@ -128,7 +129,7 @@ function generateDiffForPatch(state, original, modified) {
   return simplePatchOps.concat(combinedPatchOps);
 
   /**
-   * Inner function to generate patch object on given attributes
+l   * Inner function to generate patch object on given attributes
    * @param {string} attr attribute we're checking
    * @return {boolean} returns whether to generate patch
    */
@@ -166,12 +167,22 @@ function generateDiffForPatch(state, original, modified) {
 
 // Actions for cards vuex module
 export default {
-  updateCardByPatch({state, getters}, {id, original}) {
+  updateCardByPatch({state, commit, getters, rootState}, {id, original}) {
     let originalCard = original;
     const modifiedCard = getters.getDenormalizedCard(id);
     if (typeof original === 'string') {
       originalCard = JSON.parse(original);
     }
-    generateDiffForPatch(state, originalCard, modifiedCard);
+    const patch = generateDiffForPatch(state, originalCard, modifiedCard);
+    const patchURL = `${baseURL}/userdata/profile/${id}`;
+    const patchBody = JSON.stringify({patch});
+    const headers = [{name: 'X-CSRF-TOKEN', value: rootState.csrf}];
+    return ajaxRequest('PATCH', patchURL, patchBody, headers)
+      .then((response) => {
+        if (!response.meta.success) {
+          throw respomse.meta.message;
+        }
+        commit('updateCardFromPatch', {id, card: response.card});
+      });
   },
 };

@@ -191,7 +191,6 @@ export default {
         impp: '',
       },
       edit: false,
-      patch: [],
       original: '',
       errors: [],
     };
@@ -263,19 +262,13 @@ export default {
     edit: function(edit) {
       if (!edit && !this.newCard) {
         // cleaning up after done editing
-        this.updateEditedCard();
-        this.original = '';
-        this.patch = [];
-      } else if (!edit && this.newCard) {
-        let payload = this.vcard;
-        this.patch.forEach((operation) => {
-          const attribute = operation.path.substring(1);
-          payload[attribute] = operation.value;
+        // following is an action, async, use promise
+        this.updateEditedCard().then(() => {
+          // replace following with new json from action
+          this.original = this.getDenormalizedCard();
+          this.$forceUpdate();
         });
-        this.$emit('card-create', payload);
-        this.original = '';
-        this.patch = [];
-      }
+      } else if (!edit && this.newCard) {}
       this.share = false;
     },
     newCard: function(isNew) {
@@ -284,7 +277,7 @@ export default {
       }
     },
     attributes: {
-      handler: function(val) {
+      handler(val) {
         this.errors = [];
       },
       deep: true,
@@ -311,7 +304,6 @@ export default {
           this.values[attribute] = card[attribute] || '';
         });
       }
-      this.patch = []; // discard path array
       this.edit = !this.edit;
     },
     commitEdits: function() {
@@ -322,7 +314,6 @@ export default {
         });
         return;
       }
-      console.log('commitEdits here');
       this.edit = !edit;
     },
     // Redo for Vuex refactor
@@ -342,12 +333,15 @@ export default {
         components[3] + ' ' + ' ' + components[4] + ' ' + components[5],
       ];
     },
+    getDenormalizedCard(id=this.profileId) {
+      const getDenormalizedCard =
+        this.$store.getters['cards/getDenormalizedCard'];
+      return getDenormalizedCard(id);
+    },
     // For watcher
     populateData(id) {
       const card = this.$store.state.cards.profile[id];
-      const getDenormalizedCard =
-        this.$store.getters['cards/getDenormalizedCard'];
-      this.original = JSON.stringify(getDenormalizedCard(id));
+      this.original = JSON.stringify(this.getDenormalizedCard(id));
       // populate/update data to local state
       cardAttributes.forEach((attribute) => {
         if (attribute in card) {
@@ -379,13 +373,12 @@ export default {
       const offset = Math.round(Math.abs(popOverMidPoint - shareMidPoint));
       popOverElement.style.left = '-' + offset + 'px';
     },
-    // Remove for Vuex refactor
     updateEditedCard() {
       const params = {
         id: this.profileId,
         original: this.original,
       };
-      this.updateCardByPatch(params);
+      return this.updateCardByPatch(params);
     },
     ...mapActions('cards', ['updateCardByPatch']),
   },
