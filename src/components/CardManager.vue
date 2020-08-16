@@ -55,7 +55,6 @@
               ref="currentCard"
               :profile-id="currentCardId"
               :new-card="addCard"
-              @card-update="patchCard"
               @card-create="createCard"
               @card-new-abort="abortNew"
               @card-delete="deleteCard"
@@ -110,7 +109,7 @@ export default {
       this.currentCardIndex = 0;
       this.addCard = false;
     },
-    addNewCard: function() {
+    addNewCard() {
       this.cards.push({
         description: 'New Card',
         name: this.lastName +';'+this.firstName,
@@ -158,25 +157,6 @@ export default {
         }
         this.currentCardIndex = response.user.vcards.length - 1;
         cards.splice(deleteIndex, 1);
-      }).catch((err) => this.$emit('error/api-fetch', err));
-    },
-    patchCard: function(payload) {
-      const index = this.currentCardIndex;
-      const cards = this.cards;
-      const profileId = cards[index].profileId;
-      let patchURL = 'https://api.transfr.info/v1/userdata/profile/' + profileId;
-      if (process.env.NODE_ENV === 'development') {
-        patchURL = 'https://api.transfr.test/v1/userdata/profile/' + profileId;
-      }
-      const patchBody = {patch: payload};
-      const patchJSON = JSON.stringify(patchBody);
-      const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
-      const patchPromise = ajaxRequest('PATCH', patchURL, patchJSON, headers);
-      patchPromise.then(function(response) {
-        if (!response.meta.success) {
-          throw response.meta.message;
-        }
-        cards.splice(index, 1, response.card);
       }).catch((err) => this.$emit('error/api-fetch', err));
     },
     pushCard: function() {

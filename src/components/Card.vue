@@ -253,7 +253,6 @@ export default {
     },
     ...mapGetters('user', ['firstName', 'lastName']),
   },
-  events: ['card-update', 'card-new-abort', 'card-delete'],
   watch: {
     profileId: {
       handler: 'populateData',
@@ -262,11 +261,8 @@ export default {
     edit: function(edit) {
       if (!edit && !this.newCard) {
         // cleaning up after done editing
-        // following is an action, async, use promise
         this.updateEditedCard().then(() => {
-          // replace following with new json from action
-          this.original = this.getDenormalizedCard();
-          this.$forceUpdate();
+          this.populateData(this.profileId);
         });
       } else if (!edit && this.newCard) {}
       this.share = false;
@@ -276,33 +272,22 @@ export default {
         this.edit = true;
       }
     },
-    attributes: {
-      handler(val) {
-        this.errors = [];
-      },
-      deep: true,
-    },
   },
   methods: {
     // Move functionality into vuex somehwo
-    abort: function() {
+    abort() {
       // abort changes and return
       // if new card, abort with no changes and emit event to
       // pop card off list
       if (this.newCard) {
-        this.patch = [];
         this.edit = !this.edit;
         this.$emit('card-new-abort', true);
         return;
       }
       // parse orignal card to undo changes
       if (this.original) {
-        const card = JSON.parse(this.original);
-        this.patch.forEach((operation) => {
-          // Extract attribute from path
-          const attribute = operation.path.substring(1);
-          this.values[attribute] = card[attribute] || '';
-        });
+        const params = {id: this.profileId, original: this.original};
+        this.undoCardChanges(params);
       }
       this.edit = !this.edit;
     },
@@ -380,7 +365,7 @@ export default {
       };
       return this.updateCardByPatch(params);
     },
-    ...mapActions('cards', ['updateCardByPatch']),
+    ...mapActions('cards', ['undoCardChanges', 'updateCardByPatch']),
   },
 };
 </script>

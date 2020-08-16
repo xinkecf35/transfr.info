@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import isObject from 'lodash.isobject';
 import {normalize} from 'normalizr';
 import {getRandomInt} from '@/functions';
 import {profiles, profileSchema} from './schemas';
@@ -10,14 +11,27 @@ export default {
     Object.keys(state).forEach((key) => delete state[key]);
   },
   addValueInArray(state, {id, attribute, type, value}) {
-    const tempId = `temp-${id}-${getRandomInt(100, 1000)}`;
+    const tempId = `temp-${id}-${getRandomInt(10000, 100000)}`;
     Vue.set(state[attribute], tempId, {_id: tempId, type, value});
     const attrIdsForCard = state.profile[id][attribute];
     if (Array.isArray(attrIdsForCard) && attrIdsForCard.length) {
       state.profile[id][attribute].push(tempId);
     } else {
-      state[id][attribute] = [tempId];
+      state.profile[id][attribute] = [tempId];
     }
+  },
+  removeAllTempValues(state) {
+    // Removes all created temporary values,
+    // Does not introspect into individual card/profiles attributes
+    Object.keys(state).forEach((attr) => {
+      if (Array.isArray(state[attr])) {
+        state[attr] = state[attr].filter((val) => val.indexOf('temp') === -1);
+      } else if (isObject(state[attr])) {
+        Object.keys(state[attr])
+          .filter((key) => key.indexOf('temp') > -1)
+          .forEach((key) => Vue.delete(state[attr], key));
+      }
+    });
   },
   removeValueInArray(state, {attrId, cardId, attribute}) {
     Vue.delete(state[attribute], attrId);

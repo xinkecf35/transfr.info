@@ -167,6 +167,11 @@ l   * Inner function to generate patch object on given attributes
 
 // Actions for cards vuex module
 export default {
+  undoCardChanges({commit}, params) {
+    const {id} = params;
+    commit('resetCard', params);
+    commit('removeAllTempValues', id);
+  },
   updateCardByPatch({state, commit, getters, rootState}, {id, original}) {
     let originalCard = original;
     const modifiedCard = getters.getDenormalizedCard(id);
@@ -180,9 +185,10 @@ export default {
     return ajaxRequest('PATCH', patchURL, patchBody, headers)
       .then((response) => {
         if (!response.meta.success) {
-          throw respomse.meta.message;
+          throw response.meta.message;
         }
         commit('updateCardFromPatch', {id, card: response.card});
+        commit('removeAllTempValues');
       });
   },
 };
