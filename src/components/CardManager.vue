@@ -17,7 +17,7 @@
       <div
         id="add"
         class="level-1 tabs"
-        @click="addNewCard"
+        @click="pushNewCard"
       >
         <span>+</span>
       </div>
@@ -42,7 +42,7 @@
                 <h2>You don't have any cards, why not add one?</h2>
                 <button
                   class="action-button level-1"
-                  @click="pushCard"
+                  @click="pushNewCard"
                 >
                   Add a Card
                 </button>
@@ -54,7 +54,7 @@
               id="card"
               ref="currentCard"
               :profile-id="currentCardId"
-              :new-card="addCard"
+              :new-card="isNewCard"
               @card-create="createCard"
               @card-new-abort="abortNew"
               @card-delete="deleteCard"
@@ -66,10 +66,10 @@
   </div>
 </template>
 <script>
-import {mapGetters, mapState} from 'vuex';
+import {mapGetters, mapState, mapMutations} from 'vuex';
 import card from '@/components/Card';
 import moreCards from '@/components/MoreCards';
-import {ajaxRequest, isEmptyOrNull} from '../functions';
+import {ajaxRequest, getRandomInt, isEmptyOrNull} from '@/functions';
 
 export default {
   components: {
@@ -78,49 +78,49 @@ export default {
   },
   data: function() {
     return {
-      currentCardIndex: 0,
+      currentCardId: '',
       showModal: false,
-      addCard: false,
+      isNewCard: false,
     };
   },
   computed: {
-    displayName: function() {
-      return this.firstName + ' ' + this.lastName;
+    cards() {
+      return this.cardIds.map((id) => this.$store.state.cards.profile[id]);
     },
-    cardDescription: function() {
+    cardDescription() {
       if (isEmptyOrNull(this.currentCardId)) {
         return 'Welcome';
       }
-      return this.cards[this.currentCardIndex].description;
+      return this.profiles[this.currentCardId].description;
     },
-    currentCardId() {
-      return this.cards[this.currentCardIndex].profileId;
-    },
-    ...mapGetters('cards', {
-      cards: 'cardsArray',
-    }),
+    ...mapGetters('user', ['displayName']),
     ...mapState({
       csrfToken: (state) => state.csrf,
+      fullName: (state) => state.user.fullName,
+      cardIds: (state) => state.cards.ids,
+      profiles: (state) => state.cards.profile,
     }),
+  },
+  watch: {
+    cards: {
+      handler() {
+        if (isEmptyOrNull(this.currentCardId)) {
+          this.currentCardId = this.cards[0].profileId;
+        }
+      },
+      deep: true,
+      immediate: true,
+    },
   },
   methods: {
     abortNew: function() {
       this.cards.pop();
       this.currentCardIndex = 0;
-      this.addCard = false;
-    },
-    addNewCard() {
-      this.cards.push({
-        description: 'New Card',
-        name: this.lastName +';'+this.firstName,
-        fullName: this.firstName + ' ' + this.lastName,
-      });
-      this.currentCardIndex = this.cards.length - 1;
-      this.addCard = true;
+      this.isNewCard = false;
     },
     createCard: function(payload) {
-      if (this.addCard) {
-        this.addCard = false;
+      if (this.isNewCard) {
+        this.isNewCard = false;
       }
       const index = this.currentCardIndex;
       const cards = this.cards;
@@ -159,18 +159,23 @@ export default {
         cards.splice(deleteIndex, 1);
       }).catch((err) => this.$emit('error/api-fetch', err));
     },
-    pushCard: function() {
-      this.addCard = true;
-      this.cards.push({
+    pushNewCard() {
+      const profileId = `temp-new-card-${getRandomInt(100, 1000)}`;
+      const params = {
+        id: profileId,
         description: 'New Card',
-        name: this.lastName +';'+this.firstName,
-        fullName: this.firstName + ' ' + this.lastName,
-      });
+        name: this.fullName,
+        fullName: this.displayName,
+      };
+      this.addNewCard(params);
+      this.currentCardId = profileId;
+      this.isNewCard = true;
     },
-    switchCard: function(payload) {
+    switchCard(profileId) {
       this.$refs.currentCard.edit = false;
-      this.currentCardIndex = payload;
+      this.currentCardId = profileId;
     },
+    ...mapMutations('cards', ['addNewCard']),
   },
 };
 </script>

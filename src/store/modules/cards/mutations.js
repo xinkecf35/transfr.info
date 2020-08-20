@@ -10,6 +10,16 @@ export default {
   clear(state) {
     Object.keys(state).forEach((key) => delete state[key]);
   },
+  addNewCard(state, {id, description, name, fullName}) {
+    const newCard = {
+      profileId: id,
+      description,
+      fullName,
+      name,
+    };
+    state.profile[id] = newCard;
+    state.ids.push(id);
+  },
   addValueInArray(state, {id, attribute, type, value}) {
     const tempId = `temp-${id}-${getRandomInt(10000, 100000)}`;
     Vue.set(state[attribute], tempId, {_id: tempId, type, value});
@@ -17,7 +27,7 @@ export default {
     if (Array.isArray(attrIdsForCard) && attrIdsForCard.length) {
       state.profile[id][attribute].push(tempId);
     } else {
-      state.profile[id][attribute] = [tempId];
+      Vue.set(state.profile[id], attribute, [tempId]);
     }
   },
   removeAllTempValues(state) {

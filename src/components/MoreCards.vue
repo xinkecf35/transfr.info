@@ -6,29 +6,26 @@
     <span>More Cards</span>
     <ul>
       <li
-        v-for="(card, index) in cards"
+        v-for="card in cardsArray"
         :key="card.id"
       >
         <span
           role="button"
-          @click="switchCard(index)"
+          @click="switchCard(card.profileId)"
         >{{ card.description }}</span>
       </li>
     </ul>
   </div>
 </template>
 <script>
+import {mapGetters} from 'vuex';
+
 export default {
   events: 'card-switch',
-  props: {
-    cards: {
-      type: Array,
-      required: true,
-    },
-  },
+  computed: mapGetters('cards', ['cardsArray']),
   methods: {
-    switchCard: function(index) {
-      this.$emit('card-switch', index);
+    switchCard(profileId) {
+      this.$emit('card-switch', profileId);
     },
   },
 };

@@ -4,13 +4,13 @@ import {profileSchema} from './schemas';
 
 export default {
   cardsArray(state) {
-    return Object.values(state.profile);
+    return state.ids.map((id) => state.profile[id]);
   },
   getDenormalizedCard: (state) => (id) => {
     return denormalize(state.profile[id], profileSchema, state);
   },
   getIdsForAttribute: (state) => (id, attr) => {
-    return state.profile[id][attr];
+    return state.profile[id][attr] || [];
   },
   getObjectValues: (state) => (profileId, attribute) => {
     const attrIds = state.profile[profileId][attribute];

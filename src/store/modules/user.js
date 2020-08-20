@@ -9,7 +9,6 @@ const actions = {};
 const getters = {
   displayName(state) {
     const [lastName='', firstName=''] = state.fullName.split(';');
-
     return `${firstName} ${lastName}`;
   },
   firstName(state) {
