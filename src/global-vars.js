@@ -15,3 +15,6 @@ export const optionalAttributes = [
 ];
 export const cardAttributes = requiredAttributes.concat(optionalAttributes);
 export const complexAttributes = ['address', 'email', 'telephone'];
+export const simpleAttributes = cardAttributes.filter((attr) => {
+  return complexAttributes.indexOf(attr) === -1;
+});

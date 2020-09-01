@@ -160,7 +160,7 @@ export default {
       }).catch((err) => this.$emit('error/api-fetch', err));
     },
     pushNewCard() {
-      const profileId = `temp-new-card-${getRandomInt(100, 1000)}`;
+      const profileId = `temp-${getRandomInt(100, 1000)}`;
       const params = {
         id: profileId,
         description: 'New Card',

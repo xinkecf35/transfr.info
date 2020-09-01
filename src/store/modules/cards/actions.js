@@ -1,10 +1,7 @@
 import isEqual from 'lodash.isequal';
-import {baseURL, cardAttributes, complexAttributes} from '@/global-vars';
+import {baseURL, complexAttributes, simpleAttributes} from '@/global-vars';
 import {ajaxRequest, isEmptyOrNull, isObjectEmpty} from '@/functions';
 
-const simpleAttributes = cardAttributes.filter((attr) => {
-  return complexAttributes.indexOf(attr) === -1;
-});
 
 /**
  * Function to create a patch object for JSON patch (RFC 6902)

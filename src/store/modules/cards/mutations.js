@@ -2,6 +2,7 @@ import Vue from 'vue';
 import isObject from 'lodash.isobject';
 import {normalize} from 'normalizr';
 import {getRandomInt} from '@/functions';
+import {complexAttributes, simpleAttributes} from '@/global-vars';
 import {profiles, profileSchema} from './schemas';
 
 
@@ -13,22 +14,19 @@ export default {
   addNewCard(state, {id, description, name, fullName}) {
     const newCard = {
       profileId: id,
-      description,
-      fullName,
-      name,
     };
-    state.profile[id] = newCard;
+    complexAttributes.forEach((attr) => newCard[attr] = []);
+    simpleAttributes.forEach((attr) => newCard[attr] = '');
+    newCard.description = description;
+    newCard.name = name;
+    Vue.set(state.profile, id, newCard);
     state.ids.push(id);
   },
   addValueInArray(state, {id, attribute, type, value}) {
     const tempId = `temp-${id}-${getRandomInt(10000, 100000)}`;
+    // directly pushing on to array as normalization should guarantee array
     Vue.set(state[attribute], tempId, {_id: tempId, type, value});
-    const attrIdsForCard = state.profile[id][attribute];
-    if (Array.isArray(attrIdsForCard) && attrIdsForCard.length) {
-      state.profile[id][attribute].push(tempId);
-    } else {
-      Vue.set(state.profile[id], attribute, [tempId]);
-    }
+    state.profile[id][attribute].push(tempId);
   },
   removeAllTempValues(state) {
     // Removes all created temporary values,
