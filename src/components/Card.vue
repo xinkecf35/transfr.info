@@ -262,13 +262,15 @@ export default {
     edit: function(edit) {
       if (!edit && !this.isNewCard) {
         // cleaning up after done editing
-        this.updateEditedCard().then(() => {
+        this.updateEditedCard().then((id) => {
           this.populateData(this.profileId);
         });
       } else if (!edit && this.isNewCard) {
-        this.createCard({id: this.profileId}).then((id) => {
-          console.log('success');
-          this.populateData(id);
+        this.createCard({id: this.profileId}).catch((err) => {
+          this.errors.push({
+            field: 'modal-error',
+            message: 'Something has gone wrong, please try again later',
+          });
         });
       }
       this.share = false;

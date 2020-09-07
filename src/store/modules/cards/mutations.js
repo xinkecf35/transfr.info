@@ -72,6 +72,10 @@ export default {
     const {entities, result} = normalize(cards, profiles);
     Object.keys(entities).forEach((key) => state[key] = entities[key]);
     state.ids = result;
+    state.currentCardId = state.ids[0];
+  },
+  setCurrentCardId(state, id) {
+    state.currentCardId = id;
   },
   updateAttributeForId(state, {id, attribute, value}) {
     const card = state.profile[id];

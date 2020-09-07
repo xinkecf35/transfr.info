@@ -10,6 +10,7 @@ const state = function() {
     address: {},
     email: {},
     telephone: {},
+    currentCardId: '',
   };
 };
 

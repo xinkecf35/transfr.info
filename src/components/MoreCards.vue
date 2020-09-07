@@ -11,23 +11,19 @@
       >
         <span
           role="button"
-          @click="switchCard(card.profileId)"
+          @click="setCurrentCardId(card.profileId)"
         >{{ card.description }}</span>
       </li>
     </ul>
   </div>
 </template>
 <script>
-import {mapGetters} from 'vuex';
+import {mapGetters, mapMutations} from 'vuex';
 
 export default {
   events: 'card-switch',
   computed: mapGetters('cards', ['cardsArray']),
-  methods: {
-    switchCard(profileId) {
-      this.$emit('card-switch', profileId);
-    },
-  },
+  methods: mapMutations('cards', ['setCurrentCardId']),
 };
 </script>
 <style lang="scss" scoped>

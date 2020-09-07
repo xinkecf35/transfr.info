@@ -30,7 +30,6 @@
         <moreCards
           v-if="showModal"
           :cards="cards"
-          @card-switch="switchCard"
         />
         <keep-alive>
           <template v-if="cards.length === 0">
@@ -77,7 +76,6 @@ export default {
   },
   data: function() {
     return {
-      currentCardId: '',
       showModal: false,
       isNewCard: false,
     };
@@ -92,11 +90,21 @@ export default {
       }
       return this.profiles[this.currentCardId].description;
     },
+    currentCardId: {
+      get() {
+        return this.$store.state.cards.currentCardId;
+      },
+      set(id) {
+        this.setCurrentCardId(id);
+      },
+    },
     ...mapGetters('user', ['displayName']),
-    ...mapState({
-      csrfToken: (state) => state.csrf,
-      cardIds: (state) => state.cards.ids,
-      profiles: (state) => state.cards.profile,
+    ...mapGetters('cards', {
+      cards: 'cardsArray',
+    }),
+    ...mapState('cards', {
+      cardIds: 'ids',
+      profiles: 'profile',
     }),
   },
   watch: {
@@ -112,28 +120,7 @@ export default {
   },
   methods: {
     abortNew: function() {
-      this.currentCardIndex = 0;
       this.isNewCard = false;
-    },
-    createCard: function(payload) {
-      if (this.isNewCard) {
-        this.isNewCard = false;
-      }
-      const index = this.currentCardIndex;
-      const cards = this.cards;
-      let createURL = 'https://api.transfr.info/v1/userdata/profiles';
-      if (process.env.NODE_ENV === 'development') {
-        createURL = 'https://api.transfr.test/v1/userdata/profiles';
-      }
-      const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
-      const createJSON = JSON.stringify(payload);
-      const createPromise = ajaxRequest('POST', createURL, createJSON, headers);
-      createPromise.then(function(response) {
-        if (!response.meta.success) {
-          throw response.meta.message;
-        }
-        cards.splice(index, 1, response.user);
-      }).catch((err) => this.$emit('error/api-fetch', err));
     },
     deleteCard: function(payload) {
       const cards = this.cards;
@@ -146,7 +133,7 @@ export default {
         deleteURL = 'https://api.transfr.test/v1/userdata/profile/';
         deleteURL = deleteURL + profileId;
       }
-      const headers = [{name: 'X-CSRF-TOKEN', value: this.csrfToken}];
+      const headers = [{name: 'X-CSRF-TOKEN', value: 'snakeoil'}];
       const deletePromise = ajaxRequest('DELETE', deleteURL, null, headers);
       deletePromise.then((response) => {
         if (!response.meta.success) {
@@ -166,11 +153,7 @@ export default {
       this.currentCardId = profileId;
       this.isNewCard = true;
     },
-    switchCard(profileId) {
-      this.$refs.currentCard.edit = false;
-      this.currentCardId = profileId;
-    },
-    ...mapMutations('cards', ['addNewCard']),
+    ...mapMutations('cards', ['addNewCard', 'setCurrentCardId']),
   },
 };
 </script>

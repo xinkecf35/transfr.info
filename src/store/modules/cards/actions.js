@@ -197,7 +197,7 @@ export default {
         // TODO create addCard mutation? remove temp values.
         commit('addCard', response.card);
         commit('removeAllTempValues');
-        return response.card.profileId;
+        commit('setCurrentCardId', response.card.profileId);
       });
   },
   updateCardByPatch({state, commit, getters, rootGetters}, {id, original}) {
