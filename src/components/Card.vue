@@ -172,7 +172,7 @@ export default {
       type: String,
       required: true,
     },
-    newCard: {
+    isNewCard: {
       type: Boolean,
       default: true,
     },
@@ -191,6 +191,7 @@ export default {
         impp: '',
       },
       edit: false,
+      isModified: false,
       original: '',
       errors: [],
     };
@@ -259,15 +260,20 @@ export default {
       immediate: true,
     },
     edit: function(edit) {
-      if (!edit && !this.newCard) {
+      if (!edit && !this.isNewCard) {
         // cleaning up after done editing
         this.updateEditedCard().then(() => {
           this.populateData(this.profileId);
         });
-      } else if (!edit && this.newCard) {}
+      } else if (!edit && this.isNewCard) {
+        this.createCard({id: this.profileId}).then((id) => {
+          console.log('success');
+          this.populateData(id);
+        });
+      }
       this.share = false;
     },
-    newCard: function(isNew) {
+    isNewCard: function(isNew) {
       if (isNew !== undefined && isNew) {
         this.edit = true;
       }
@@ -279,12 +285,13 @@ export default {
       // abort changes and return
       // if new card, abort with no changes and emit event to
       // pop card off list
-      if (this.newCard) {
+      if (this.isNewCard) {
         this.edit = !this.edit;
         this.$emit('card-new-abort', true);
         return;
       }
       // parse orignal card to undo changes
+      // add another condition to remove extraneous edits
       if (this.original) {
         const params = {id: this.profileId, original: this.original};
         this.undoCardChanges(params);
@@ -365,7 +372,11 @@ export default {
       };
       return this.updateCardByPatch(params);
     },
-    ...mapActions('cards', ['undoCardChanges', 'updateCardByPatch']),
+    ...mapActions('cards', [
+      'createCard',
+      'undoCardChanges',
+      'updateCardByPatch',
+    ]),
   },
 };
 </script>

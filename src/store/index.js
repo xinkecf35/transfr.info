@@ -2,12 +2,10 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import createPresistedState from 'vuex-persistedstate';
 import {ajaxRequest} from '@/functions';
+import {baseURL} from '@/global-vars';
 import cards from './modules/cards';
 import user from './modules/user';
 
-const baseURL = process.env.NODE_ENV === 'development' ?
-  'https://api.transfr.test/v1' :
-  'https://api.transfr.info/v1';
 const presistKey = 'transfr-vuex';
 const presistStateConfig = {key: presistKey, storage: window.sessionStorage};
 
@@ -16,6 +14,12 @@ Vue.use(Vuex);
 const state = () => ({
   csrf: '',
 });
+
+const getters = {
+  CSRFHeader(state) {
+    return {name: 'X-CSRF-TOKEN', value: state.csrf};
+  },
+};
 
 const mutations = {
   clearCSRF(state) {
@@ -45,6 +49,7 @@ const actions = {
 
 const store = new Vuex.Store({
   actions,
+  getters,
   modules: {
     cards,
     user,

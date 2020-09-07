@@ -2,7 +2,10 @@
 //   'https://api.transfr.test/v1' :
 //   'https://api.transfr.info/v1';
 
-const state = () => ({});
+const state = () => ({
+  email: '',
+  fullName: '',
+});
 
 const actions = {};
 

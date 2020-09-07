@@ -11,16 +11,22 @@ export default {
   clear(state) {
     Object.keys(state).forEach((key) => delete state[key]);
   },
-  addNewCard(state, {id, description, name, fullName}) {
+  addNewCard(state, {id, description}) {
     const newCard = {
       profileId: id,
     };
     complexAttributes.forEach((attr) => newCard[attr] = []);
     simpleAttributes.forEach((attr) => newCard[attr] = '');
     newCard.description = description;
-    newCard.name = name;
     Vue.set(state.profile, id, newCard);
     state.ids.push(id);
+  },
+  addCard(state, card) {
+    const {entities, result} = normalize(card, profileSchema);
+    Object.keys(entities).forEach((key) => {
+      state[key] = Object.assign({}, state[key], entities[key]);
+    });
+    state.ids.push(result);
   },
   addValueInArray(state, {id, attribute, type, value}) {
     const tempId = `temp-${id}-${getRandomInt(10000, 100000)}`;

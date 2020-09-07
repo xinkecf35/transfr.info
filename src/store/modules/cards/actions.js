@@ -106,12 +106,11 @@ function generatePatchesOverArray(attr, originalValues, newValues) {
 /**
  * Creates an Array of JSON Patch operation for
  * updating card by PATCH method
- * @param {object} state state from vuex
  * @param {object} original original state of card
  * @param {object} modified current state of card in vuex
  * @return {array} Array of patch objects
  */
-function generateDiffForPatch(state, original, modified) {
+function generateDiffForPatch(original, modified) {
   // over the simple attributes first
   const needPatchAttrs = simpleAttributes.filter(filterForPatch);
   const simplePatchOps = needPatchAttrs.map((attr) => {
@@ -126,7 +125,7 @@ function generateDiffForPatch(state, original, modified) {
   return simplePatchOps.concat(combinedPatchOps);
 
   /**
-l   * Inner function to generate patch object on given attributes
+   * Inner function to generate patch object on given attributes
    * @param {string} attr attribute we're checking
    * @return {boolean} returns whether to generate patch
    */
@@ -169,7 +168,39 @@ export default {
     commit('resetCard', params);
     commit('removeAllTempValues', id);
   },
-  updateCardByPatch({state, commit, getters, rootState}, {id, original}) {
+  createCard({state, commit, getters, rootGetters, rootState}, {id}) {
+    // Test if description is set
+    if (!state.profile[id].description.length) {
+      // emit global event? or regular throw?
+      throw new Error('description must be set');
+    }
+    const cardData = getters.getDenormalizedCard(id);
+    cardData.fullName = rootState.user.fullName;
+    cardData.name = rootGetters['user/displayName'];
+    cardData.fullName = rootState.user.fullName;
+
+    // Remove Ids in cardData
+    delete cardData.profileId;
+    complexAttributes.forEach((attr) => {
+      if (cardData[attr].length) {
+        cardData[attr].forEach((data) => delete data._id);
+      }
+    });
+    const createURL = `${baseURL}/userdata/profiles`;
+    const createBody = JSON.stringify(cardData);
+    const headers = [rootGetters.CSRFHeader];
+    return ajaxRequest('POST', createURL, createBody, headers)
+      .then((response) => {
+        if (!response.meta.success) {
+          throw response.meta.message;
+        }
+        // TODO create addCard mutation? remove temp values.
+        commit('addCard', response.card);
+        commit('removeAllTempValues');
+        return response.card.profileId;
+      });
+  },
+  updateCardByPatch({state, commit, getters, rootGetters}, {id, original}) {
     let originalCard = original;
     const modifiedCard = getters.getDenormalizedCard(id);
     if (typeof original === 'string') {
@@ -178,7 +209,7 @@ export default {
     const patch = generateDiffForPatch(state, originalCard, modifiedCard);
     const patchURL = `${baseURL}/userdata/profile/${id}`;
     const patchBody = JSON.stringify({patch});
-    const headers = [{name: 'X-CSRF-TOKEN', value: rootState.csrf}];
+    const headers = [rootGetters.CSRFHeader];
     return ajaxRequest('PATCH', patchURL, patchBody, headers)
       .then((response) => {
         if (!response.meta.success) {

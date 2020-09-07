@@ -102,6 +102,14 @@ export default {
       return getters[getterName](this.profileId, this.attribute);
     },
   },
+  watch: {
+    ids: {
+      handler(newValues) {
+        console.log(newValues);
+      },
+      deep: true,
+    },
+  },
   methods: {
     addCombinedValue() {
       if (!isEmptyOrNull(this.label) && !isEmptyOrNull(this.value)) {

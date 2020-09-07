@@ -54,8 +54,7 @@
               id="card"
               ref="currentCard"
               :profile-id="currentCardId"
-              :new-card="isNewCard"
-              @card-create="createCard"
+              :is-new-card="isNewCard"
               @card-new-abort="abortNew"
               @card-delete="deleteCard"
             />
@@ -96,7 +95,6 @@ export default {
     ...mapGetters('user', ['displayName']),
     ...mapState({
       csrfToken: (state) => state.csrf,
-      fullName: (state) => state.user.fullName,
       cardIds: (state) => state.cards.ids,
       profiles: (state) => state.cards.profile,
     }),
@@ -114,7 +112,6 @@ export default {
   },
   methods: {
     abortNew: function() {
-      this.cards.pop();
       this.currentCardIndex = 0;
       this.isNewCard = false;
     },
@@ -164,8 +161,6 @@ export default {
       const params = {
         id: profileId,
         description: 'New Card',
-        name: this.fullName,
-        fullName: this.displayName,
       };
       this.addNewCard(params);
       this.currentCardId = profileId;
