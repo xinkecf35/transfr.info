@@ -27,7 +27,7 @@
       :class="{showMore: showModal}"
     >
       <div id="wrapper-cards">
-        <moreCards
+        <more-cards
           v-if="showModal"
           :cards="cards"
         />
@@ -55,7 +55,6 @@
               :profile-id="currentCardId"
               :is-new-card="isNewCard"
               @card-new-abort="abortNew"
-              @card-delete="deleteCard"
             />
           </template>
         </keep-alive>
@@ -65,14 +64,14 @@
 </template>
 <script>
 import {mapGetters, mapState, mapMutations} from 'vuex';
-import card from '@/components/Card';
-import moreCards from '@/components/MoreCards';
-import {ajaxRequest, getRandomInt, isEmptyOrNull} from '@/functions';
+import Card from '@/components/Card';
+import MoreCards from '@/components/MoreCards';
+import {getRandomInt, isEmptyOrNull} from '@/functions';
 
 export default {
   components: {
-    card,
-    moreCards,
+    Card,
+    MoreCards,
   },
   data: function() {
     return {
@@ -121,28 +120,29 @@ export default {
   methods: {
     abortNew: function() {
       this.isNewCard = false;
+      this.removeAllTempValues();
     },
-    deleteCard: function(payload) {
-      const cards = this.cards;
-      const profileId = payload.profileId;
-      const deleteIndex = cards.findIndex(
-        (card) => card.profileId == profileId);
-      let deleteURL = 'https://api.transfr.info/v1/userdata/profile/';
-      deleteURL = deleteURL + profileId;
-      if (process.env.NODE_ENV === 'development') {
-        deleteURL = 'https://api.transfr.test/v1/userdata/profile/';
-        deleteURL = deleteURL + profileId;
-      }
-      const headers = [{name: 'X-CSRF-TOKEN', value: 'snakeoil'}];
-      const deletePromise = ajaxRequest('DELETE', deleteURL, null, headers);
-      deletePromise.then((response) => {
-        if (!response.meta.success) {
-          throw response.meta.message;
-        }
-        this.currentCardIndex = response.user.vcards.length - 1;
-        cards.splice(deleteIndex, 1);
-      }).catch((err) => this.$emit('error/api-fetch', err));
-    },
+    // deleteCard: function(payload) {
+    //   const cards = this.cards;
+    //   const profileId = payload.profileId;
+    //   const deleteIndex = cards.findIndex(
+    //     (card) => card.profileId == profileId);
+    //   let deleteURL = 'https://api.transfr.info/v1/userdata/profile/';
+    //   deleteURL = deleteURL + profileId;
+    //   if (process.env.NODE_ENV === 'development') {
+    //     deleteURL = 'https://api.transfr.test/v1/userdata/profile/';
+    //     deleteURL = deleteURL + profileId;
+    //   }
+    //   const headers = [{name: 'X-CSRF-TOKEN', value: 'snakeoil'}];
+    //   const deletePromise = ajaxRequest('DELETE', deleteURL, null, headers);
+    //   deletePromise.then((response) => {
+    //     if (!response.meta.success) {
+    //       throw response.meta.message;
+    //     }
+    //     this.currentCardIndex = response.user.vcards.length - 1;
+    //     cards.splice(deleteIndex, 1);
+    //   }).catch((err) => this.$emit('error/api-fetch', err));
+    // },
     pushNewCard() {
       const profileId = `temp-${getRandomInt(100, 1000)}`;
       const params = {
@@ -153,7 +153,11 @@ export default {
       this.currentCardId = profileId;
       this.isNewCard = true;
     },
-    ...mapMutations('cards', ['addNewCard', 'setCurrentCardId']),
+    ...mapMutations('cards', [
+      'addNewCard',
+      'removeAllTempValues',
+      'setCurrentCardId',
+    ]),
   },
 };
 </script>

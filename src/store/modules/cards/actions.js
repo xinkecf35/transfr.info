@@ -200,6 +200,19 @@ export default {
         commit('setCurrentCardId', response.card.profileId);
       });
   },
+  deleteCard({commit, rootGetters}, id) {
+    // Send DELETE Request
+    // remove values/replace values from updated vcards
+    // catch meta
+    const deleteURL = `${baseURL}/userdata/profile/${id}`;
+    const headers = [rootGetters.CSRFHeader];
+    return ajaxRequest('DELETE', deleteURL, null, headers).then((response) => {
+      if (!response.meta.success) {
+        throw response.meta.message;
+      }
+      commit('setCards', response.user.vcards);
+    });
+  },
   updateCardByPatch({state, commit, getters, rootGetters}, {id, original}) {
     let originalCard = original;
     const modifiedCard = getters.getDenormalizedCard(id);

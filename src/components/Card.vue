@@ -141,7 +141,7 @@
         <div id="edit">
           <button
             class="level-1 editing-button-error"
-            @click="deleteCard()"
+            @click="deleteCurrentCard()"
           >
             Delete
           </button>
@@ -269,7 +269,7 @@ export default {
         this.createCard({id: this.profileId}).catch((err) => {
           this.errors.push({
             field: 'modal-error',
-            message: 'Something has gone wrong, please try again later',
+            message: 'Something gone wrong; reason is: ' + err.message,
           });
         });
       }
@@ -311,11 +311,10 @@ export default {
       this.edit = !edit;
     },
     // Redo for Vuex refactor
-    deleteCard: function() {
+    deleteCurrentCard() {
       // discards any patches and emits event for deletion
-      this.patch = [];
       this.edit = !this.edit;
-      this.$emit('card-delete', {profileId: this.vcard.profileId});
+      this.deleteCard(this.profileId);
     },
     extractLexicalArray(data) {
       const components = data.split(';');
@@ -376,6 +375,7 @@ export default {
     },
     ...mapActions('cards', [
       'createCard',
+      'deleteCard',
       'undoCardChanges',
       'updateCardByPatch',
     ]),
