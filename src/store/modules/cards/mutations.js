@@ -34,6 +34,9 @@ export default {
     Vue.set(state[attribute], tempId, {_id: tempId, type, value});
     state.profile[id][attribute].push(tempId);
   },
+  clearDirtyFlag(state, id) {
+    state.profile[id].dirty = false;
+  },
   removeAllTempValues(state) {
     // Removes all created temporary values,
     // Does not introspect into individual card/profiles attributes
@@ -80,9 +83,11 @@ export default {
   updateAttributeForId(state, {id, attribute, value}) {
     const card = state.profile[id];
     card[attribute] = value;
+    card.dirty = true;
   },
-  updateValueInArray(state, {id, attribute, field, value}) {
+  updateValueInArray(state, {profileId, id, attribute, field, value}) {
     state[attribute][id][field] = value;
+    state.profile[profileId].dirty = true;
   },
   updateCardFromPatch(state, {id, card}) {
     const {entities} = normalize(card, profileSchema);

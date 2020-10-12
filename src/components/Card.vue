@@ -213,7 +213,7 @@ export default {
      * This simply uses an array as include and iterates over that
      * returns an object filled the key value pairs
      */
-    objectOptionals: function() {
+    objectOptionals() {
       let result = {};
       complexAttributes.forEach((key) => {
         const values = this.values[key];
@@ -228,11 +228,11 @@ export default {
      * This computed property returns properties that are text only
      * returns an object filled with the simple key-value pairs
      */
-    presentError: function() {
+    presentError() {
       const errors = this.errors;
       return errors.length && errors[errors.length - 1].field === 'modal-error';
     },
-    simpleOptionals: function() {
+    simpleOptionals() {
       const result = {};
       const exclude = ['address', 'description', 'email', 'telephone'];
       const filtered = cardAttributes.filter((property) => {
@@ -245,7 +245,7 @@ export default {
       });
       return result;
     },
-    shareURL: function() {
+    shareURL() {
       const shareBaseURL =
         process.env.NODE_ENV === 'development'
           ? 'https://transfr.test/card'
@@ -259,13 +259,14 @@ export default {
       handler: 'populateData',
       immediate: true,
     },
-    edit: function(edit) {
-      if (!edit && !this.isNewCard) {
+    edit(edit) {
+      const dirty = this.isDirty();
+      if (!edit && !this.isNewCard && dirty) {
         // cleaning up after done editing
         this.updateEditedCard().then((id) => {
           this.populateData(this.profileId);
         });
-      } else if (!edit && this.isNewCard) {
+      } else if (!edit && this.isNewCard && dirty) {
         this.createCard({id: this.profileId}).catch((err) => {
           this.errors.push({
             field: 'modal-error',
@@ -275,7 +276,7 @@ export default {
       }
       this.share = false;
     },
-    isNewCard: function(isNew) {
+    isNewCard(isNew) {
       if (isNew !== undefined && isNew) {
         this.edit = true;
       }
@@ -330,6 +331,9 @@ export default {
       const getDenormalizedCard =
         this.$store.getters['cards/getDenormalizedCard'];
       return getDenormalizedCard(id);
+    },
+    isDirty() {
+      return this.$store.getters['cards/isCardDirty'](this.profileId);
     },
     // For watcher
     populateData(id) {

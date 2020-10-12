@@ -140,6 +140,7 @@ export default {
     updateValue(e, id, field) {
       const params = {
         id,
+        profileId: this.profileId,
         attribute: this.attribute,
         field,
         value: e.target.value,

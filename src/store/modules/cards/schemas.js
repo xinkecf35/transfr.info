@@ -15,7 +15,7 @@ export const telephoneSchema = new schema.Entity('telephone', {}, {
 
 const profileSchemaOptions = {
   idAttribute: 'profileId',
-  processStrategy: function(input) {
+  processStrategy(input) {
     const existingKeys = Object.keys(input);
     const missingKeys = cardAttributes.filter((attr) => {
       return existingKeys.indexOf(attr) === -1;
@@ -27,6 +27,8 @@ const profileSchemaOptions = {
       }
       emptyData[key] = '';
     });
+    // Add a dirty flag to stop extraneous patches
+    emptyData.dirty = false;
     const newData = {...input, ...emptyData};
     return newData;
   },

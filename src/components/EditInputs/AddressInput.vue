@@ -209,7 +209,7 @@ export default {
         };
         this.addValueInArray(params);
         this.label = '';
-        this.addressKeys.forEach((key) => this.addressComponents[key] = '');
+        this.addressKeys.forEach((key) => (this.addressComponents[key] = ''));
       }
     },
     debouncedAddAddress: debounce(function() {
@@ -237,7 +237,13 @@ export default {
       });
     },
     updateLabel(id, value) {
-      const params = {id, attr: 'address', field: 'type', value};
+      const params = {
+        id,
+        profileId: this.profileId,
+        attribute: 'address',
+        field: 'type',
+        value,
+      };
       this.updateValueInArray(params);
     },
     removeAddress(id) {
@@ -254,6 +260,7 @@ export default {
       const modified = Array.from(keys, (key) => value[key]).join(';');
       const params = {
         id,
+        profileId: this.profileId,
         attribute: 'address',
         field: 'value',
         value: modified,

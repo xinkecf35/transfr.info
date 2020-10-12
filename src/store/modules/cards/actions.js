@@ -229,6 +229,7 @@ export default {
           throw response.meta.message;
         }
         commit('updateCardFromPatch', {id, card: response.card});
+        commit('clearDirtyFlag');
         commit('removeAllTempValues');
       });
   },

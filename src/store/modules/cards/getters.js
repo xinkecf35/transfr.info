@@ -20,4 +20,5 @@ export default {
   getValueFromArray: (state) => (id, attr, field) => {
     return state[attr][id][field];
   },
+  isCardDirty: (state) => (profileId) => state.profile[profileId].dirty,
 };
