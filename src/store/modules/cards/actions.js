@@ -213,13 +213,13 @@ export default {
       commit('setCards', response.user.vcards);
     });
   },
-  updateCardByPatch({state, commit, getters, rootGetters}, {id, original}) {
+  updateCardByPatch({commit, getters, rootGetters}, {id, original}) {
     let originalCard = original;
     const modifiedCard = getters.getDenormalizedCard(id);
     if (typeof original === 'string') {
       originalCard = JSON.parse(original);
     }
-    const patch = generateDiffForPatch(state, originalCard, modifiedCard);
+    const patch = generateDiffForPatch(originalCard, modifiedCard);
     const patchURL = `${baseURL}/userdata/profile/${id}`;
     const patchBody = JSON.stringify({patch});
     const headers = [rootGetters.CSRFHeader];
@@ -229,7 +229,6 @@ export default {
           throw response.meta.message;
         }
         commit('updateCardFromPatch', {id, card: response.card});
-        commit('clearDirtyFlag');
         commit('removeAllTempValues');
       });
   },
